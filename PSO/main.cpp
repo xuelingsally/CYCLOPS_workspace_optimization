@@ -66,12 +66,16 @@ int main()
     Eigen::Vector3d position;
     position << a, b, c; 
     
-    Eigen::Matrix3d Output;
+    std::cout << "First Input is " << position[0] << " Second Input is " << position[1] << "Third Input is " << position[2] << std::endl;
 
-    Output = cyclops::test_function(int(1), position);
+    Eigen::Matrix3d Output = cyclops::test_function(int(1), position);
+    
+    // WIP
+    //Eigen::Map<Eigen::VectorXf,0,Eigen::OuterStride<> > Output2(Output.data, Output.rows(), Eigen::InnerStride<>(3));
 
-    std::cout << "The outoput is: " << std::endl;
+    std::cout << "The output is: " << std::endl;
     std::cout << Output << std::endl;
+    std::cout << "Output 2 is " << std::endl << Output2 << std::endl;
 
     return 0;
 }
