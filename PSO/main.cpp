@@ -70,11 +70,15 @@ int main()
 
     Eigen::Matrix3d Output = cyclops::test_function(int(1), position);
     
+    Eigen::Matrix3d Output_temp;
+    Output_temp << 1,2,3,4,5,6,7,8,9;
+
     // WIP
-    //Eigen::Map<Eigen::VectorXf,0,Eigen::OuterStride<> > Output2(Output.data, Output.rows(), Eigen::InnerStride<>(3));
+    Eigen::Vector3d Output2 = Output_temp.block<3,1>(0,2);
 
     std::cout << "The output is: " << std::endl;
     std::cout << Output << std::endl;
+    std::cout << "Output_temp is " << std::endl << Output_temp << std::endl;
     std::cout << "Output 2 is " << std::endl << Output2 << std::endl;
 
     return 0;
