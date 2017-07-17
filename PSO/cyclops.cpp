@@ -123,7 +123,7 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
 }
 
 cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,6> B,
-                        Matrix<double,6,1> W, vector<Vector3d> f_ee, 
+                        Matrix<double,6,1> W, vector<Vector3d> f_ee_vec, 
                         Vector3d r_ee, Vector2d phi_min, Vector2d phi_max,
                         VectorXd t_min, VectorXd t_max)
 {
@@ -144,7 +144,8 @@ cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,
 
     double radius = (B.block<2,1>(1,0)).norm();
 
-    double x_step = (x_space_length1 + x_space_length2)/x_res;
+    double x_search = (x_space_length1 + x_space_length2);
+    double x_step = x_search/x_res;
     double y_step = 2 * radius /y_res;
     double z_step = 2 * radius /z_res;
 
@@ -175,14 +176,61 @@ cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,
     }
 
     // Checking if the points in the search volume are feasible across the given forces on the end effector
-    
+    vector<Vector3d> feasible, unfeasible;
+    vector<Vector3d>::iterator vol_grid_iter;
+    vector<Vector3d>::iterator f_ee_iter;
 
 
-    dw_result Temp;
-    Temp.feasible = vol_grid;
-    Temp.unfeasible = vol_grid;
-    Temp.size = 0;
-    return Temp;
+    for (vol_grid_iter = vol_grid.begin(); vol_grid_iter!=vol_grid.end(); ++vol_grid_iter)
+    {
+        unsigned int feasible_counter = 0;
+        for (f_ee_iter = f_ee_vec.begin(); f_ee_iter!=f_ee_vec.end(); ++f_ee_iter)
+        {
+            bool feasible_temp = false;
+            Matrix<double,5,1> P;
+            
+            P << (*vol_grid_iter)(0), (*vol_grid_iter)(1), (*vol_grid_iter)(2), 0, 0;
+            feasible_temp = feasible_pose(P, a, B, W, *f_ee_iter, r_ee, t_min, t_max);
+            if (feasible_temp)
+                feasible_counter++;
+
+            P(3,0) = phi_min(0);
+            feasible_temp = feasible_pose(P, a, B, W, *f_ee_iter, r_ee, t_min, t_max);
+            if (feasible_temp)
+                feasible_counter++;
+
+            P(3,0) = phi_max(0);
+            feasible_temp = feasible_pose(P, a, B, W, *f_ee_iter, r_ee, t_min, t_max);
+            if (feasible_temp)
+                feasible_counter++;
+
+            P(3,0) = 0;
+            P(4,0) = phi_min(1);
+            feasible_temp = feasible_pose(P, a, B, W, *f_ee_iter, r_ee, t_min, t_max);
+            if (feasible_temp)
+                feasible_counter++;
+
+            P(4,0) = phi_max(1);
+            feasible_temp = feasible_pose(P, a, B, W, *f_ee_iter, r_ee, t_min, t_max);
+            if (feasible_temp)
+                feasible_counter++;
+        }
+
+        if (feasible_counter == 5 * f_ee_vec.size())
+            feasible.push_back(*vol_grid_iter);
+        else
+            unfeasible.push_back(*vol_grid_iter);
+    }
+
+    double yz_search = PI * radius * radius;
+    double search_vol = x_search * yz_search;
+    double wp_size = double(feasible.size())/double(vol_grid.size()) * search_vol;
+
+    dw_result Result;
+    Result.feasible = feasible;
+    Result.unfeasible = unfeasible;
+    Result.size = wp_size;
+    return Result;
 }
 
 double cyclops::x_space_length(Matrix<double,3,6> a, Matrix<double,3,6> B, Vector3d p)

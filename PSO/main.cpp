@@ -96,30 +96,32 @@ int main()
     r_ee << 70, 0, 0;
     Eigen::Matrix<double,6,1> W;
     W << 0,0,0,0,0,0;
+    std::vector<Eigen::Vector3d> f_ee_vec;
+    f_ee_vec.push_back(f_ee);
+
 
     Eigen::Matrix<double,5,1> P;
     P << -46, 0, 0, 0, 0;
     //P << -200, 0, 0, 0, 0;
 
     Eigen::Matrix<double, 6, 1> t_min, t_max;
-    t_min << 10,10,10,10,10,10;
+    t_min << 5,5,5,5,5,5;
     t_max << 60,60,60,60,60,60;
     
     Eigen::Vector2d phi_min, phi_max;
     phi_min << -10/180 * PI, -10/180 * PI;
     phi_max << 10/180 * PI, 10/180 * PI;
 
-    std::vector<Eigen::Vector3d> f_ee_vec;
-    f_ee_vec.push_back(f_ee);
-
     bool result = cyclops::feasible_pose(P/1000, a1/1000, B/1000, W, f_ee, r_ee/1000, t_min, t_max);
 
     std::cout << "Feasibility of Given Pose: " << result << std::endl;
 
-    cyclops::dw_result test_dw = cyclops::dex_workspace(a1, B, W, f_ee_vec, r_ee, phi_min, phi_max, t_min, t_max);
+    cyclops::dw_result test_dw = cyclops::dex_workspace(a1/1000, B/1000, W, f_ee_vec, r_ee/1000, phi_min, phi_max, t_min, t_max);
     
 
-    std::cout << "Size of Vol_grid is: " << (test_dw.feasible).size() << std::endl;
+    std::cout << "No. of Feasible pts is: " << (test_dw.feasible).size() << std::endl;
+    std::cout << "No. of UnFeasible pts is: " << (test_dw.unfeasible).size() << std::endl;
+    std::cout << "Workspace Size: " << (test_dw.size) << std::endl;
 
     return 0;
 }
