@@ -174,6 +174,10 @@ cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,
         x_temp+= x_step;
     }
 
+    // Checking if the points in the search volume are feasible across the given forces on the end effector
+    
+
+
     dw_result Temp;
     Temp.feasible = vol_grid;
     Temp.unfeasible = vol_grid;
