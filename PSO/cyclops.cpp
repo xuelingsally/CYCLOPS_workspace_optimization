@@ -56,21 +56,62 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
 
         // Adding to the structural Matrix
         A.block<3,1>(0,i) = l_hat;
-        A.block<3,1>(3,i) = tau;    
+        A.block<2,1>(3,i) = tau.block<2,1>(1,0);    
     }
 
     // Compute overall wrench
+    // We ignore torque in the x direction
     Vector3d tau_f_ee = f_ee.cross(r_ee);
-    Matrix<double,6,1> f;
-    f << f_ee(0), f_ee(1), f_ee(2), tau_f_ee(0), tau_f_ee(1), tau_f_ee(2);
+    Matrix<double,5,1> f;
+    f << f_ee(0), f_ee(1), f_ee(2), tau_f_ee(1), tau_f_ee(2);
 
     // Obtaining Tension Solution
     // Analytical method with L1-norm Solution
 
-    Matrix<double,6,5> Partition_A = A.block<6,5>(0,0);
-    Matrix<double,6,1> Partition_B = A.block<6,1>(0,6);
+    Matrix<double,5,5> Partition_A = A.block<5,5>(0,0);
+    Matrix<double,5,1> Partition_B = A.block<5,1>(0,6);
 
-    //WIP
+    Matrix<double,5,1> M = - Partition_A.inverse() * f;
+    Matrix<double,5,1> N = - Partition_A.inverse() * Partition_B;
 
-	return true;
+    Matrix<double, 6, 1> t_low;
+    Matrix<double, 6, 1> t_high;
+
+    for (int i=0; i<5; i++)
+    {
+        if (N(i,0) > 0)
+        {
+            t_low(i,0) = (t_min(i) - M(i,0))/N(i,0);
+            t_high(i,0) = (t_max(i) - M(i))/N(i);
+        }
+        else
+        {
+            t_low(i,0) = (t_min(i) - M(i,0))/N(i,0);
+            t_high(i,0) = (t_min(i) - M(i,0))/N(i,0);
+        }
+    }
+
+    t_low(6,0) = t_min(6);
+    t_high(6,0) = t_max(6);
+
+    double t_B_min, t_B_max;
+
+    MatrixXf::Index tempRow, tempCol;
+
+    t_B_min = t_low.maxCoeff(&tempRow, &tempCol);
+    t_B_max = t_high.minCoeff(&tempRow, &tempCol);
+
+    bool feasible;
+
+    if (t_B_min <= t_B_max)
+    {
+        feasible = true;
+    }
+    else
+    {
+        feasible = false;
+    }
+
+
+	return feasible;
 }
