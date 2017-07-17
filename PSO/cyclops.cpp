@@ -120,3 +120,31 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
 
 	return feasible;
 }
+
+cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,6> B,
+                        Matrix<double,6,1> W, vector<Vector3d> f_ee, 
+                        Vector3d r_ee, Vector2d phi_min, Vector2d phi_max,
+                        VectorXd t_min, VectorXd t_max)
+{
+    dw_result Temp;
+    return Temp;
+}
+
+double cyclops::x_space_length(Matrix<double,3,6> a, Matrix<double,3,6> B, Vector3d p)
+{
+    double max_length = 0;
+
+    for (int i=0; i<a.cols(); i++)
+    {
+        Vector3d a_temp = a.block<3,1>(0,i);
+        Vector3d a_b = a_temp + p;
+
+        Vector3d B_temp = B.block<3,1>(0,i);
+
+        double x_length = a_b(0) - B_temp(0);
+
+        if (max_length < x_length)
+            max_length = x_length;
+    }
+    return max_length;
+}

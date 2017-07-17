@@ -27,6 +27,8 @@ struct dw_result {
 	vector<Vector3d> unfeasible;
 };
 
+double x_space_length(Matrix<double,3,6> a, Matrix<double,3,6> B, Vector3d p);
+
 dw_result dex_workspace(Matrix<double,3,6> a, Matrix<double,3,6> B,
 	                    Matrix<double,6,1> W, vector<Vector3d> f_ee, 
 	                    Vector3d r_ee, Vector2d phi_min, Vector2d phi_max,
