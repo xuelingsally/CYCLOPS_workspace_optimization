@@ -7,6 +7,7 @@ This contains various functions required for calculating the workspace of the CY
 #include <math.h>
 
 using namespace Eigen;
+using namespace std;
 
 Matrix3d cyclops::test_function(int num_vars, Vector3d position)
 {
@@ -52,7 +53,7 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
     	Vector3d l = B_temp - a_b;
 
     	//Get the normalised unit vector
-    	Vector3d l_hat = l/l.squaredNorm();
+    	Vector3d l_hat = l/l.norm();
         
         // Calculate Torque Component of Structural Matrix
         Vector3d tau = a_temp.cross(l);
@@ -126,7 +127,57 @@ cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,
                         Vector3d r_ee, Vector2d phi_min, Vector2d phi_max,
                         VectorXd t_min, VectorXd t_max)
 {
+    int x_res = 10;
+    int y_res = 10;
+    int z_res = 10;
+
+    // Determining Search Volume;
+    Matrix<double,1,6> B_x = B.block<1,6>(0,0);
+    MatrixXf::Index tempRow, tempCol;
+    double x_middle = (B_x.maxCoeff(&tempRow, &tempCol) + B_x.minCoeff(&tempRow, &tempCol))/2;
+    
+    Vector3d p_arbitrary;
+    p_arbitrary << x_middle, 0 , 0;
+
+    double x_space_length1 = x_space_length(a, B, p_arbitrary);
+    double x_space_length2 = x_space_length(a, B, -p_arbitrary);
+
+    double radius = (B.block<2,1>(1,0)).norm();
+
+    double x_step = (x_space_length1 + x_space_length2)/x_res;
+    double y_step = 2 * radius /y_res;
+    double z_step = 2 * radius /z_res;
+
+    double x_temp = x_middle - x_space_length1;
+    double y_temp = -radius;
+    double z_temp = -radius;
+
+    vector<Vector3d> vol_grid;
+    for (int i=0; i<x_res+1; i++)
+    {
+        for (int j=0; j<y_res+1; j++)
+        {
+            for (int k=0; k<z_res+1; k++)
+            {
+                if ((z_temp * z_temp + y_temp * y_temp) <= (radius * radius))
+                {
+                    Vector3d temp_vec;
+                    temp_vec << x_temp, y_temp, z_temp;
+                    vol_grid.push_back(temp_vec);
+                }
+                z_temp+= z_step;
+            }
+            z_temp = -radius;
+            y_temp+= y_step;
+        }
+        y_temp = -radius;
+        x_temp+= x_step;
+    }
+
     dw_result Temp;
+    Temp.feasible = vol_grid;
+    Temp.unfeasible = vol_grid;
+    Temp.size = 0;
     return Temp;
 }
 
@@ -148,3 +199,4 @@ double cyclops::x_space_length(Matrix<double,3,6> a, Matrix<double,3,6> B, Vecto
     }
     return max_length;
 }
+
