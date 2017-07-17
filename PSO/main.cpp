@@ -94,13 +94,17 @@ int main()
 
     Eigen::Matrix<double,5,1> P;
     P << -46, 0, 0, 0, 0;
-   // P << -200, 0, 0, 0, 0;
+    //P << -200, 0, 0, 0, 0;
 
     Eigen::Matrix<double, 6, 1> t_min, t_max;
     t_min << 10,10,10,10,10,10;
     t_max << 60,60,60,60,60,60;
+    
+    Eigen::Matrix<double,6,1> W;
+    W << 0,0,0,0,0,0;
 
-    bool result = cyclops::feasible_pose(P/1000, a1/1000, B/1000, f_ee, r_ee/1000, t_min, t_max);
+
+    bool result = cyclops::feasible_pose(P/1000, a1/1000, B/1000, W, f_ee, r_ee/1000, t_min, t_max);
 
     std::cout << "Feasibility of Given Pose: " << result << std::endl;
     return 0;

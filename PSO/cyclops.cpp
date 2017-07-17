@@ -16,8 +16,9 @@ Matrix3d cyclops::test_function(int num_vars, Vector3d position)
 }
 
 bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a, 
-	                        Matrix<double,3,6> B, Vector3d f_ee,
-	                        Vector3d r_ee, VectorXd t_min, VectorXd t_max)
+	                        Matrix<double,3,6> B, Matrix<double,6,1> W,
+                            Vector3d f_ee, Vector3d r_ee,
+                            VectorXd t_min, VectorXd t_max)
 {
 
 	Vector3d p;
@@ -64,8 +65,11 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
     // Compute overall wrench
     // We ignore torque in the x direction
     Vector3d tau_f_ee = f_ee.cross(r_ee);
+    Matrix<double,6,1> f_temp;
+    f_temp << f_ee(0), f_ee(1), f_ee(2), tau_f_ee(0), tau_f_ee(1), tau_f_ee(2);
+    Matrix<double,6,1> f_temp2 = W + f_temp;
     Matrix<double,5,1> f;
-    f << f_ee(0), f_ee(1), f_ee(2), tau_f_ee(1), tau_f_ee(2);
+    f << f_temp2(0), f_temp2(1), f_temp2(2), f_temp2(4), f_temp2(5);
 
     // Obtaining Tension Solution
     // Analytical method with L1-norm Solution
