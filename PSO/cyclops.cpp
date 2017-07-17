@@ -21,9 +21,10 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
 {
 
 	Vector3d p;
-	p << P[0], P[1], P[2]; //The position of the tool
-	double phi_y = P[4]; //Orientation of the tool (y)
-	double phi_z = P[5]; //Orientation of the tool (z)
+    
+	p << P(0,0), P(1,0), P(2,0); //The position of the tool
+	double phi_y = P(3,0); //Orientation of the tool (y)
+	double phi_z = P(4,0); //Orientation of the tool (z)
 
     // Define rotation Matrix
     Matrix3d R_y, R_z, T_r;
@@ -35,7 +36,8 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
            0, 0, 1;
     T_r = R_y * R_z;
 
-    Matrix<double, 6, Dynamic> A;
+    Matrix<double, 5, 6> A;
+
 
     // Create Structural Matrix, A
     for (int i=0; i<a.cols(); i++)
@@ -56,7 +58,7 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
 
         // Adding to the structural Matrix
         A.block<3,1>(0,i) = l_hat;
-        A.block<2,1>(3,i) = tau.block<2,1>(1,0);    
+        A.block<2,1>(3,i) = tau.segment(1,2);    
     }
 
     // Compute overall wrench
@@ -69,7 +71,7 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
     // Analytical method with L1-norm Solution
 
     Matrix<double,5,5> Partition_A = A.block<5,5>(0,0);
-    Matrix<double,5,1> Partition_B = A.block<5,1>(0,6);
+    Matrix<double,5,1> Partition_B = A.block<5,1>(0,5);
 
     Matrix<double,5,1> M = - Partition_A.inverse() * f;
     Matrix<double,5,1> N = - Partition_A.inverse() * Partition_B;
@@ -91,8 +93,8 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
         }
     }
 
-    t_low(6,0) = t_min(6);
-    t_high(6,0) = t_max(6);
+    t_low(5,0) = t_min(5);
+    t_high(5,0) = t_max(5);
 
     double t_B_min, t_B_max;
 
@@ -101,7 +103,7 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
     t_B_min = t_low.maxCoeff(&tempRow, &tempCol);
     t_B_max = t_high.minCoeff(&tempRow, &tempCol);
 
-    bool feasible;
+    bool feasible = false;
 
     if (t_B_min <= t_B_max)
     {
@@ -111,7 +113,6 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
     {
         feasible = false;
     }
-
 
 	return feasible;
 }

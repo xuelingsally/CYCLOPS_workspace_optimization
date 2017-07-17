@@ -81,5 +81,27 @@ int main()
     std::cout << "Output_temp is " << std::endl << Output_temp << std::endl;
     std::cout << "Output 2 is " << std::endl << Output2 << std::endl;
 
+    Eigen::Matrix<double,3,6> a1, B;
+    a1 << 30, 30, 30, -30, -30, -30,
+         0.5, -1, 0.5, 0.5, -1, 0.5,
+         0.866, 0, -0.866, 0.866, 0, -0.866;
+    B << 0, 0, 0, -100, -100, -100,
+         15, -30, 15, 15, -30, 15,
+         25.98, 0, -25.98, 25.98, 0, -25.98;
+    Eigen::Vector3d f_ee, r_ee;
+    f_ee << 0, 0, 0;
+    r_ee << 70, 0, 0;
+
+    Eigen::Matrix<double,5,1> P;
+    P << -46, 0, 0, 0, 0;
+   // P << -200, 0, 0, 0, 0;
+
+    Eigen::Matrix<double, 6, 1> t_min, t_max;
+    t_min << 10,10,10,10,10,10;
+    t_max << 60,60,60,60,60,60;
+
+    bool result = cyclops::feasible_pose(P/1000, a1/1000, B/1000, f_ee, r_ee/1000, t_min, t_max);
+
+    std::cout << "Feasibility of Given Pose: " << result << std::endl;
     return 0;
 }
