@@ -60,7 +60,7 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
 
         // Adding to the structural Matrix
         A.block<3,1>(0,i) = l_hat;
-        A.block<2,1>(3,i) = tau.segment(1,2);    
+        A.block<2,1>(3,i) = tau.block<2,1>(1,0);    
     }
 
     // Compute overall wrench
@@ -78,8 +78,8 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
     Matrix<double,5,5> Partition_A = A.block<5,5>(0,0);
     Matrix<double,5,1> Partition_B = A.block<5,1>(0,5);
 
-    Matrix<double,5,1> M = - Partition_A.inverse() * f;
-    Matrix<double,5,1> N = - Partition_A.inverse() * Partition_B;
+    Matrix<double,5,1> M = -Partition_A.inverse() * f;
+    Matrix<double,5,1> N = -Partition_A.inverse() * Partition_B;
 
     Matrix<double, 6, 1> t_low;
     Matrix<double, 6, 1> t_high;
@@ -89,11 +89,11 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
         if (N(i,0) > 0)
         {
             t_low(i,0) = (t_min(i) - M(i,0))/N(i,0);
-            t_high(i,0) = (t_max(i) - M(i))/N(i);
+            t_high(i,0) = (t_max(i) - M(i,0))/N(i,0);
         }
         else
         {
-            t_low(i,0) = (t_min(i) - M(i,0))/N(i,0);
+            t_low(i,0) = (t_max(i) - M(i,0))/N(i,0);
             t_high(i,0) = (t_min(i) - M(i,0))/N(i,0);
         }
     }
