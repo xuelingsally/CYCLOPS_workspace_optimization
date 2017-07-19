@@ -3,6 +3,8 @@ clear;
 clc;
 %close;
 
+warning('off', 'all');
+
 addpath PSwarmM_v2_1;
 
 %% Constants (All units in mm)
@@ -160,3 +162,5 @@ else
     disp(X);
     
 end
+
+warning('on', 'all');
