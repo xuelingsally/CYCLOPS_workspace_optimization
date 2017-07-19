@@ -60,40 +60,40 @@ int main()
     */
     
     Eigen::Matrix<double,3,6> a, B;
-    a << 30, 30, 30, -30, -30, -30,
-         0.5, -1, 0.5, 0.5, -1, 0.5,
-         0.866, 0, -0.866, 0.866, 0, -0.866;
-    B << 0, 0, 0, -100, -100, -100,
-         15, -30, 15, 15, -30, 15,
-         25.98, 0, -25.98, 25.98, 0, -25.98;
+    a << 30.0, 30.0, 30.0, -30.0, -30.0, -30.0,
+         0.5, -1.0, 0.5, 0.5, -1.0, 0.5,
+         0.866, 0.0, -0.866, 0.866, 0.0, -0.866;
+    B << 0.0, 0.0, 0.0, -100.0, -100.0, -100.0,
+         15.0, -30.0, 15.0, 15.0, -30.0, 15.0,
+         25.98, 0.0, -25.98, 25.98, 0.0, -25.98;
 
     Eigen::Vector3d f_ee, r_ee;
-    f_ee << 0, 0, 0;
-    r_ee << 70, 0, 0;
+    f_ee << 0.0, 0.0, 0.0;
+    r_ee << 70.0, 0.0, 0.0;
     Eigen::Matrix<double,6,1> W;
-    W << 0,0,0,0,0,0;
+    W << 0.0,0.0,0.0,0.0,0.0,0.0;
     std::vector<Eigen::Vector3d> f_ee_vec;
     f_ee_vec.push_back(f_ee);
 
 
     Eigen::Matrix<double,5,1> P;
-    P << -50, 0, 0, 0, 0;
+    P << -50.0, 0.0, 0.0, 0.0, 0.0;
     //P << -200, 0, 0, 0, 0;
     //P << -0.0660, -0.0060, -0.0000, 0, 0;
 
     Eigen::Matrix<double, 6, 1> t_min, t_max;
-    t_min << 5,5,5,5,5,5;
-    t_max << 60,60,60,60,60,60;
+    t_min << 5.0,5.0,5.0,5.0,5.0,5.0;
+    t_max << 60.0,60.0,60.0,60.0,60.0,60.0;
     
     Eigen::Vector2d phi_min, phi_max;
-    phi_min << -10/180 * PI, -10/180 * PI;
-    phi_max << 10/180 * PI, 10/180 * PI;
+    phi_min << -10.0/180.0 * PI, -10.0/180.0 * PI;
+    phi_max << 10.0/180.0 * PI, 10.0/180.0 * PI;
 
-    bool result = cyclops::feasible_pose(P/1000, a/1000, B/1000, W, f_ee, r_ee/1000, t_min, t_max);
+    bool result = cyclops::feasible_pose(P/1000.0, a/1000.0, B/1000.0, W, f_ee, r_ee/1000.0, t_min, t_max);
 
     std::cout << "Feasibility of Given Pose: " << result << std::endl;
 
-    cyclops::dw_result test_dw = cyclops::dex_workspace(a/1000, B/1000, W, f_ee_vec, r_ee/1000, phi_min, phi_max, t_min, t_max);
+    cyclops::dw_result test_dw = cyclops::dex_workspace(a/1000.0, B/1000.0, W, f_ee_vec, r_ee/1000.0, phi_min, phi_max, t_min, t_max);
     
 
     std::cout << "No. of Feasible pts is: " << (test_dw.feasible).size() << std::endl;
@@ -101,8 +101,10 @@ int main()
     std::cout << "Workspace Size: " << (test_dw.size) << std::endl;
 
     std::vector<Eigen::Vector3d> feasible = test_dw.feasible;
+    std::vector<Eigen::Vector3d> unfeasible = test_dw.unfeasible;
 
     std::vector<Eigen::Vector3d>::iterator feasible_iter;
+    std::vector<Eigen::Vector3d>::iterator unfeasible_iter;
 
     std::cout << "Positions:" << std::endl;
     for(feasible_iter=feasible.begin(); feasible_iter!=feasible.end(); ++feasible_iter)

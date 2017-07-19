@@ -135,12 +135,12 @@ cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,
     Matrix<double,1,6> B_x = B.block<1,6>(0,0);
     MatrixXf::Index tempRow, tempCol;
     double x_middle = (B_x.maxCoeff(&tempRow, &tempCol) + B_x.minCoeff(&tempRow, &tempCol))/2;
-    
+
     Vector3d p_arbitrary;
     p_arbitrary << x_middle, 0 , 0;
 
     double x_space_length1 = x_space_length(a, B, p_arbitrary);
-    double x_space_length2 = x_space_length(a, B, -p_arbitrary);
+    double x_space_length2 = x_space_length(-a, -B, -p_arbitrary);
 
     double radius = (B.block<2,1>(1,0)).norm();
 
