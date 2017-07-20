@@ -461,6 +461,8 @@ Problem.CacheData=InitCache(Problem);
 
 % Initialise Population Weights
 Population.weight = ones(Population.Size, 1) * 1/Population.Size;
+Resample_counter = 0;
+PFO = false;
 
 % Main cycle of the algorithm
 % Run pattern search until no success is attained. Call for a poll step in
@@ -533,8 +535,31 @@ while(Problem.Stats.IterCounter<Problem.MaxIterations && Problem.Stats.ObjFunCou
         end
     end
     
+    % Check for PFO activation
+    if Population.fy(Population.Leader) < 0 && PFO == false
+        % We resample the particles first
+        [Problem, Population] = Resample_Particles(Problem, Population);
+        % Then, we deactivate several particles and activate the particle filter
+        for i=Population.Size/2+1:Population.Size
+            Population.Active(i) = 0;
+        end
+        PFO = true;
+        X = sprintf('PFO Activated');
+        disp(X);
+    end
+    
     % Perform Resampling Step
     %[~,Problem,Population]=ResamplingStep2(Problem, Population, Success, varargin);
+    if Resample_counter >= 10 && PFO == true
+        [Problem, Population] = Resample_Particles(Problem, Population);
+        Resample_counter = 0;
+        X = sprintf('Particles Resampled');
+        disp(X);
+    end
+    
+    if PFO == true
+        Resample_counter = Resample_counter + 1;
+    end
     
     [Problem, Population]=UpdateInfo(Problem, Population);
         
