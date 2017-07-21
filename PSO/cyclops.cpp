@@ -3,8 +3,6 @@ This contains various functions required for calculating the workspace of the CY
 */
 
 #include "cyclops.h"
-#include "Eigen/Eigen"
-#include <math.h>
 
 using namespace Eigen;
 using namespace std;
@@ -252,3 +250,112 @@ double cyclops::x_space_length(Matrix<double,3,6> a, Matrix<double,3,6> B, Vecto
     return max_length;
 }
 
+double objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W,
+	                      vector<Vector3d> f_ee_vec,
+	                      Vector2d phi_min, Vector2d phi_max,
+	                      VectorXd t_min, VectorXd t_max,
+	                      vector<Vector3d> taskspace,
+	                      double radius_tool, double radius_scaffold)
+{
+	double val = 0.0;
+
+	// Finding the attachment and feeding points based on design vector
+	Matrix<double,3,6> a, B;
+	for(int i=0; i<6; i++)
+	{
+		a(0,i) = eaB(i+6,0);
+		a(1,i) = radius_tool * cos(eaB(i,0));
+        a(2,i) = radius_tool * sin(eaB(i,0));
+
+        if(i<3)
+        	B(0,i) = eaB(13,0);
+        else
+        	B(0,i) = eaB(14,0);
+
+        B(1,i) = radius_scaffold * cos(eaB(i,0));
+        B(2,i) = radius_scaffold * sin(eaB(i,0));
+	}
+
+	// Checking for crossing of cables
+	for (int i=0;i<a.cols();i++)
+	{
+		for (int j=0;j<a.cols();j++)
+		{
+			if(a(0,i) < a(0,j) && B(0,i) > B(0,j))
+				return -1.5;
+		}
+	}
+
+	// Based on the tooltip, find the poses that the CG of the tool has to reach
+	dist_tooltip = eaB(15);
+	Vector3d r_ee;
+	r_ee << dist_tooltip, 0, 0;
+
+
+	// Checking if the points in the taskspace are feasible across the given forces on the end effector
+    vector<Vector3d>::iterator taskspace_iter;
+    vector<Vector3d>::iterator f_ee_iter;
+
+
+    for (taskspace_iter = taskspace.begin(); taskspace_iter!=taskspace.end(); ++taskspace_iter)
+    {
+        unsigned int feasible_counter = 0;
+
+        Vector3d taskspace_temp = (*taskspace_iter) - r_ee/1000;
+
+        for (f_ee_iter = f_ee_vec.begin(); f_ee_iter!=f_ee_vec.end(); ++f_ee_iter)
+        {
+            bool feasible_temp = false;
+            Matrix<double,5,1> P;
+            
+            P << (taskspace_temp)(0), (taskspace_temp)(1), (taskspace_temp)(2), 0, 0;
+            feasible_temp = feasible_pose(P, a/1000.0, B/1000.0, W, *f_ee_iter, r_ee/1000.0, t_min, t_max);
+            if (feasible_temp)
+                feasible_counter++;
+
+            P(3,0) = phi_min(0);
+            feasible_temp = feasible_pose(P, a/1000.0, B/1000.0, W, *f_ee_iter, r_ee/1000.0, t_min, t_max);
+            if (feasible_temp)
+                feasible_counter++;
+
+            P(3,0) = phi_max(0);
+            feasible_temp = feasible_pose(P, a/1000.0, B/1000.0, W, *f_ee_iter, r_ee/1000.0, t_min, t_max);
+            if (feasible_temp)
+                feasible_counter++;
+
+            P(3,0) = 0;
+            P(4,0) = phi_min(1);
+            feasible_temp = feasible_pose(P, a/1000.0, B/1000.0, W, *f_ee_iter, r_ee/1000.0, t_min, t_max);
+            if (feasible_temp)
+                feasible_counter++;
+
+            P(4,0) = phi_max(1);
+            feasible_temp = feasible_pose(P, a/1000.0, B/1000.0, W, *f_ee_iter, r_ee/1000.0, t_min, t_max);
+            if (feasible_temp)
+                feasible_counter++;
+        }
+
+        if (feasible_counter == 5 * f_ee_vec.size())
+            val-= 1;
+    }
+
+    if (val < 0)
+    {
+    	val = val/(taskspace.size() * f_ee_vec.size());
+    	return val;
+    }
+
+
+    // Calculate and return the zero wrench workspace if the taskspace condition is fulfilled.
+
+    Vector3d zero_f_ee;
+    zero_f_ee << 0,0,0;
+    vector<Vector3d> zero_f_ee_vec;
+    zero_f_ee_vec.push_back(zero_f_ee);
+
+    dw_result dex_wp = dex_workspace(a/1000.0, B/1000.0, W, zero_f_ee_vec, r_ee/1000.0, phi_min, phi_max, t_min, t_max);
+
+    val = dex_wp.size;
+
+    return val;
+}

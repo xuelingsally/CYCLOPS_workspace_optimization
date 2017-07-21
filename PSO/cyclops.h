@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 #include "Eigen/Eigen"
 
@@ -38,5 +39,11 @@ dw_result dex_workspace(Matrix<double,3,6> a, Matrix<double,3,6> B,
 	                    Vector3d r_ee, Vector2d phi_min, Vector2d phi_max,
 	                    VectorXd t_min, VectorXd t_max);
 
+double objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W,
+	                      vector<Vector3d> f_ee_vec,
+	                      Vector2d phi_min, Vector2d phi_max,
+	                      VectorXd t_min, VectorXd t_max,
+	                      vector<Vector3d> taskspace,
+	                      double radius_tool, double radius_scaffold);
 
 }; //namespace cyclops
