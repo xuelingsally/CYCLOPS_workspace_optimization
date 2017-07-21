@@ -250,7 +250,7 @@ double cyclops::x_space_length(Matrix<double,3,6> a, Matrix<double,3,6> B, Vecto
     return max_length;
 }
 
-double objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W,
+double cyclops::objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W,
 	                      vector<Vector3d> f_ee_vec,
 	                      Vector2d phi_min, Vector2d phi_max,
 	                      VectorXd t_min, VectorXd t_max,
@@ -287,7 +287,7 @@ double objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W,
 	}
 
 	// Based on the tooltip, find the poses that the CG of the tool has to reach
-	dist_tooltip = eaB(15);
+	double dist_tooltip = eaB(15);
 	Vector3d r_ee;
 	r_ee << dist_tooltip, 0, 0;
 

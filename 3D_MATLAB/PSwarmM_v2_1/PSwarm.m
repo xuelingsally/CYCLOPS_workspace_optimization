@@ -550,7 +550,7 @@ while(Problem.Stats.IterCounter<Problem.MaxIterations && Problem.Stats.ObjFunCou
     
     % Perform Resampling Step
     %[~,Problem,Population]=ResamplingStep2(Problem, Population, Success, varargin);
-    if Resample_counter >= 10 && PFO == true
+    if Resample_counter >= 30 && PFO == true
         [Problem, Population] = Resample_Particles(Problem, Population);
         Resample_counter = 0;
         X = sprintf('Particles Resampled');
