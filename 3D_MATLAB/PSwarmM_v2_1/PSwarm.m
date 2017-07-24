@@ -543,13 +543,16 @@ while(Problem.Stats.IterCounter<Problem.MaxIterations && Problem.Stats.ObjFunCou
         if Population.weightchange == false
             Population.weightchange = true;
         end
-    else
+    end
+    
+    if PFO == false
         [~,Problem,Population]=ResamplingStep(Problem, Population, Success, varargin);
     end
     
+    
     % Check if improvement by PSwarm is getting sluggish
     if PFO == false && Population.fy(Population.Leader) < 0
-        if abs(fy_old - Population.fy)/abs(fy_old) <= 0.05
+        if abs(fy_old - Population.fy)/abs(fy_old) <= 0.1
             PFO_counter = PFO_counter + 1;
         else
             fy_old = Population.fy;
@@ -572,7 +575,7 @@ while(Problem.Stats.IterCounter<Problem.MaxIterations && Problem.Stats.ObjFunCou
     end
    
     % Perform Resampling Step
-    if Resample_counter >= 30 && PFO == true
+    if Resample_counter >= 20 && PFO == true
         [Problem, Population] = Resample_Particles(Problem, Population);
         Resample_counter = 0;
         X = sprintf('Particles Resampled');
@@ -636,7 +639,7 @@ if Problem.IPrint>=0
     
     Unfeasible_count = 0;
     for i=1:Population.Size
-        if Population.fy(i) >= 1000
+        if Population.fy(i) >= 1.5
             Unfeasible_count = Unfeasible_count + 1;
         end
     end

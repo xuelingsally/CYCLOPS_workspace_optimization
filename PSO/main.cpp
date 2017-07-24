@@ -94,33 +94,33 @@ int main()
     // Taskspace Definition
     Eigen::Vector3d tp_temp;
     tp_temp(0) = 20; tp_temp(1) = 5, tp_temp(2) = 5;
-    fnInputs.taskspace.push_back(tp_temp);
+    fnInputs.taskspace.push_back(tp_temp/1000.0);
     tp_temp(0) = 20; tp_temp(1) = -5, tp_temp(2) = 5;
-    fnInputs.taskspace.push_back(tp_temp);
+    fnInputs.taskspace.push_back(tp_temp/1000.0);
     tp_temp(0) = 20; tp_temp(1) = -5, tp_temp(2) = -5;
-    fnInputs.taskspace.push_back(tp_temp);
+    fnInputs.taskspace.push_back(tp_temp/1000.0);
     tp_temp(0) = 20; tp_temp(1) = 5, tp_temp(2) = -5;
-    fnInputs.taskspace.push_back(tp_temp);
+    fnInputs.taskspace.push_back(tp_temp/1000.0);
 
     tp_temp(0) = 25; tp_temp(1) = 5, tp_temp(2) = -6;
-    fnInputs.taskspace.push_back(tp_temp);
+    fnInputs.taskspace.push_back(tp_temp/1000.0);
     tp_temp(0) = 25; tp_temp(1) = 5, tp_temp(2) = 6;
-    fnInputs.taskspace.push_back(tp_temp);
+    fnInputs.taskspace.push_back(tp_temp/1000.0);
     tp_temp(0) = 25; tp_temp(1) = -5, tp_temp(2) = -6;
-    fnInputs.taskspace.push_back(tp_temp);
+    fnInputs.taskspace.push_back(tp_temp/1000.0);
     tp_temp(0) = 25; tp_temp(1) = -5, tp_temp(2) = 6;
-    fnInputs.taskspace.push_back(tp_temp);
+    fnInputs.taskspace.push_back(tp_temp/1000.0);
 
     tp_temp(0) = 30; tp_temp(1) = 5, tp_temp(2) = -5;
-    fnInputs.taskspace.push_back(tp_temp);
+    fnInputs.taskspace.push_back(tp_temp/1000.0);
     tp_temp(0) = 30; tp_temp(1) = 5, tp_temp(2) = 5;
-    fnInputs.taskspace.push_back(tp_temp);
+    fnInputs.taskspace.push_back(tp_temp/1000.0);
     tp_temp(0) = 30; tp_temp(1) = -5, tp_temp(2) = -5;
-    fnInputs.taskspace.push_back(tp_temp);
+    fnInputs.taskspace.push_back(tp_temp/1000.0);
     tp_temp(0) = 30; tp_temp(1) = -5, tp_temp(2) = 5;
-    fnInputs.taskspace.push_back(tp_temp);
+    fnInputs.taskspace.push_back(tp_temp/1000.0);
     tp_temp(0) = 35; tp_temp(1) = 5, tp_temp(2) = -10;
-    fnInputs.taskspace.push_back(tp_temp);
+    fnInputs.taskspace.push_back(tp_temp/1000.0);
 
 
     // Design Vector and limits
@@ -157,11 +157,10 @@ int main()
     upper_range[14] = 70.0;
 
 
-
     // Parameters for PSO
     int number_runs=1;
-    int pso_pop=500;
-    int pso_iters=100;
+    int pso_pop=50;
+    int pso_iters=10;
     float phi_p=1.49445;
     float phi_g=1.49445;
     float omega=.729;

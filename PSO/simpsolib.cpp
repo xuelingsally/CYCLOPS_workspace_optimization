@@ -41,6 +41,8 @@ void simpsolib::Population::evaluate()
         function_cnt++;
         (*it_pool)->value=fn_value;
 
+        //std::cout << fn_value << std::endl;
+
         if (fn_value >= (*it_pool)->best_value)
         {
             (*it_pool)->best_position=(*it_pool)->position;
@@ -50,6 +52,7 @@ void simpsolib::Population::evaluate()
         if (fn_value >= overall_best_value)
         {
             overall_best_position=(*it_pool)->position;
+
             overall_best_value=fn_value;
         }
     }
@@ -202,7 +205,7 @@ double simpsolib::EvalFN::evaluate(vector<double> position, cyclops::fnInputs In
                               Input.phi_max, Input.t_min, Input.t_max,
                               Input.taskspace, Input.radius_tool, Input.radius_scaffold);
     //std::cout << temp_result << std::endl;
-    return -1.0 * temp_result;
+    return temp_result;
 
 }
 
@@ -236,15 +239,43 @@ void simpsolib::Population::update_vel()
 
         for (int i=0; i< num_dims; i++) // Shi, Eberhart (1998, 2001)
         {
+            //std::cout << overall_best_position[i] << std::endl;
             (*it_pool)->velocity[i] = omega*((*it_pool)->velocity[i]) + phi_p*r_p*((*it_pool)->best_position[i] - (*it_pool)->position[i]) + phi_g*r_g*(overall_best_position[i] - (*it_pool)->position[i]);
-
+            
             // Limit velocity in each dimension to full dynamic range in search space (Simplifying PSO, Pedersen 2009)
             if (fabs((*it_pool)->velocity[i]) > (evaluator.upper_range[i] - evaluator.lower_range[i]))
             {
                 (*it_pool)->velocity[i]=ran2(&(semran2))*(evaluator.upper_range[i] - evaluator.lower_range[i]);
             }
-
+/*
+            if (it_pool == pool.begin() && i==0) {
+                std::cout << ((*it_pool)->best_position[i] - (*it_pool)->position[i] ) * phi_p * r_p << std::endl;
+                std::cout << (overall_best_position[i] - (*it_pool)->position[i] )* phi_g * r_g << std::endl;
+            }
+*/
         }
+/*        
+        if (it_pool == pool.begin()){
+            std::cout << std::endl << r_p  << std::endl << r_g << std::endl;
+            std::cout << phi_p  << std::endl << phi_g << std::endl << omega << std::endl;
+            std::cout << (*it_pool)->velocity[0] << ", "
+            
+                      << (*it_pool)->velocity[1] << ", "
+                      << (*it_pool)->velocity[2] << ", "
+                      << (*it_pool)->velocity[3] << ", "
+                      << (*it_pool)->velocity[4] << ", "
+                      << (*it_pool)->velocity[5] << ", "
+                      << (*it_pool)->velocity[6] << ", "
+                      << (*it_pool)->velocity[7] << ", "
+                      << (*it_pool)->velocity[8] << ", "
+                      << (*it_pool)->velocity[9] << ", "
+                      << (*it_pool)->velocity[10] << ", "
+                      << (*it_pool)->velocity[11] << ", "
+                      << (*it_pool)->velocity[12] << ", "
+                      << (*it_pool)->velocity[13] << ", "
+                      << (*it_pool)->velocity[14] << ", "
+                      << std::endl << std::endl;
+        }*/
     }
 
 }
@@ -268,6 +299,26 @@ void simpsolib::Population::update_pos()
                 (*it_pool)->position[i]=evaluator.lower_range[i];
             }
         }
+/*
+        if (it_pool == pool.begin()){
+            std::cout << (*it_pool)->position[0] << ", "
+            
+                      << (*it_pool)->position[1] << ", "
+                      << (*it_pool)->position[2] << ", "
+                      << (*it_pool)->position[3] << ", "
+                      << (*it_pool)->position[4] << ", "
+                      << (*it_pool)->position[5] << ", "
+                      << (*it_pool)->position[6] << ", "
+                      << (*it_pool)->position[7] << ", "
+                      << (*it_pool)->position[8] << ", "
+                      << (*it_pool)->position[9] << ", "
+                      << (*it_pool)->position[10] << ", "
+                      << (*it_pool)->position[11] << ", "
+                      << (*it_pool)->position[12] << ", "
+                      << (*it_pool)->position[13] << ", "
+                      << (*it_pool)->position[14] << ", "
+                      << std::endl << std::endl;
+        }*/
     }
 }
 //-----------------------------------------------------------------------------
@@ -282,7 +333,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
     // Run params
     int nRun=0;
     double nRunsAvgFitness=0;
-    double nRunsMaxFitness=0;
+    double nRunsMaxFitness=-100000;
     double nRunsMinFitness=999999999;
     double nRunFitness[number_runs];
     double nRunsAvgFitnessVariance=0;
@@ -311,8 +362,14 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
         //    std::cout << "---------- BEGIN OPTIMIZATION ----------" << std::endl;
 
         pop.create(); // instantiate (new) the population
+        pop.setPhiP(phi_p);
+        pop.setPhiG(phi_g);
+        pop.setOmega(omega);
+        pop.setRandPartUpdFlag(rand_particle_upd_flag);
+
         pop.evaluate();
         pop_info.evaluate_population_info(&pop);
+
 
         // std::cout << "---------- Initial Population Stats (press enter) -------" << std::endl << flush;
         // std::cin.get(temp);
@@ -321,13 +378,13 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
         for (int i=1; i < pop.getNumIters() ; i++)
         {
             
-            std::cout<< "Iteration: " << i << "  ObjVal: " << pop.getBestVal() << std::endl;
+            //std::cout<< "Iteration: " << i << "  ObjVal: " << pop.getBestVal() << std::endl;
             pop.update_vel();
             pop.update_pos();
 
             pop.evaluate();
             pop_info.evaluate_population_info(&pop);
-            // pop_info.display_population_stats();
+            pop_info.display_population_stats();
 
             // std::cout << "iteration: "<< i << "-- Press enter to continue --" << std::endl << flush;
             //std::cin.get(temp);
@@ -356,18 +413,18 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
         nRunFitness[nRun]=pop_info.avg_value;
         nRunsAvgFitness+=pop_info.avg_value;
         
-        std::cout << "Population Min Value: " << pop_info.min_value << std::endl;
+        std::cout << "Max Value: " << pop.getBestVal() << std::endl;
 
-        vector<double> temp_position = (pop.pool[pop_info.min_index])->best_position;
-        std::cout << "Min. Position: ";
+        vector<double> temp_position = (pop.getBestPos());
+        std::cout << "eaB = [";
         for (unsigned int i=0; i < temp_position.size(); i++)
         {
-            std::cout << temp_position[i] << " ";
+            std::cout << temp_position[i];
+            if (i < temp_position.size()-1)
+                std::cout << "; ";
         }
 
-        std::cout << std::endl;
-        std::cout << "Min. Position Value: " << (pop.pool[pop_info.min_index])->best_value << std::endl;
-
+        std::cout << "];" << std::endl;
 
         pop.destroy();  // del the population
     }

@@ -137,7 +137,7 @@ public:
         population_size=POPULATION_SIZE;
         num_iterations=NUM_ITERATIONS;
         num_dims=NUM_DIMS_UNDEF;
-        overall_best_value=0.0;
+        overall_best_value=-2.0;
     }
     Population(int tmp_num_dims)
     {
@@ -145,7 +145,7 @@ public:
         population_size=POPULATION_SIZE;
         num_iterations=NUM_ITERATIONS;
         num_dims=tmp_num_dims;
-        overall_best_value=0.0;
+        overall_best_value=-2.0;
     }
     ~Population()
     {
@@ -211,7 +211,10 @@ public:
     {
         return overall_best_value;
     }
-
+    vector<double> getBestPos()
+    {
+        return overall_best_position;
+    }
 };
 
 class Population_data
@@ -229,9 +232,9 @@ public:
     void clear_pop_data()
     {
         max_index=0;
-        max_value=0;
+        max_value=-100000;
         min_index=0;
-        min_value=0;
+        min_value=100000;
         avg_value=0;
         sum_values=0;
     }

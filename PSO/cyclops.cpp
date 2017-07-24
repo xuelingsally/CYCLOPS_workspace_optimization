@@ -273,13 +273,39 @@ double cyclops::objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W
         a(2,i) = radius_tool * sin_mul;
 
         if(i<3)
-        	B(0,i) = eaB(13,0);
+        	B(0,i) = eaB(12,0);
         else
-        	B(0,i) = eaB(14,0);
+        	B(0,i) = eaB(13,0);
 
         B(1,i) = radius_scaffold * cos_mul;
         B(2,i) = radius_scaffold * sin_mul;
 	}
+
+/*
+    cout << "a = [";
+    for (int i=0; i<a.rows(); i++){
+    	for (int j=0; j<a.cols(); j++) {
+    		cout << a(i,j);
+    		if (j < a.cols()-1)
+    			cout << ",";
+    	}
+    	cout << ";" << endl;
+    }
+    cout << "];" << endl;
+	
+	cout << "B = [";
+	for (int i=0; i<B.rows(); i++){
+    	for (int j=0; j<B.cols(); j++) {
+    		cout << B(i,j);
+    		if (j < B.cols()-1)
+    			cout << ",";
+    	}
+    	cout << ";" << endl;
+    }
+    cout << "];" << endl;
+
+*/
+
 
 	// Checking for crossing of cables
 	for (int i=0;i<a.cols();i++)
