@@ -20,6 +20,7 @@
 #include <string.h>
 #include <time.h>
 #include "simtstlib.h"
+#include "cyclops.h"
 
 namespace simpsolib
 {
@@ -84,6 +85,7 @@ public:
     vector<double> upper_range;
     double (*eval_fn)(int, double []);
     char szName[256];
+    cyclops::fnInputs Input;
     EvalFN(): num_parms(0), eval_fn(0)
     {
         ;
@@ -102,6 +104,9 @@ public:
         eval_fn=tmp_eval_fn;
     }
     double evaluate(vector<double> position);
+
+    // Additional evaluate function for CYCLOPS optimization.
+    double evaluate(vector<double> position, cyclops::fnInputs Input);
 };
 
 class Population
@@ -201,6 +206,10 @@ public:
     void setRandPartUpdFlag(bool tmp_rand_particle_upd_flag)
     {
         rand_particle_upd_flag=tmp_rand_particle_upd_flag;
+    }
+    double getBestVal()
+    {
+        return overall_best_value;
     }
 
 };

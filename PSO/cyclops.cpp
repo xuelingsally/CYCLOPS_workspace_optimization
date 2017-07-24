@@ -96,6 +96,7 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
         }
     }
 
+
     t_low(5,0) = t_min(5);
     t_high(5,0) = t_max(5);
 
@@ -181,6 +182,7 @@ cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,
 
     for (vol_grid_iter = vol_grid.begin(); vol_grid_iter!=vol_grid.end(); ++vol_grid_iter)
     {
+
         unsigned int feasible_counter = 0;
         for (f_ee_iter = f_ee_vec.begin(); f_ee_iter!=f_ee_vec.end(); ++f_ee_iter)
         {
@@ -258,22 +260,25 @@ double cyclops::objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W
 	                      double radius_tool, double radius_scaffold)
 {
 	double val = 0.0;
-
+    //cout << eaB << endl;
 	// Finding the attachment and feeding points based on design vector
 	Matrix<double,3,6> a, B;
 	for(int i=0; i<6; i++)
 	{
+		double cos_mul = cos(eaB(i,0));
+		double sin_mul = sin(eaB(i,0));
+
 		a(0,i) = eaB(i+6,0);
-		a(1,i) = radius_tool * cos(eaB(i,0));
-        a(2,i) = radius_tool * sin(eaB(i,0));
+		a(1,i) = radius_tool * cos_mul;
+        a(2,i) = radius_tool * sin_mul;
 
         if(i<3)
         	B(0,i) = eaB(13,0);
         else
         	B(0,i) = eaB(14,0);
 
-        B(1,i) = radius_scaffold * cos(eaB(i,0));
-        B(2,i) = radius_scaffold * sin(eaB(i,0));
+        B(1,i) = radius_scaffold * cos_mul;
+        B(2,i) = radius_scaffold * sin_mul;
 	}
 
 	// Checking for crossing of cables
@@ -282,12 +287,16 @@ double cyclops::objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W
 		for (int j=0;j<a.cols();j++)
 		{
 			if(a(0,i) < a(0,j) && B(0,i) > B(0,j))
-				return -1.5;
+			{
+				val = -1.5;
+			    //cout << "Returned0 " << val << endl;
+				return val;
+			}
 		}
 	}
 
 	// Based on the tooltip, find the poses that the CG of the tool has to reach
-	double dist_tooltip = eaB(15);
+	double dist_tooltip = eaB(14);
 	Vector3d r_ee;
 	r_ee << dist_tooltip, 0, 0;
 
@@ -305,44 +314,63 @@ double cyclops::objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W
 
         for (f_ee_iter = f_ee_vec.begin(); f_ee_iter!=f_ee_vec.end(); ++f_ee_iter)
         {
+
             bool feasible_temp = false;
             Matrix<double,5,1> P;
             
             P << (taskspace_temp)(0), (taskspace_temp)(1), (taskspace_temp)(2), 0, 0;
             feasible_temp = feasible_pose(P, a/1000.0, B/1000.0, W, *f_ee_iter, r_ee/1000.0, t_min, t_max);
             if (feasible_temp)
+            {
                 feasible_counter++;
+                feasible_temp = false;
+            }
 
             P(3,0) = phi_min(0);
             feasible_temp = feasible_pose(P, a/1000.0, B/1000.0, W, *f_ee_iter, r_ee/1000.0, t_min, t_max);
             if (feasible_temp)
+            {
                 feasible_counter++;
+                feasible_temp = false;
+            }
 
             P(3,0) = phi_max(0);
             feasible_temp = feasible_pose(P, a/1000.0, B/1000.0, W, *f_ee_iter, r_ee/1000.0, t_min, t_max);
             if (feasible_temp)
+            {
                 feasible_counter++;
+                feasible_temp = false;
+            }
 
             P(3,0) = 0;
             P(4,0) = phi_min(1);
             feasible_temp = feasible_pose(P, a/1000.0, B/1000.0, W, *f_ee_iter, r_ee/1000.0, t_min, t_max);
             if (feasible_temp)
+            {
                 feasible_counter++;
+                feasible_temp = false;
+            }
 
             P(4,0) = phi_max(1);
             feasible_temp = feasible_pose(P, a/1000.0, B/1000.0, W, *f_ee_iter, r_ee/1000.0, t_min, t_max);
             if (feasible_temp)
+            {
                 feasible_counter++;
-        }
+                feasible_temp = false;
+            }
 
-        if (feasible_counter == 5 * f_ee_vec.size())
-            val-= 1;
+            if (feasible_counter != 5)
+                val = val - 1.0;
+            feasible_counter = 0;
+        }
     }
 
-    if (val < 0)
+    if (val < 0.0)
     {
-    	val = val/(taskspace.size() * f_ee_vec.size());
-    	return val;
+    	//cout << val << endl;
+    	double val2 = double(val)/(double(taskspace.size()) * double(f_ee_vec.size()));
+    	//cout << "Returned1 " << val2 << endl;
+    	return val2;
     }
 
 
@@ -350,12 +378,13 @@ double cyclops::objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W
 
     Vector3d zero_f_ee;
     zero_f_ee << 0,0,0;
+
     vector<Vector3d> zero_f_ee_vec;
     zero_f_ee_vec.push_back(zero_f_ee);
 
     dw_result dex_wp = dex_workspace(a/1000.0, B/1000.0, W, zero_f_ee_vec, r_ee/1000.0, phi_min, phi_max, t_min, t_max);
 
     val = dex_wp.size;
-
+    cout << "Returned2 " << val << endl;
     return val;
 }

@@ -35,8 +35,10 @@ if(Problem.Vectorized)
     for i=1:length(ActiveParticlesIdx)
         
         % Update the weight of the particle based on its current value
-        Population.weight(i) = Population.weight(i) * likelihood_fn(ObjValue(i));
-        
+        if Population.weightchange == true
+            Population.weight(i) = Population.weight(i) * likelihood_fn(ObjValue(i));
+        end
+            
         % Was progress attained for the current particle?
         if Population.fy(ActiveParticlesIdx(i))>ObjValue(i)
             % Yes. Update best particle position
@@ -64,7 +66,9 @@ else
                 PenaltyEval(Problem, Population.x(i,:), 0, varargin{:});
             
             % Update the weight of the particle based on its current value
-            Population.weight(i) = Population.weight(i) * likelihood_fn(ObjValue);
+            if Population.weightchange == true
+                Population.weight(i) = Population.weight(i) * likelihood_fn(ObjValue);
+            end
             
             % Was progress attained for the current particle?
             if Population.fy(i)>ObjValue

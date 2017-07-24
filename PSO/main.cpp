@@ -34,31 +34,148 @@ using namespace simtstlib;
 
 int main()
 {
-    /*
-    int number_runs=50;
-    //pso parms
-    int pso_pop=20;
+
+    //---- Defining CYCLOPS parameters ----
+    cyclops::fnInputs fnInputs;
+    // Radius of Overtube
+    double radius_tool = 1.0;
+    fnInputs.radius_tool = radius_tool;
+    // Radius of Scaffold
+    double radius_scaffold = 30.0;
+    fnInputs.radius_scaffold = radius_scaffold;
+    // Lenght of Scaffold
+    double length_scaffold = 100.0;
+    // Length of Overtube
+    double length_overtube = 60.0;
+    // Distance of back of tool to CG of tool
+    double dist_tool_b_cg = 30.0;
+
+
+
+    // Tensions
+    Eigen::Matrix<double,6,1> t_min;
+    t_min << 5.0,5.0,5.0,5.0,5.0,5.0;
+    fnInputs.t_min = t_min;
+    Eigen::Matrix<double,6,1> t_max;
+    t_max << 60.0,60.0,60.0,60.0,60.0,60.0;
+    fnInputs.t_max = t_max;
+
+    // Orientation Limits
+    Eigen::Vector2d phi_min;
+    phi_min << -10.0/180.0 * PI, -10.0/180.0 * PI;
+    fnInputs.phi_min = phi_min;
+    Eigen::Vector2d phi_max;
+    phi_max << 10.0/180.0 * PI, 10.0/180.0 * PI;
+    fnInputs.phi_max = phi_max;
+
+
+    // Wrench Vector
+    Eigen::Matrix<double,6,1> W;
+    W << 0.0,0.0,0.0,0.0,0.0,0.0;
+    fnInputs.W = W;
+    // end effector force
+    Eigen::Vector3d f_ee;
+    f_ee << -1.0,0.0,0.0;
+    fnInputs.f_ee_vec.push_back(f_ee);
+    f_ee(0) = 1.0;
+    fnInputs.f_ee_vec.push_back(f_ee);
+    f_ee(0) = 0.0;
+    f_ee(1) = -1.0;
+    fnInputs.f_ee_vec.push_back(f_ee);
+    f_ee(1) = 1.0;
+    fnInputs.f_ee_vec.push_back(f_ee);
+    f_ee(1) = 0.0;
+    f_ee(2) = -1.0;
+    fnInputs.f_ee_vec.push_back(f_ee);
+    f_ee(2) = 1.0;
+    fnInputs.f_ee_vec.push_back(f_ee);
+
+
+    // Taskspace Definition
+    Eigen::Vector3d tp_temp;
+    tp_temp(0) = 20; tp_temp(1) = 5, tp_temp(2) = 5;
+    fnInputs.taskspace.push_back(tp_temp);
+    tp_temp(0) = 20; tp_temp(1) = -5, tp_temp(2) = 5;
+    fnInputs.taskspace.push_back(tp_temp);
+    tp_temp(0) = 20; tp_temp(1) = -5, tp_temp(2) = -5;
+    fnInputs.taskspace.push_back(tp_temp);
+    tp_temp(0) = 20; tp_temp(1) = 5, tp_temp(2) = -5;
+    fnInputs.taskspace.push_back(tp_temp);
+
+    tp_temp(0) = 25; tp_temp(1) = 5, tp_temp(2) = -6;
+    fnInputs.taskspace.push_back(tp_temp);
+    tp_temp(0) = 25; tp_temp(1) = 5, tp_temp(2) = 6;
+    fnInputs.taskspace.push_back(tp_temp);
+    tp_temp(0) = 25; tp_temp(1) = -5, tp_temp(2) = -6;
+    fnInputs.taskspace.push_back(tp_temp);
+    tp_temp(0) = 25; tp_temp(1) = -5, tp_temp(2) = 6;
+    fnInputs.taskspace.push_back(tp_temp);
+
+    tp_temp(0) = 30; tp_temp(1) = 5, tp_temp(2) = -5;
+    fnInputs.taskspace.push_back(tp_temp);
+    tp_temp(0) = 30; tp_temp(1) = 5, tp_temp(2) = 5;
+    fnInputs.taskspace.push_back(tp_temp);
+    tp_temp(0) = 30; tp_temp(1) = -5, tp_temp(2) = -5;
+    fnInputs.taskspace.push_back(tp_temp);
+    tp_temp(0) = 30; tp_temp(1) = -5, tp_temp(2) = 5;
+    fnInputs.taskspace.push_back(tp_temp);
+    tp_temp(0) = 35; tp_temp(1) = 5, tp_temp(2) = -10;
+    fnInputs.taskspace.push_back(tp_temp);
+
+
+    // Design Vector and limits
+    vector<double> lower_range(15);
+    vector<double> upper_range(15);
+
+    // Limits for e (angles)
+    for (int i=0; i<6; i++)
+    {
+        lower_range[i]=0.0;
+        upper_range[i]= 2.0 * PI;
+    }
+    // Limits for a
+    // Front 3 tendons
+    for (int i=6; i<9; i++)
+    {
+        lower_range[i] = -dist_tool_b_cg;
+        upper_range[i] = 0.0;
+    }
+    // Back 3 Tendons
+    for (int i=9; i<12; i++)
+    {
+        lower_range[i] = 0.0;
+        upper_range[i] = (length_overtube - dist_tool_b_cg);
+    }
+    // Limits for B
+    for (int i=12; i<14; i++)
+    {
+        lower_range[i] = -length_scaffold;
+        upper_range[i] = 0.0;
+    }
+    // Limits for tooltip
+    lower_range[14] = 0.0;
+    upper_range[14] = 70.0;
+
+
+
+    // Parameters for PSO
+    int number_runs=1;
+    int pso_pop=500;
     int pso_iters=100;
     float phi_p=1.49445;
     float phi_g=1.49445;
     float omega=.729;
-    bool rand_update=false;
+    bool rand_update=false; 
 
-   
     // perform PSO experiment
-    vector<double> lower_range(DEJONG2_FN_NUM_VARS);
-    vector<double> upper_range(DEJONG2_FN_NUM_VARS);
-
-    for (int i=0; i< DEJONG2_FN_NUM_VARS; i++)
-    {
-        lower_range[i]=DEJONG2_FN_LOWER_RANGE;
-        upper_range[i]=DEJONG2_FN_UPPER_RANGE;
-    }
-
-    simpsolib::EvalFN pso_eval_fn((char *)"DEJONG2", DEJONG2_FN_NUM_VARS,lower_range, upper_range, dejong2_test_fn_real);
+    //simpsolib::EvalFN pso_eval_fn((char *)"DEJONG2", DEJONG2_FN_NUM_VARS,lower_range, upper_range, dejong2_test_fn_real);
+    simpsolib::EvalFN pso_eval_fn((char *)"CYCLOPS_OPT", 15, lower_range, upper_range, dejong2_test_fn_real);
+    pso_eval_fn.Input = fnInputs;
     run_pso(pso_eval_fn, number_runs, pso_pop, pso_iters, phi_p, phi_g, omega, rand_update);
-    */
     
+ 
+/*
+
     Eigen::Matrix<double,3,6> a, B;
     a << 30.0, 30.0, 30.0, -30.0, -30.0, -30.0,
          0.5, -1.0, 0.5, 0.5, -1.0, 0.5,
@@ -111,6 +228,6 @@ int main()
     {
         std::cout << (*feasible_iter)(0) << ", " << (*feasible_iter)(1) << ", " << (*feasible_iter)(2) << ";" << std::endl;
     }
-
+*/
     return 0;
 }

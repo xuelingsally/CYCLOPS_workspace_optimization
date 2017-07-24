@@ -20,6 +20,7 @@
 using namespace std;
 using namespace simpsolib;
 using namespace simtstlib;
+using namespace Eigen;
 
 int function_cnt = 0;  // function eval counter
 
@@ -34,7 +35,9 @@ void simpsolib::Population::evaluate()
     for (std::vector<Organism*>::iterator it_pool = pool.begin(); it_pool != pool.end(); ++it_pool)
     {
         // This is the function for which the population is trying to find the max value.
-        fn_value = evaluator.evaluate((*it_pool)->position);
+        //fn_value = evaluator.evaluate((*it_pool)->position);
+
+        fn_value = evaluator.evaluate((*it_pool)->position, evaluator.Input);
         function_cnt++;
         (*it_pool)->value=fn_value;
 
@@ -144,7 +147,7 @@ void simpsolib::Population::create()
     {
         for (int j = 0; j < num_dims; j++)
         {
-            (*pool[i]).position[j]=ran2((float)evaluator.lower_range[j],(float)evaluator.upper_range[j]);
+            (*pool[i]).position[j]=ran2((double)evaluator.lower_range[j],(double)evaluator.upper_range[j]);
         }
     }
 
@@ -185,6 +188,22 @@ double simpsolib::EvalFN::evaluate(vector<double> position)
         tmp_position[i]=position[i];
 
     return ((*eval_fn)(num_parms,tmp_position));
+}
+
+double simpsolib::EvalFN::evaluate(vector<double> position, cyclops::fnInputs Input)
+{
+    int tmp_num_dims=position.size();
+    Matrix<double, 15, 1> eaB;
+
+    for (int i=0; i< tmp_num_dims; i++)
+        eaB(i,0) = position[i];
+
+    double temp_result = cyclops::objective_function(eaB, Input.W, Input.f_ee_vec, Input.phi_min,
+                              Input.phi_max, Input.t_min, Input.t_max,
+                              Input.taskspace, Input.radius_tool, Input.radius_scaffold);
+    //std::cout << temp_result << std::endl;
+    return -1.0 * temp_result;
+
 }
 
 #if 0
@@ -284,6 +303,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
 
     srand(clock());
 
+
     for (nRun=0; nRun < number_runs; nRun++)
     {
 
@@ -300,6 +320,8 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
 
         for (int i=1; i < pop.getNumIters() ; i++)
         {
+            
+            std::cout<< "Iteration: " << i << "  ObjVal: " << pop.getBestVal() << std::endl;
             pop.update_vel();
             pop.update_pos();
 

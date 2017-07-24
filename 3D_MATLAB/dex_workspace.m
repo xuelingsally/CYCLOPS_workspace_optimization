@@ -1,6 +1,6 @@
 function [wp_size, feasible, unfeasible, t] = dex_workspace(a, B, W, f_ee, r_ee, phi_min, phi_max, t_min, t_max)
 
-x_res = 10;
+%x_res = 10;
 y_res = 10;
 z_res = 10;
 
@@ -15,7 +15,7 @@ x_space = [x_middle - x_space_length1, x_middle + x_space_length2];
 
 radius = norm(B(2:3,1));
 
-x_step = (x_space_length1 + x_space_length2)/x_res;
+x_step = 0.005;
 y_step = 2 * radius /y_res;
 z_step = 2 * radius /z_res;
 
@@ -25,7 +25,8 @@ y_temp = -radius;
 z_temp = -radius;
 
 vol_grid = [];
-for i=1:x_res + 1
+%for i=1:x_res + 1
+while x_temp <= x_space(2); 
     for j=1:y_res + 1
         for k=1:z_res + 1
            if (z_temp * z_temp + y_temp * y_temp) <= (radius * radius)

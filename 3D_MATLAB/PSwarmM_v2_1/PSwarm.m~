@@ -548,7 +548,7 @@ while(Problem.Stats.IterCounter<Problem.MaxIterations && Problem.Stats.ObjFunCou
     end
     
     % Check if improvement by PSwarm is getting sluggish
-    if PFO == false && Population.fy(Population.Leader) < 0
+    if PFO == false
         if abs(fy_old - Population.fy)/abs(fy_old) <= 0.05
             PFO_counter = PFO_counter + 1;
         else
@@ -556,7 +556,6 @@ while(Problem.Stats.IterCounter<Problem.MaxIterations && Problem.Stats.ObjFunCou
             PFO_counter = 0;
         end
     end
-    
     % Check for PFO activation (when PSwarm is sluggish)
     if PFO_counter >= 10 && PFO == false
         % We resample the particles first
@@ -572,7 +571,7 @@ while(Problem.Stats.IterCounter<Problem.MaxIterations && Problem.Stats.ObjFunCou
     end
    
     % Perform Resampling Step
-    if Resample_counter >= 30 && PFO == true
+       if Resample_counter >= 30 && PFO == true
         [Problem, Population] = Resample_Particles(Problem, Population);
         Resample_counter = 0;
         X = sprintf('Particles Resampled');
