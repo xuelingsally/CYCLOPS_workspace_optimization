@@ -509,7 +509,7 @@ while(Problem.Stats.IterCounter<Problem.MaxIterations && Problem.Stats.ObjFunCou
         otherwise
             error('Unknown search step type')
     end
-    %Success = true;
+    %Success = true; %Stop the polling step.
     % Successful iteration?
     if ~Success
         % No success in search phase. Proceed to a poll step if possible.
@@ -550,46 +550,49 @@ while(Problem.Stats.IterCounter<Problem.MaxIterations && Problem.Stats.ObjFunCou
     end
     
     
-    % Check if improvement by PSwarm is getting sluggish
-    if PFO == false && Population.fy(Population.Leader) < 0
-        if abs(fy_old - Population.fy)/abs(fy_old) <= 0.1
-            PFO_counter = PFO_counter + 1;
-        else
-            fy_old = Population.fy;
-            PFO_counter = 0;
-        end
-    end
-    
-    % Check for PFO activation (when PSwarm is sluggish)
-    if PFO_counter >= 10 && PFO == false
-        % We resample the particles first
-        [Problem, Population] = Resample_Particles(Problem, Population);
-        % Then, we deactivate several particles and activate the particle filter
-        for i=50:Population.Size
-            Population.Active(i) = 0;
-        end
-        Population.Size = 50;
-        PFO = true;
-        X = sprintf('PFO Activated');
-        disp(X);
-    end
-   
-    % Perform Resampling Step
-    if Resample_counter >= 20 && PFO == true
-        [Problem, Population] = Resample_Particles(Problem, Population);
-        Resample_counter = 0;
-        X = sprintf('Particles Resampled');
-        disp(X);
-    end
-    
-    if PFO == true
-        Resample_counter = Resample_counter + 1;
-    end
+%     % Check if improvement by PSwarm is getting sluggish
+%     if PFO == false && Population.fy(Population.Leader) < 0
+%         if abs(fy_old - Population.fy)/abs(fy_old) <= 0.05
+%             PFO_counter = PFO_counter + 1;
+%         else
+%             fy_old = Population.fy;
+%             PFO_counter = 0;
+%         end
+%     end
+%     
+%     % Check for PFO activation (when PSwarm is sluggish)
+%     if PFO_counter >= 20 && PFO == false
+%         % We resample the particles first
+%         [Problem, Population] = Resample_Particles(Problem, Population);
+%         % Then, we deactivate several particles and activate the particle filter
+%         for i=50:Population.Size
+%             Population.Active(i) = 0;
+%         end
+%         Population.Size = 50;
+%         PFO = true;
+%         X = sprintf('PFO Activated');
+%         disp(X);
+%     end
+%    
+%     % Perform Resampling Step
+%     if Resample_counter >= 20 && PFO == true
+%         [Problem, Population] = Resample_Particles(Problem, Population);
+%         Resample_counter = 0;
+%         X = sprintf('Particles Resampled');
+%         disp(X);
+%     end
+%     
+%     if PFO == true
+%         Resample_counter = Resample_counter + 1;
+%     end
     
     [Problem, Population]=UpdateInfo(Problem, Population);
         
 end
 
+% Do a final poll step
+[Problem,Population]=PollStep(Problem,Population, ...
+                varargin{:});
 
 % End of main cycle ...
 

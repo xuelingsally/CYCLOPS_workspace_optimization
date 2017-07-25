@@ -57,6 +57,7 @@ taskspace(:,end+1) = [35, 5, -10];
 taskspace(:,end+1) = [30, 5, 5];
 taskspace(:,end+1) = [30, -5, -5];
 taskspace(:,end+1) = [30, -5, 5];
+taskspace(:,end+1) = [40, 7, -10];
 
 % Based on the tooltip, find the poses that the CG of the overtube+tool is
 % required to reach.
