@@ -378,13 +378,13 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
         for (int i=1; i < pop.getNumIters() ; i++)
         {
             
-            //std::cout<< "Iteration: " << i << "  ObjVal: " << pop.getBestVal() << std::endl;
+            std::cout<< "Iteration: " << i << "  ObjVal: " << pop.getBestVal() << std::endl;
             pop.update_vel();
             pop.update_pos();
 
             pop.evaluate();
             pop_info.evaluate_population_info(&pop);
-            pop_info.display_population_stats();
+            //pop_info.display_population_stats();
 
             // std::cout << "iteration: "<< i << "-- Press enter to continue --" << std::endl << flush;
             //std::cin.get(temp);

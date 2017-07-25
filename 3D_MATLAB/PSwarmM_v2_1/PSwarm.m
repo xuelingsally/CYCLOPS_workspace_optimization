@@ -509,7 +509,7 @@ while(Problem.Stats.IterCounter<Problem.MaxIterations && Problem.Stats.ObjFunCou
         otherwise
             error('Unknown search step type')
     end
-    
+    %Success = true;
     % Successful iteration?
     if ~Success
         % No success in search phase. Proceed to a poll step if possible.

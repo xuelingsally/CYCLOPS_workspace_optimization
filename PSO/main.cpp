@@ -159,11 +159,11 @@ int main()
 
     // Parameters for PSO
     int number_runs=1;
-    int pso_pop=50;
-    int pso_iters=10;
-    float phi_p=1.49445;
-    float phi_g=1.49445;
-    float omega=.729;
+    int pso_pop=500;
+    int pso_iters=50;
+    float phi_p=0.50;
+    float phi_g=0.50;;
+    float omega=0.50;
     bool rand_update=false; 
 
     // perform PSO experiment
