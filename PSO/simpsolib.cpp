@@ -247,35 +247,7 @@ void simpsolib::Population::update_vel()
             {
                 (*it_pool)->velocity[i]=ran2(&(semran2))*(evaluator.upper_range[i] - evaluator.lower_range[i]);
             }
-/*
-            if (it_pool == pool.begin() && i==0) {
-                std::cout << ((*it_pool)->best_position[i] - (*it_pool)->position[i] ) * phi_p * r_p << std::endl;
-                std::cout << (overall_best_position[i] - (*it_pool)->position[i] )* phi_g * r_g << std::endl;
-            }
-*/
         }
-/*        
-        if (it_pool == pool.begin()){
-            std::cout << std::endl << r_p  << std::endl << r_g << std::endl;
-            std::cout << phi_p  << std::endl << phi_g << std::endl << omega << std::endl;
-            std::cout << (*it_pool)->velocity[0] << ", "
-            
-                      << (*it_pool)->velocity[1] << ", "
-                      << (*it_pool)->velocity[2] << ", "
-                      << (*it_pool)->velocity[3] << ", "
-                      << (*it_pool)->velocity[4] << ", "
-                      << (*it_pool)->velocity[5] << ", "
-                      << (*it_pool)->velocity[6] << ", "
-                      << (*it_pool)->velocity[7] << ", "
-                      << (*it_pool)->velocity[8] << ", "
-                      << (*it_pool)->velocity[9] << ", "
-                      << (*it_pool)->velocity[10] << ", "
-                      << (*it_pool)->velocity[11] << ", "
-                      << (*it_pool)->velocity[12] << ", "
-                      << (*it_pool)->velocity[13] << ", "
-                      << (*it_pool)->velocity[14] << ", "
-                      << std::endl << std::endl;
-        }*/
     }
 
 }
@@ -288,7 +260,7 @@ void simpsolib::Population::update_pos()
         for (int i=0; i< num_dims; i++) // Shi, Eberhart (1998, 2001)
         {
             (*it_pool)->position[i] = (*it_pool)->position[i] + (*it_pool)->velocity[i] ;
-
+   
             // Limit velocity in each dimension to full dynamic range in search space (Simplifying PSO, Pedersen 2009)
             if ((*it_pool)->position[i] > (evaluator.upper_range[i]))
             {
@@ -298,34 +270,18 @@ void simpsolib::Population::update_pos()
             {
                 (*it_pool)->position[i]=evaluator.lower_range[i];
             }
+
+            //if (it_pool == pool.begin())
+            //    std::cout << (*it_pool)->position[i] << ", ";
         }
-/*
-        if (it_pool == pool.begin()){
-            std::cout << (*it_pool)->position[0] << ", "
-            
-                      << (*it_pool)->position[1] << ", "
-                      << (*it_pool)->position[2] << ", "
-                      << (*it_pool)->position[3] << ", "
-                      << (*it_pool)->position[4] << ", "
-                      << (*it_pool)->position[5] << ", "
-                      << (*it_pool)->position[6] << ", "
-                      << (*it_pool)->position[7] << ", "
-                      << (*it_pool)->position[8] << ", "
-                      << (*it_pool)->position[9] << ", "
-                      << (*it_pool)->position[10] << ", "
-                      << (*it_pool)->position[11] << ", "
-                      << (*it_pool)->position[12] << ", "
-                      << (*it_pool)->position[13] << ", "
-                      << (*it_pool)->position[14] << ", "
-                      << std::endl << std::endl;
-        }*/
     }
+    //std::cout << std::endl;
 }
 //-----------------------------------------------------------------------------
 // Optimization Methods
 //-----------------------------------------------------------------------------
 int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_number_iters,
-                       float phi_p, float phi_g, float omega, bool rand_particle_upd_flag)
+                       float phi_p, float phi_g, double omega_initial, double omega_final, bool rand_particle_upd_flag)
 {
     clock_t start,end,diff=0;
     start=clock();
@@ -364,7 +320,9 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
         pop.create(); // instantiate (new) the population
         pop.setPhiP(phi_p);
         pop.setPhiG(phi_g);
-        pop.setOmega(omega);
+        pop.setOmega(omega_initial);
+        pop.omega_initial = omega_initial;
+        pop.omega_final = omega_final;
         pop.setRandPartUpdFlag(rand_particle_upd_flag);
 
         pop.evaluate();
@@ -379,6 +337,8 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
         {
             
             std::cout<< "Iteration: " << i << "  ObjVal: " << pop.getBestVal() << std::endl;
+            double omega_temp = omega_initial - ((omega_initial-omega_final) * i/pop.getNumIters());
+            pop.setOmega(omega_temp);
             pop.update_vel();
             pop.update_pos();
 

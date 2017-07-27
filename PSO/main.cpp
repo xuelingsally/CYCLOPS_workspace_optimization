@@ -35,6 +35,8 @@ using namespace simtstlib;
 int main()
 {
 
+
+
     //---- Defining CYCLOPS parameters ----
     cyclops::fnInputs fnInputs;
     // Radius of Overtube
@@ -73,6 +75,7 @@ int main()
     Eigen::Matrix<double,6,1> W;
     W << 0.0,0.0,0.0,0.0,0.0,0.0;
     fnInputs.W = W;
+
     // end effector force
     Eigen::Vector3d f_ee;
     f_ee << -1.0,0.0,0.0;
@@ -163,33 +166,46 @@ int main()
     int pso_iters=50;
     float phi_p=0.50;
     float phi_g=0.50;;
-    float omega=0.50;
+    double omega_initial=0.90;
+    double omega_final=0.50;
     bool rand_update=false; 
 
     // perform PSO experiment
     //simpsolib::EvalFN pso_eval_fn((char *)"DEJONG2", DEJONG2_FN_NUM_VARS,lower_range, upper_range, dejong2_test_fn_real);
     simpsolib::EvalFN pso_eval_fn((char *)"CYCLOPS_OPT", 15, lower_range, upper_range, dejong2_test_fn_real);
     pso_eval_fn.Input = fnInputs;
-    run_pso(pso_eval_fn, number_runs, pso_pop, pso_iters, phi_p, phi_g, omega, rand_update);
+    run_pso(pso_eval_fn, number_runs, pso_pop, pso_iters, phi_p, phi_g, omega_initial, omega_final, rand_update);
     
  
 /*
 
     Eigen::Matrix<double,3,6> a, B;
-    a << 30.0, 30.0, 30.0, -30.0, -30.0, -30.0,
-         0.5, -1.0, 0.5, 0.5, -1.0, 0.5,
-         0.866, 0.0, -0.866, 0.866, 0.0, -0.866;
-    B << 0.0, 0.0, 0.0, -100.0, -100.0, -100.0,
-         15.0, -30.0, 15.0, 15.0, -30.0, 15.0,
-         25.98, 0.0, -25.98, 25.98, 0.0, -25.98;
+    
+//    a << 30.0, 30.0, 30.0, -30.0, -30.0, -30.0,
+//         0.5, -1.0, 0.5, 0.5, -1.0, 0.5,
+//         0.866, 0.0, -0.866, 0.866, 0.0, -0.866;
+//    B << 0.0, 0.0, 0.0, -100.0, -100.0, -100.0,
+//         15.0, -30.0, 15.0, 15.0, -30.0, 15.0,
+//         25.98, 0.0, -25.98, 25.98, 0.0, -25.98; 
 
-    Eigen::Vector3d f_ee, r_ee;
+    a << -7.2716,  -11.3936,  -21.7060,   11.5591,  16.7089,   19.7650,
+   -0.6269,    0.9821,   -0.2583,   -0.3502,    1.0000,   -0.4169,
+   -0.7791,   -0.1882,    0.9661,   -0.9367,   -0.0000,    0.9090;
+
+    B << -85.1078, -85.1078, -85.1078, -4.9541, -4.9541, -4.9541,
+    -18.8056, 29.4638, -7.7491, -10.5072, 30.0000, -12.5071,
+    -23.3741, -5.6468, 28.9819, -28.0998, -0.0000, 27.2685;
+
+    Eigen::Vector3d f_ee;
+    Eigen::Vector3d r_ee;
     f_ee << 0.0, 0.0, 0.0;
     r_ee << 70.0, 0.0, 0.0;
     Eigen::Matrix<double,6,1> W;
     W << 0.0,0.0,0.0,0.0,0.0,0.0;
     std::vector<Eigen::Vector3d> f_ee_vec;
     f_ee_vec.push_back(f_ee);
+    
+    std::cout << "f_ee is: " << f_ee << std::endl << std::endl;
 
 
     Eigen::Matrix<double,5,1> P;
@@ -227,6 +243,18 @@ int main()
     {
         std::cout << (*feasible_iter)(0) << ", " << (*feasible_iter)(1) << ", " << (*feasible_iter)(2) << ";" << std::endl;
     }
+
+    Eigen::Matrix<double, 15, 1> eaB;
+    eaB << 4.0349, 6.0938, 1.8321, 4.3546, 6.2832, 2.0008,
+    -7.2716, -11.3936, -21.7060, 11.5591, 16.7089, 19.7650,
+    -85.1078, -4.9541,
+    70.0000;
+
+    double val = cyclops::objective_function(eaB, W, f_ee_vec, phi_min, phi_max,
+                          t_min, t_max, fnInputs.taskspace, radius_tool, 
+                          radius_scaffold);
+
+    std::cout << "Value of Objective Function is: " << val << std::endl;
 */
     return 0;
 }

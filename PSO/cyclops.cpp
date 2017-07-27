@@ -54,7 +54,7 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
     	Vector3d l_hat = l/l.norm();
         
         // Calculate Torque Component of Structural Matrix
-        Vector3d tau = a_temp.cross(l);
+        Vector3d tau = a_temp.cross(l_hat);
 
         // Adding to the structural Matrix
         A.block<3,1>(0,i) = l_hat;
@@ -70,14 +70,21 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
     Matrix<double,5,1> f;
     f << f_temp2(0), f_temp2(1), f_temp2(2), f_temp2(4), f_temp2(5);
 
+    //cout << "f = " << endl << f << endl << endl;
+
     // Obtaining Tension Solution
     // Analytical method with L1-norm Solution
 
     Matrix<double,5,5> Partition_A = A.block<5,5>(0,0);
     Matrix<double,5,1> Partition_B = A.block<5,1>(0,5);
 
+    //cout << "A = " << endl << A << endl << endl;
+
     Matrix<double,5,1> M = -Partition_A.inverse() * f;
     Matrix<double,5,1> N = -Partition_A.inverse() * Partition_B;
+
+    //cout << "M = " << endl << M << endl << endl;
+    //cout << "N = " << endl << N << endl << endl;
 
     Matrix<double, 6, 1> t_low;
     Matrix<double, 6, 1> t_high;

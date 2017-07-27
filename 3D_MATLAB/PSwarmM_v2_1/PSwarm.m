@@ -538,12 +538,12 @@ while(Problem.Stats.IterCounter<Problem.MaxIterations && Problem.Stats.ObjFunCou
         end
     end
     
-    % Activate weight accumulation and stop uniform resampling when fy<0
-    if Population.fy(Population.Leader) < 0
-        if Population.weightchange == false
-            Population.weightchange = true;
-        end
-    end
+%     % Activate weight accumulation and stop uniform resampling when fy<0
+%     if Population.fy(Population.Leader) < 0
+%         if Population.weightchange == false
+%             Population.weightchange = true;
+%         end
+%     end
     
     if PFO == false
         [~,Problem,Population]=ResamplingStep(Problem, Population, Success, varargin);
