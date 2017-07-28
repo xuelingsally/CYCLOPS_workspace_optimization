@@ -1,6 +1,6 @@
-function [wp_size, feasible, unfeasible, t] = dex_workspace(a, B, W, f_ee, r_ee, phi_min, phi_max, t_min, t_max)
+function [wp_size, feasible, unfeasible, t] = dex_workspace(a, B, W, f_ee, r_ee, phi_min, phi_max, t_min, t_max, length_scaffold)
 
-%x_res = 10;
+x_res = 10;
 y_res = 10;
 z_res = 10;
 
@@ -15,7 +15,7 @@ x_space = [x_middle - x_space_length1, x_middle + x_space_length2];
 
 radius = norm(B(2:3,1));
 
-x_step = 0.005;
+x_step = length_scaffold/x_res;
 y_step = 2 * radius /y_res;
 z_step = 2 * radius /z_res;
 

@@ -89,7 +89,7 @@ eaB_min(15) = eaB_min(15) * 0;
 eaB_max(15) = eaB_max(15) * 70;
 
 %% PSwarm
-fun = @(x) -my_objective_function3a(x, W, f_ee, r_ee, phi_min, phi_max, t_min, t_max, taskspace_d, radius_tool, radius_scaffold);
+fun = @(x) -my_objective_function3a(x, W, f_ee, r_ee, phi_min, phi_max, t_min, t_max, taskspace_d, radius_tool, radius_scaffold, length_scaffold);
 Problem = struct('Variables', 15, 'ObjFunction', fun, 'LB', eaB_min, 'UB', eaB_max);
 
 InitPop(1).x = [0; 0; 0; 0; 0; 0; ...

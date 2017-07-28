@@ -49,8 +49,8 @@ public:
     Organism()
     {
         num_dims=NUM_DIMS_UNDEF;
-        best_value=0.0;
-        value=0.0;
+        best_value=-2.0;
+        value=2.0;
         cout << "Error: Called Organism constructor without parameters\n" << endl;
     }
 
@@ -60,8 +60,8 @@ public:
         position = vector<double>(num_dims);
         velocity = vector<double>(num_dims);
         best_position = vector<double>(num_dims);
-        best_value=0.0;
-        value=0.0;
+        best_value=-2.0;
+        value=2.0;
     }
     friend ostream & operator<<(ostream& output, const Organism& p);
     friend class Population;
@@ -83,6 +83,8 @@ public:
     int num_parms;
     vector<double> lower_range;
     vector<double> upper_range;
+    vector<double> max_velocity_vector; //Maximum value the velocity can take
+    double max_velocity_factor;
     double (*eval_fn)(int, double []);
     char szName[256];
     cyclops::fnInputs Input;
@@ -97,9 +99,16 @@ public:
 
         lower_range=vector<double> (num_parms);
         upper_range=vector<double> (num_parms);
+        max_velocity_vector = vector<double> (num_parms); 
 
         lower_range=tmp_lower_range;
         upper_range=tmp_upper_range;
+
+        max_velocity_factor = 0.5;
+        for (int i=0; i<num_parms; i++)
+        {
+            max_velocity_vector[i] = (upper_range[i] - lower_range[i]) * max_velocity_factor;
+        }
 
         eval_fn=tmp_eval_fn;
     }
@@ -131,8 +140,10 @@ public:
     void evaluate();
     void update_vel();
     void update_pos();
+    void rand_resample();
     double omega_final;
     double omega_initial;
+    vector<Organism *>::iterator pop_leader;
 
     Population()
     {

@@ -1,4 +1,4 @@
-function val = my_objective_function3a(eaB, W, f_ee, r_ee, phi_min, phi_max, t_min, t_max, taskspace_d, radius_tool, radius_scaffold)
+function val = my_objective_function3a(eaB, W, f_ee, r_ee, phi_min, phi_max, t_min, t_max, taskspace_d, radius_tool, radius_scaffold, length_scaffold)
 
 val = 0;
 
@@ -76,7 +76,7 @@ if val < 0
     return
 end
                                                                                                                                                                                                                                                                                                      
-[wp_size, ~, ~, ~] = dex_workspace(a/1000, B/1000, W, [0 ,0,0], r_ee/1000, phi_min, phi_max, t_min, t_max);
+[wp_size, ~, ~, ~] = dex_workspace(a/1000, B/1000, W, [0 ,0,0], r_ee/1000, phi_min, phi_max, t_min, t_max, length_scaffold/1000);
 val = wp_size;
 
 end

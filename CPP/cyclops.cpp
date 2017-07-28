@@ -418,6 +418,6 @@ double cyclops::objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W
     dw_result dex_wp = dex_workspace(a/1000.0, B/1000.0, W, zero_f_ee_vec, r_ee/1000.0, phi_min, phi_max, t_min, t_max);
 
     val = dex_wp.size;
-    cout << "Returned2 " << val << endl;
+    //cout << "Returned2 " << val << endl;
     return val;
 }

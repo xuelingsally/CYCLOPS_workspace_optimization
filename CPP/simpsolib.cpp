@@ -54,6 +54,8 @@ void simpsolib::Population::evaluate()
             overall_best_position=(*it_pool)->position;
 
             overall_best_value=fn_value;
+
+            pop_leader = it_pool; //Record the population leader
         }
     }
 }
@@ -151,8 +153,10 @@ void simpsolib::Population::create()
         for (int j = 0; j < num_dims; j++)
         {
             (*pool[i]).position[j]=ran2((double)evaluator.lower_range[j],(double)evaluator.upper_range[j]);
+            (*pool[i]).velocity[j]=0;
         }
     }
+    pop_leader = pool.begin();
 
 }
 
@@ -243,9 +247,13 @@ void simpsolib::Population::update_vel()
             (*it_pool)->velocity[i] = omega*((*it_pool)->velocity[i]) + phi_p*r_p*((*it_pool)->best_position[i] - (*it_pool)->position[i]) + phi_g*r_g*(overall_best_position[i] - (*it_pool)->position[i]);
             
             // Limit velocity in each dimension to full dynamic range in search space (Simplifying PSO, Pedersen 2009)
-            if (fabs((*it_pool)->velocity[i]) > (evaluator.upper_range[i] - evaluator.lower_range[i]))
+            /*if (fabs((*it_pool)->velocity[i]) > (evaluator.upper_range[i] - evaluator.lower_range[i]))
             {
                 (*it_pool)->velocity[i]=ran2(&(semran2))*(evaluator.upper_range[i] - evaluator.lower_range[i]);
+            }*/
+            if (fabs((*it_pool)->velocity[i]) > evaluator.max_velocity_vector[i])
+            {
+                (*it_pool)->velocity[i]=evaluator.max_velocity_vector[i];
             }
         }
     }
@@ -276,6 +284,23 @@ void simpsolib::Population::update_pos()
         }
     }
     //std::cout << std::endl;
+}
+
+void simpsolib::Population::rand_resample()
+{
+    for (std::vector<Organism*>::iterator it_pool = pool.begin(); it_pool != pool.end(); ++it_pool)
+    {
+        double random_num = ran2(&(semran2));
+        double likelihood = 1.50 - (*it_pool)->value;
+        if (random_num >= likelihood)
+        {
+            for(int i=0; i< num_dims; i++)
+            {
+                (*it_pool)->position[i] = ran2((double)evaluator.lower_range[i],(double)evaluator.upper_range[i]);
+                (*it_pool)->velocity[i] = 0;
+            }
+        }
+    }
 }
 //-----------------------------------------------------------------------------
 // Optimization Methods
@@ -343,6 +368,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
             pop.update_pos();
 
             pop.evaluate();
+            pop.rand_resample();
             pop_info.evaluate_population_info(&pop);
             //pop_info.display_population_stats();
 

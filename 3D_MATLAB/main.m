@@ -74,7 +74,9 @@ r_ee = [dist_tooltip, 0, 0];
 f_ee = [0,0,0];
 
 % Workspace Calculation
-[wp_size, feasible, unfeasible, t] = dex_workspace(a/1000, B/1000, W, f_ee, r_ee/1000, phi_min, phi_max, t_min, t_max);
+[wp_size, feasible, unfeasible, t] = dex_workspace(a/1000, B/1000, W, f_ee, r_ee/1000, phi_min, phi_max, t_min, t_max, length_scaffold/1000);
+
+plot3(feasible(1,:)*1000, feasible(2,:)*1000, feasible(3,:)*1000, 'b.');
 
 % plot
 figure;
