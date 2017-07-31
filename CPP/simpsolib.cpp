@@ -59,6 +59,11 @@ bool simpsolib::Population::evaluate()
             pop_leader = it_pool; //Record the population leader
 
             success = true;
+
+            if (mesh_size < 4)
+            {
+                mesh_size = mesh_size * 2.0;
+            }
         }
     }
     return success;
@@ -381,15 +386,20 @@ void simpsolib::Population::patternsearch()
     if (!success)
     {
         // reduce the mesh size if the poll step was not successful
-        mesh_size = mesh_size * 0.5;
-        cout << "Patternsearch failed" << endl;
+        if (mesh_size > 10e-4)
+        {
+            mesh_size = mesh_size * 0.5;
+        }
+        cout << "Patternsearch Failed, MeshSize: " << mesh_size << endl;
     }
     else
     {
-
         // increase the mesh size
-        mesh_size = mesh_size * 2.0;
-        cout << "Patternsearch Successful" << endl;
+        if (mesh_size < 4)
+        {
+            mesh_size = mesh_size * 2.0;
+        }
+        cout << "Patternsearch Successful, MeshSize: " << mesh_size << endl;
     }
 
 }
