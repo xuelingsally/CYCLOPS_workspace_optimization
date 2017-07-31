@@ -137,13 +137,21 @@ public:
     void create();
     void destroy();
     void display();
-    void evaluate();
+    bool evaluate();
     void update_vel();
     void update_pos();
     void rand_resample();
+
+    void initpatternsearch();
+    void patternsearch();
     double omega_final;
     double omega_initial;
+
+    // for pattern search
     vector<Organism *>::iterator pop_leader;
+    vector<double> SearchDirVec;
+    double initial_search_factor;
+    double mesh_size;
 
     Population()
     {

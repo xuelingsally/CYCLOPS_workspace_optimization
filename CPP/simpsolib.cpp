@@ -27,9 +27,10 @@ int function_cnt = 0;  // function eval counter
 // seed random number generator for ran2
 long semran2 = -1000;
 
-void simpsolib::Population::evaluate()
+bool simpsolib::Population::evaluate()
 {
     double fn_value;
+    bool success = false;
 
     // evaluate fitness
     for (std::vector<Organism*>::iterator it_pool = pool.begin(); it_pool != pool.end(); ++it_pool)
@@ -43,21 +44,24 @@ void simpsolib::Population::evaluate()
 
         //std::cout << fn_value << std::endl;
 
-        if (fn_value >= (*it_pool)->best_value)
+        if (fn_value > (*it_pool)->best_value)
         {
             (*it_pool)->best_position=(*it_pool)->position;
             (*it_pool)->best_value=fn_value;
         }
 
-        if (fn_value >= overall_best_value)
+        if (fn_value > overall_best_value)
         {
             overall_best_position=(*it_pool)->position;
 
             overall_best_value=fn_value;
 
             pop_leader = it_pool; //Record the population leader
+
+            success = true;
         }
     }
+    return success;
 }
 
 
@@ -304,6 +308,92 @@ void simpsolib::Population::rand_resample()
     }
 }
 //-----------------------------------------------------------------------------
+// Pattern Search
+//-----------------------------------------------------------------------------
+void simpsolib::Population::initpatternsearch()
+{
+    // create the search vector for pattern search
+    mesh_size = 1.0;
+    initial_search_factor = 0.05;
+    SearchDirVec = vector<double> (num_dims); 
+    
+    for (int i=0; i<num_dims; i++)
+    {
+        SearchDirVec[i] = (evaluator.upper_range[i] - evaluator.lower_range[i]) * 0.05;
+    }
+}
+
+void simpsolib::Population::patternsearch()
+{
+
+    cout <<  "Pattern Search!" << endl;
+    double fn_value;
+    bool success = false;
+    // the Mesh set to evaluate is the positive and negative of each direction in the search space
+    for(int i=0; i<num_dims; i++)
+    {
+        // Create the +ve search vector, d_plus
+        vector<double> d_plus = (*pop_leader)->position;
+        d_plus[i] = d_plus[i] + mesh_size * SearchDirVec[i];
+
+        fn_value = evaluator.evaluate(d_plus, evaluator.Input);
+        function_cnt++;
+
+
+        if (fn_value > (*pop_leader)->best_value)
+        {
+            (*pop_leader)->position = d_plus;
+            (*pop_leader)->best_position=d_plus;
+            (*pop_leader)->best_value=fn_value;
+            (*pop_leader)->value = fn_value;
+
+            //since this is the pop leader, it is also the best value
+            overall_best_position=d_plus;
+            overall_best_value=fn_value;
+
+            success = true;
+            break;
+        }
+
+        // Create the -ve search vector, d_minus
+        vector<double> d_minus = (*pop_leader)->position;
+        d_minus[i] = d_minus[i] - mesh_size * SearchDirVec[i];
+
+        fn_value = evaluator.evaluate(d_minus, evaluator.Input);
+        function_cnt++;
+
+        if (fn_value > (*pop_leader)->best_value)
+        {
+            (*pop_leader)->position = d_minus;
+            (*pop_leader)->best_position = d_minus;
+            (*pop_leader)->best_value = fn_value;
+            (*pop_leader)->value = fn_value;
+
+            //since this is the pop leader, it is also the best value
+            overall_best_position = d_minus;
+            overall_best_value = fn_value;
+
+            success = true;
+            break;
+        }
+    }
+
+    if (!success)
+    {
+        // reduce the mesh size if the poll step was not successful
+        mesh_size = mesh_size * 0.5;
+        cout << "Patternsearch failed" << endl;
+    }
+    else
+    {
+
+        // increase the mesh size
+        mesh_size = mesh_size * 2.0;
+        cout << "Patternsearch Successful" << endl;
+    }
+
+}
+//-----------------------------------------------------------------------------
 // Optimization Methods
 //-----------------------------------------------------------------------------
 int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_number_iters,
@@ -333,6 +423,8 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
     Population_data pop_info;
     pop.setSize(pso_pop_size);
     pop.setNumIters(pso_number_iters);
+
+    pop.initpatternsearch(); //initialise pattern search parameters
 
     srand(clock());
 
@@ -368,7 +460,14 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
             pop.update_vel();
             pop.update_pos();
 
-            pop.evaluate();
+            bool temp_success = pop.evaluate();
+
+            // perform pattern search of particle swarm failed.
+            if (!temp_success)
+            {
+                pop.patternsearch();
+            }
+
             pop.rand_resample();
             pop_info.evaluate_population_info(&pop);
             //pop_info.display_population_stats();
