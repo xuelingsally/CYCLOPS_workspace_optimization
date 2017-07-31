@@ -331,18 +331,40 @@ void simpsolib::Population::initpatternsearch()
 void simpsolib::Population::patternsearch()
 {
 
-    cout <<  "Pattern Search!" << endl;
+    cout <<  "Pattern Search! ";
     double fn_value;
     bool success = false;
     // the Mesh set to evaluate is the positive and negative of each direction in the search space
+ /*   for (int j=0; j<num_dims; j++)
+    {
+        cout << (*pop_leader)->position[j] << ", ";
+    }
+    cout << endl << endl; */
+
     for(int i=0; i<num_dims; i++)
     {
         // Create the +ve search vector, d_plus
         vector<double> d_plus = (*pop_leader)->position;
         d_plus[i] = d_plus[i] + mesh_size * SearchDirVec[i];
 
+        if d_plus[i] > evaluator.upper_range[i]
+        {
+            d_plus[i] = evaluator.upper_range[i];
+        }
+        else if d_plus[i] < evaluator.lower_range[i]
+        {
+            d_plus[i] = evaluator.lower_range[i];
+        }
+
+
         fn_value = evaluator.evaluate(d_plus, evaluator.Input);
         function_cnt++;
+/*
+        for (int j=0; j<num_dims; j++)
+        {
+            cout << d_plus[j] << ", ";
+        }
+        cout << endl << endl; */
 
 
         if (fn_value > (*pop_leader)->best_value)
@@ -360,9 +382,21 @@ void simpsolib::Population::patternsearch()
             break;
         }
 
+
+
         // Create the -ve search vector, d_minus
         vector<double> d_minus = (*pop_leader)->position;
         d_minus[i] = d_minus[i] - mesh_size * SearchDirVec[i];
+
+        if d_minus[i] > evaluator.upper_range[i]
+        {
+            d_minus[i] = evaluator.upper_range[i];
+        }
+        else if d_minus[i] < evaluator.lower_range[i]
+        {
+            d_minus[i] = evaluator.lower_range[i];
+        }
+
 
         fn_value = evaluator.evaluate(d_minus, evaluator.Input);
         function_cnt++;
@@ -386,7 +420,7 @@ void simpsolib::Population::patternsearch()
     if (!success)
     {
         // reduce the mesh size if the poll step was not successful
-        if (mesh_size > 10e-4)
+        if (mesh_size > 10e-6)
         {
             mesh_size = mesh_size * 0.5;
         }
