@@ -347,11 +347,11 @@ void simpsolib::Population::patternsearch()
         vector<double> d_plus = (*pop_leader)->position;
         d_plus[i] = d_plus[i] + mesh_size * SearchDirVec[i];
 
-        if d_plus[i] > evaluator.upper_range[i]
+        if (d_plus[i] > evaluator.upper_range[i])
         {
             d_plus[i] = evaluator.upper_range[i];
         }
-        else if d_plus[i] < evaluator.lower_range[i]
+        else if (d_plus[i] < evaluator.lower_range[i])
         {
             d_plus[i] = evaluator.lower_range[i];
         }
@@ -388,11 +388,11 @@ void simpsolib::Population::patternsearch()
         vector<double> d_minus = (*pop_leader)->position;
         d_minus[i] = d_minus[i] - mesh_size * SearchDirVec[i];
 
-        if d_minus[i] > evaluator.upper_range[i]
+        if (d_minus[i] > evaluator.upper_range[i])
         {
             d_minus[i] = evaluator.upper_range[i];
         }
-        else if d_minus[i] < evaluator.lower_range[i]
+        else if (d_minus[i] < evaluator.lower_range[i])
         {
             d_minus[i] = evaluator.lower_range[i];
         }
