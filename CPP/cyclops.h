@@ -39,7 +39,8 @@ double x_space_length(Matrix<double,3,6> a, Matrix<double,3,6> B, Vector3d p);
 dw_result dex_workspace(Matrix<double,3,6> a, Matrix<double,3,6> B,
 	                    Matrix<double,6,1> W, vector<Vector3d> f_ee_vec, 
 	                    Vector3d r_ee, Vector2d phi_min, Vector2d phi_max,
-	                    VectorXd t_min, VectorXd t_max);
+	                    VectorXd t_min, VectorXd t_max,
+	                    double length_scaffold);
 
 struct fnInputs {
 	Matrix<double, 6, 1> W;
@@ -51,6 +52,7 @@ struct fnInputs {
     vector<Vector3d> taskspace;
     double radius_tool;
     double radius_scaffold;
+    double length_scaffold;
 };
 
 double objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W,
@@ -58,7 +60,8 @@ double objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W,
 	                      Vector2d phi_min, Vector2d phi_max,
 	                      VectorXd t_min, VectorXd t_max,
 	                      vector<Vector3d> taskspace,
-	                      double radius_tool, double radius_scaffold);
+	                      double radius_tool, double radius_scaffold,
+	                      double length_scaffold);
 
 }; //namespace cyclops
 

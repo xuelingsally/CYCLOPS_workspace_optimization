@@ -131,7 +131,8 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
 cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,6> B,
                         Matrix<double,6,1> W, vector<Vector3d> f_ee_vec, 
                         Vector3d r_ee, Vector2d phi_min, Vector2d phi_max,
-                        VectorXd t_min, VectorXd t_max)
+                        VectorXd t_min, VectorXd t_max,
+                        double length_scaffold)
 {
     int x_res = 10;
     int y_res = 10;
@@ -151,7 +152,8 @@ cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,
     double radius = (B.block<2,1>(1,0)).norm();
 
     double x_search = (x_space_length1 + x_space_length2);
-    double x_step = x_search/x_res;
+    double x_end = x_middle + x_space_length2;
+    double x_step = length_scaffold/x_res;
     double y_step = 2 * radius /y_res;
     double z_step = 2 * radius /z_res;
 
@@ -160,7 +162,8 @@ cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,
     double z_temp = -radius;
 
     vector<Vector3d> vol_grid;
-    for (int i=0; i<x_res+1; i++)
+    //for (int i=0; i<x_res+1; i++)
+    while (x_temp <= x_end)
     {
         for (int j=0; j<y_res+1; j++)
         {
@@ -264,7 +267,8 @@ double cyclops::objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W
 	                      Vector2d phi_min, Vector2d phi_max,
 	                      VectorXd t_min, VectorXd t_max,
 	                      vector<Vector3d> taskspace,
-	                      double radius_tool, double radius_scaffold)
+	                      double radius_tool, double radius_scaffold,
+                          double length_scaffold)
 {
 	double val = 0.0;
     //cout << eaB << endl;
@@ -415,7 +419,7 @@ double cyclops::objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W
     vector<Vector3d> zero_f_ee_vec;
     zero_f_ee_vec.push_back(zero_f_ee);
 
-    dw_result dex_wp = dex_workspace(a/1000.0, B/1000.0, W, zero_f_ee_vec, r_ee/1000.0, phi_min, phi_max, t_min, t_max);
+    dw_result dex_wp = dex_workspace(a/1000.0, B/1000.0, W, zero_f_ee_vec, r_ee/1000.0, phi_min, phi_max, t_min, t_max, length_scaffold/1000.0);
 
     val = dex_wp.size;
     //cout << "Returned2 " << val << endl;

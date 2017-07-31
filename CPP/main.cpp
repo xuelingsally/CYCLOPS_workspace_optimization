@@ -47,6 +47,7 @@ int main()
     fnInputs.radius_scaffold = radius_scaffold;
     // Lenght of Scaffold
     double length_scaffold = 100.0;
+    fnInputs.length_scaffold = length_scaffold;
     // Length of Overtube
     double length_overtube = 60.0;
     // Distance of back of tool to CG of tool
