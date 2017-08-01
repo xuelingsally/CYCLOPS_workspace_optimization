@@ -155,6 +155,7 @@ void simpsolib::Population::destroy()
 
 void simpsolib::Population::create()
 {
+    overall_best_value=-2.0;
     pool.resize(population_size);
 
     for (int i=0; i < population_size; i++)
