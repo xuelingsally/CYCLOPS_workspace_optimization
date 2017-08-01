@@ -62,11 +62,12 @@ bool simpsolib::Population::evaluate()
             pop_leader = it_pool; //Record the population leader
 
             success = true;
-
+            
+            /*
             if (mesh_size < 4)
             {
                 mesh_size = mesh_size * 2.0;
-            }
+            }*/
         }
     }
     return success;
@@ -320,14 +321,35 @@ void simpsolib::Population::rand_resample()
 //-----------------------------------------------------------------------------
 void simpsolib::Population::initpatternsearch()
 {
+    // Determine the mesh size as the minimum of the search space x the search factor
+    initial_search_factor = 0.2;
+    double temp_min = 999999999;
+    for (int i=0; i<num_dims; i++)
+    {
+        double diff = evaluator.upper_range[i] - evaluator.lower_range[i];
+        if (diff < temp_min)
+        {
+            temp_min = diff;
+        }
+    }
+
+    if (temp_min <= 1e-6 * 2.0)
+    {
+        temp_min = 1e-6 * 2.0;
+    }
+
+    mesh_size = temp_min * initial_search_factor;
+
+    //mesh_size = 1;
+
     // create the search vector for pattern search
-    mesh_size = 1.0;
-    initial_search_factor = 0.05;
+    
     SearchDirVec = vector<double> (num_dims); 
     
     for (int i=0; i<num_dims; i++)
     {
-        SearchDirVec[i] = (evaluator.upper_range[i] - evaluator.lower_range[i]) * 0.05;
+        //SearchDirVec[i] = (evaluator.upper_range[i] - evaluator.lower_range[i]) * 0.05;
+        SearchDirVec[i] = 1.0;
     }
 }
 
@@ -433,10 +455,10 @@ void simpsolib::Population::patternsearch()
     else
     {
         // increase the mesh size
-        if (mesh_size < 4)
-        {
+        //if (mesh_size < 4)
+        //{
             mesh_size = mesh_size * 2.0;
-        }
+        //}
         cout << "Patternsearch Successful, MeshSize: " << mesh_size << endl;
         writeFile << "  Patternsearch Successful, MeshSize: " << mesh_size << endl;
     }
