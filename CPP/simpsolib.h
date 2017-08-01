@@ -21,6 +21,7 @@
 #include <time.h>
 #include "simtstlib.h"
 #include "cyclops.h"
+#include <fstream>
 
 namespace simpsolib
 {

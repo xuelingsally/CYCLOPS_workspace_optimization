@@ -22,6 +22,9 @@ using namespace simpsolib;
 using namespace simtstlib;
 using namespace Eigen;
 
+// create writeFile variable
+ofstream writeFile("out.txt");
+
 int function_cnt = 0;  // function eval counter
 
 // seed random number generator for ran2
@@ -425,6 +428,7 @@ void simpsolib::Population::patternsearch()
             mesh_size = mesh_size * 0.5;
         }
         cout << "Patternsearch Failed, MeshSize: " << mesh_size << endl;
+        writeFile << "  Patternsearch Failed, MeshSize: " << mesh_size << endl;
     }
     else
     {
@@ -434,6 +438,7 @@ void simpsolib::Population::patternsearch()
             mesh_size = mesh_size * 2.0;
         }
         cout << "Patternsearch Successful, MeshSize: " << mesh_size << endl;
+        writeFile << "  Patternsearch Successful, MeshSize: " << mesh_size << endl;
     }
 
 }
@@ -468,8 +473,6 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
     pop.setSize(pso_pop_size);
     pop.setNumIters(pso_number_iters);
 
-    
-
     srand(clock());
 
 
@@ -500,6 +503,8 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
         {
             
             std::cout<< "Iteration: " << i << "  ObjVal: " << pop.getBestVal() << std::endl;
+            writeFile << "Iteration: " << i << "  ObjVal: " << pop.getBestVal() << std::endl;
+            
             double omega_temp = omega_initial - ((omega_initial-omega_final) * i/pop.getNumIters());
             pop.setOmega(omega_temp);
             pop.update_vel();
@@ -515,6 +520,20 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
 
             pop.rand_resample();
             pop_info.evaluate_population_info(&pop);
+
+
+            if (i%10==0)
+            {
+                vector<double> temp_position = (pop.getBestPos());
+                writeFile << std::endl << "eaB = [";
+                for (int j=0; j < pop.getNumDims(); j++)
+                {
+                    writeFile << temp_position[j];
+                    if (j < pop.getNumDims()-1)
+                        writeFile << "; ";
+                }
+                writeFile << "];" << std::endl << std::endl;
+            }
             //pop_info.display_population_stats();
 
             // std::cout << "iteration: "<< i << "-- Press enter to continue --" << std::endl << flush;
