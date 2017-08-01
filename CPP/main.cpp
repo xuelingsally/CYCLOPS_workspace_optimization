@@ -171,6 +171,10 @@ int main()
     double omega_final=0.50;
     bool rand_update=false; 
 
+    //Create logging file
+    //ofstream cout("output.txt")
+
+
     // perform PSO experiment
     //simpsolib::EvalFN pso_eval_fn((char *)"DEJONG2", DEJONG2_FN_NUM_VARS,lower_range, upper_range, dejong2_test_fn_real);
     simpsolib::EvalFN pso_eval_fn((char *)"CYCLOPS_OPT", 15, lower_range, upper_range, dejong2_test_fn_real);

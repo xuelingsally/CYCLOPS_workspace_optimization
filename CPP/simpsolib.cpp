@@ -468,7 +468,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
     pop.setSize(pso_pop_size);
     pop.setNumIters(pso_number_iters);
 
-    pop.initpatternsearch(); //initialise pattern search parameters
+    
 
     srand(clock());
 
@@ -486,6 +486,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
         pop.omega_initial = omega_initial;
         pop.omega_final = omega_final;
         pop.setRandPartUpdFlag(rand_particle_upd_flag);
+        pop.initpatternsearch(); //initialise pattern search parameters
 
         pop.evaluate();
         pop_info.evaluate_population_info(&pop);
