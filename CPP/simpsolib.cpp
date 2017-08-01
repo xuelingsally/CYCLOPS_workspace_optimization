@@ -589,14 +589,20 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
 
         vector<double> temp_position = (pop.getBestPos());
         std::cout << "eaB = [";
+        writeFile << "eaB = [";
         for (unsigned int i=0; i < temp_position.size(); i++)
         {
             std::cout << temp_position[i];
+            writeFile << temp_position[i];
             if (i < temp_position.size()-1)
+            {
                 std::cout << "; ";
+                writeFile << temp_position[i];
+            }
         }
 
         std::cout << "];" << std::endl;
+        writeFile << "];" << std::endl << std::endl;
 
         pop.destroy();  // del the population
     }
