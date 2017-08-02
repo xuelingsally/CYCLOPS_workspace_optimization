@@ -445,6 +445,83 @@ void simpsolib::Population::patternsearch()
 
     if (!success)
     {
+         // Create the +ve search vector, d_plus
+        vector<double> d_plus = (*pop_leader)->position;
+        for (int i=0; i<num_dims; i++)
+        {
+            d_plus[i] = d_plus[i] + mesh_size * SearchDirVec[i];
+
+            if (d_plus[i] > evaluator.upper_range[i])
+            {
+                d_plus[i] = evaluator.upper_range[i];
+            }
+            else if (d_plus[i] < evaluator.lower_range[i])
+            {
+                d_plus[i] = evaluator.lower_range[i];
+            }
+        }
+
+
+        fn_value = evaluator.evaluate(d_plus, evaluator.Input);
+        function_cnt++;
+
+        if (fn_value > (*pop_leader)->best_value)
+        {
+            (*pop_leader)->position = d_plus;
+            (*pop_leader)->best_position=d_plus;
+            (*pop_leader)->best_value=fn_value;
+            (*pop_leader)->value = fn_value;
+
+            //since this is the pop leader, it is also the best value
+            overall_best_position=d_plus;
+            overall_best_value=fn_value;
+
+            success = true;
+        }
+    }
+
+    if (!success)
+    {
+         // Create the +ve search vector, d_plus
+        vector<double> d_minus = (*pop_leader)->position;
+        for (int i=0; i<num_dims; i++)
+        {
+            d_minus[i] = d_minus[i] - mesh_size * SearchDirVec[i];
+
+            if (d_minus[i] > evaluator.upper_range[i])
+            {
+                d_minus[i] = evaluator.upper_range[i];
+            }
+            else if (d_minus[i] < evaluator.lower_range[i])
+            {
+                d_minus[i] = evaluator.lower_range[i];
+            }
+        }
+
+
+        fn_value = evaluator.evaluate(d_minus, evaluator.Input);
+        function_cnt++;
+
+        if (fn_value > (*pop_leader)->best_value)
+        {
+            (*pop_leader)->position = d_minus;
+            (*pop_leader)->best_position=d_minus;
+            (*pop_leader)->best_value=fn_value;
+            (*pop_leader)->value = fn_value;
+
+            //since this is the pop leader, it is also the best value
+            overall_best_position=d_minus;
+            overall_best_value=fn_value;
+
+            success = true;
+        }
+    }
+
+
+
+
+    if (!success)
+    {
         // reduce the mesh size if the poll step was not successful
         if (mesh_size > 10e-6)
         {
@@ -598,7 +675,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
             if (i < temp_position.size()-1)
             {
                 std::cout << "; ";
-                writeFile << temp_position[i];
+                writeFile << "; ";
             }
         }
 
