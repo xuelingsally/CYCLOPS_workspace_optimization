@@ -164,7 +164,7 @@ int main()
     // Parameters for PSO
     int number_runs=5;
     int pso_pop=500;
-    int pso_iters=50;
+    int pso_iters=80;
     float phi_p=0.50;
     float phi_g=0.50;;
     double omega_initial=0.90;
