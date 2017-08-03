@@ -149,10 +149,13 @@ public:
     double omega_initial;
 
     // for pattern search
-    vector<Organism *>::iterator pop_leader;
+    int pop_leader_index;
     vector<double> SearchDirVec;
     double initial_search_factor;
     double mesh_size;
+
+    // for random resample
+    int rand_resample_count;
 
     Population()
     {

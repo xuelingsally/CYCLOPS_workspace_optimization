@@ -182,7 +182,7 @@ if Problem.mLinear>0
     NActive=size(Active,2);
     
     if NActive>0 && NActive<=Problem.Variables
-        % Code from Ana and Luís
+        % Code from Ana and Luï¿½s
         [U,S,V] = svd(Active);
         S1      = S(1:NActive,1:NActive);
         if min(diag(S1)) < Problem.DegTolerance
@@ -297,7 +297,7 @@ if Problem.mLinear>0
         NActive=size(Active,2);
 
         if NActive>0 && NActive<=Problem.Variables
-            % Code from Ana and Luís
+            % Code from Ana and Luï¿½s
             [U,S,V] = svd(Active);
             S1      = S(1:NActive,1:NActive);
             if min(diag(S1)) < Problem.DegTolerance

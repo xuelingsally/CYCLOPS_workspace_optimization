@@ -110,6 +110,7 @@ Options = PSwarm('defaults');
 Options.Size = 500;
 Options.MaxObj = 50000;
 Options.MaxIter = 50000;
+Options.IPrint = 10;
 
 % Running PSwarm
 [BestParticle, BestParticleObj, RunData] = PSwarm(Problem, InitPop, Options);
@@ -150,14 +151,14 @@ if fval < 0
 
     plot3(feasible(1,:)*1000, feasible(2,:)*1000, feasible(3,:)*1000, 'b.');
     
-    % plot
-    figure;
-    hold;
-
-    plot3(feasible(1,:), feasible(2,:), feasible(3,:), 'bo');
-    plot3(unfeasible(1,:), unfeasible(2,:), unfeasible(3,:), 'r.');
-
-    axis([(min(unfeasible(1,:)) - 20/1000) (max(unfeasible(1,:)) + 20/1000) -(radius_scaffold+5)/1000 (radius_scaffold+5)/1000 -(radius_scaffold+5)/1000 (radius_scaffold+5)/1000]);
+%     % plot
+%     figure;
+%     hold;
+% 
+%     plot3(feasible(1,:), feasible(2,:), feasible(3,:), 'bo');
+%     plot3(unfeasible(1,:), unfeasible(2,:), unfeasible(3,:), 'r.');
+% 
+%     axis([(min(unfeasible(1,:)) - 20/1000) (max(unfeasible(1,:)) + 20/1000) -(radius_scaffold+5)/1000 (radius_scaffold+5)/1000 -(radius_scaffold+5)/1000 (radius_scaffold+5)/1000]);
 else
     X = sprintf('Taskspace not feasible given scaffold and overtube size');
     disp(X);

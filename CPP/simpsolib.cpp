@@ -59,15 +59,21 @@ bool simpsolib::Population::evaluate()
 
             overall_best_value=fn_value;
 
-            pop_leader = it_pool; //Record the population leader
+            //pop_leader = it_pool; //Record the population leader
+            pop_leader_index = it_pool - pool.begin();
+
 
             success = true;
             
             /*
-            if (mesh_size < 4)
-            {
-                mesh_size = mesh_size * 2.0;
-            }*/
+            cout << "Leading Position is: " << endl;
+            for (int i=0; i<num_dims; i++)
+                cout <<  (*pool[pop_leader_index]).position[i] << ", ";
+
+            cout << endl;
+            cout << "Leading Value is: " << (*pool[pop_leader_index]).value << endl; 
+            cout << "Leading Index is: " << pop_leader_index << endl;
+            */
         }
     }
     return success;
@@ -170,8 +176,27 @@ void simpsolib::Population::create()
             (*pool[i]).velocity[j]=0;
         }
     }
-    pop_leader = pool.begin();
+/*
+    (*pool[0]).position[0] = 4.0349;
+    (*pool[0]).position[1] = 6.0938;
+    (*pool[0]).position[2] = 1.8321;
+    (*pool[0]).position[3] = 4.3546;
+    (*pool[0]).position[4] = 6.2832;
+    (*pool[0]).position[5] = 2.0008;
 
+    (*pool[0]).position[6] = -7.2716;
+    (*pool[0]).position[7] = -11.3936;
+    (*pool[0]).position[8] = -21.7060;
+    (*pool[0]).position[9] = 11.5591;
+    (*pool[0]).position[10] = 16.7089;
+    (*pool[0]).position[11] = 19.7650;
+
+    (*pool[0]).position[12] = -85.1078;
+    (*pool[0]).position[13] = -4.9541;
+    (*pool[0]).position[14] = 70.0;
+*/
+    pop_leader_index = 0;
+    rand_resample_count = 0;
 }
 
 void simpsolib::Population::display()
@@ -306,9 +331,10 @@ void simpsolib::Population::rand_resample()
     for (std::vector<Organism*>::iterator it_pool = pool.begin(); it_pool != pool.end(); ++it_pool)
     {
         double random_num = ran2(&(semran2));
-        double likelihood = 1.50 - (*it_pool)->value;
+        double likelihood = 1.5 + (*it_pool)->value;
         if (random_num >= likelihood)
         {
+            rand_resample_count++;
             for(int i=0; i< num_dims; i++)
             {
                 (*it_pool)->position[i] = ran2((double)evaluator.lower_range[i],(double)evaluator.upper_range[i]);
@@ -357,20 +383,23 @@ void simpsolib::Population::initpatternsearch()
 void simpsolib::Population::patternsearch()
 {
 
-    cout <<  "Pattern Search! ";
+    //cout <<  "Pattern Search! " << endl;
     double fn_value;
     bool success = false;
     // the Mesh set to evaluate is the positive and negative of each direction in the search space
- /*   for (int j=0; j<num_dims; j++)
+    /*
+    cout << "Leading Index is: " << pop_leader_index << endl;
+    cout << "Current Leading Positon is: " << endl;
+    for (int j=0; j<num_dims; j++)
     {
-        cout << (*pop_leader)->position[j] << ", ";
+        cout << (*pool[pop_leader_index]).best_position[j] << ", ";
     }
     cout << endl << endl; */
 
     for(int i=0; i<num_dims; i++)
     {
         // Create the +ve search vector, d_plus
-        vector<double> d_plus = (*pop_leader)->position;
+        vector<double> d_plus = (*pool[pop_leader_index]).best_position;
         d_plus[i] = d_plus[i] + mesh_size * SearchDirVec[i];
 
         if (d_plus[i] > evaluator.upper_range[i])
@@ -393,12 +422,12 @@ void simpsolib::Population::patternsearch()
         cout << endl << endl; */
 
 
-        if (fn_value > (*pop_leader)->best_value)
+        if (fn_value > (*pool[pop_leader_index]).best_value)
         {
-            (*pop_leader)->position = d_plus;
-            (*pop_leader)->best_position=d_plus;
-            (*pop_leader)->best_value=fn_value;
-            (*pop_leader)->value = fn_value;
+            (*pool[pop_leader_index]).position = d_plus;
+            (*pool[pop_leader_index]).best_position = d_plus;
+            (*pool[pop_leader_index]).best_value = fn_value;
+            (*pool[pop_leader_index]).value = fn_value;
 
             //since this is the pop leader, it is also the best value
             overall_best_position=d_plus;
@@ -411,7 +440,7 @@ void simpsolib::Population::patternsearch()
 
 
         // Create the -ve search vector, d_minus
-        vector<double> d_minus = (*pop_leader)->position;
+        vector<double> d_minus = (*pool[pop_leader_index]).best_position;
         d_minus[i] = d_minus[i] - mesh_size * SearchDirVec[i];
 
         if (d_minus[i] > evaluator.upper_range[i])
@@ -427,12 +456,12 @@ void simpsolib::Population::patternsearch()
         fn_value = evaluator.evaluate(d_minus, evaluator.Input);
         function_cnt++;
 
-        if (fn_value > (*pop_leader)->best_value)
+        if (fn_value > (*pool[pop_leader_index]).best_value)
         {
-            (*pop_leader)->position = d_minus;
-            (*pop_leader)->best_position = d_minus;
-            (*pop_leader)->best_value = fn_value;
-            (*pop_leader)->value = fn_value;
+            (*pool[pop_leader_index]).position = d_minus;
+            (*pool[pop_leader_index]).best_position = d_minus;
+            (*pool[pop_leader_index]).best_value = fn_value;
+            (*pool[pop_leader_index]).value = fn_value;
 
             //since this is the pop leader, it is also the best value
             overall_best_position = d_minus;
@@ -443,82 +472,6 @@ void simpsolib::Population::patternsearch()
         }
     }
 
-    if (!success)
-    {
-         // Create the +ve search vector, d_plus
-        vector<double> d_plus = (*pop_leader)->position;
-        for (int i=0; i<num_dims; i++)
-        {
-            d_plus[i] = d_plus[i] + mesh_size * SearchDirVec[i];
-
-            if (d_plus[i] > evaluator.upper_range[i])
-            {
-                d_plus[i] = evaluator.upper_range[i];
-            }
-            else if (d_plus[i] < evaluator.lower_range[i])
-            {
-                d_plus[i] = evaluator.lower_range[i];
-            }
-        }
-
-
-        fn_value = evaluator.evaluate(d_plus, evaluator.Input);
-        function_cnt++;
-
-        if (fn_value > (*pop_leader)->best_value)
-        {
-            (*pop_leader)->position = d_plus;
-            (*pop_leader)->best_position=d_plus;
-            (*pop_leader)->best_value=fn_value;
-            (*pop_leader)->value = fn_value;
-
-            //since this is the pop leader, it is also the best value
-            overall_best_position=d_plus;
-            overall_best_value=fn_value;
-
-            success = true;
-        }
-    }
-
-    if (!success)
-    {
-         // Create the +ve search vector, d_plus
-        vector<double> d_minus = (*pop_leader)->position;
-        for (int i=0; i<num_dims; i++)
-        {
-            d_minus[i] = d_minus[i] - mesh_size * SearchDirVec[i];
-
-            if (d_minus[i] > evaluator.upper_range[i])
-            {
-                d_minus[i] = evaluator.upper_range[i];
-            }
-            else if (d_minus[i] < evaluator.lower_range[i])
-            {
-                d_minus[i] = evaluator.lower_range[i];
-            }
-        }
-
-
-        fn_value = evaluator.evaluate(d_minus, evaluator.Input);
-        function_cnt++;
-
-        if (fn_value > (*pop_leader)->best_value)
-        {
-            (*pop_leader)->position = d_minus;
-            (*pop_leader)->best_position=d_minus;
-            (*pop_leader)->best_value=fn_value;
-            (*pop_leader)->value = fn_value;
-
-            //since this is the pop leader, it is also the best value
-            overall_best_position=d_minus;
-            overall_best_value=fn_value;
-
-            success = true;
-        }
-    }
-
-
-
 
     if (!success)
     {
@@ -527,18 +480,27 @@ void simpsolib::Population::patternsearch()
         {
             mesh_size = mesh_size * 0.5;
         }
-        cout << "Patternsearch Failed, MeshSize: " << mesh_size << endl;
-        writeFile << "  Patternsearch Failed, MeshSize: " << mesh_size << endl;
+        //cout << "Patternsearch Failed, MeshSize: " << mesh_size << endl;
+        //writeFile << "  Patternsearch Failed, MeshSize: " << mesh_size << endl;
     }
     else
     {
         // increase the mesh size
         //if (mesh_size < 4)
         //{
-            mesh_size = mesh_size * 2.0;
+        mesh_size = mesh_size * 2.0;
         //}
-        cout << "Patternsearch Successful, MeshSize: " << mesh_size << endl;
-        writeFile << "  Patternsearch Successful, MeshSize: " << mesh_size << endl;
+        /*
+        cout << "New Leading Positon is: " << endl;
+        for (int j=0; j<num_dims; j++)
+        {
+            cout << (*pool[pop_leader_index]).position[j] << ", ";
+        }
+        cout << endl << endl;
+        */
+
+        //cout << "Patternsearch Successful, MeshSize: " << mesh_size << endl;
+        //writeFile << "  Patternsearch Successful, MeshSize: " << mesh_size << endl;
     }
 
 }
@@ -602,8 +564,8 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
         for (int i=1; i < pop.getNumIters() ; i++)
         {
             
-            std::cout<< "Iteration: " << i << "  ObjVal: " << pop.getBestVal() << std::endl;
-            writeFile << "Iteration: " << i << "  ObjVal: " << pop.getBestVal() << std::endl;
+            std::cout << "Iteration: " << i << "  Leader: " << pop.pop_leader_index << "  ObjVal: " << pop.getBestVal() << "  meshsize: " << pop.mesh_size << "  RanResampleCount: " << pop.rand_resample_count << std::endl;
+            writeFile << "Iteration: " << i << "  Leader: " << pop.pop_leader_index << "  ObjVal: " << pop.getBestVal() << "  meshsize: " << pop.mesh_size << "  RanResampleCount: " << pop.rand_resample_count << std::endl;
             
             double omega_temp = omega_initial - ((omega_initial-omega_final) * i/pop.getNumIters());
             pop.setOmega(omega_temp);
@@ -638,6 +600,19 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
 
             // std::cout << "iteration: "<< i << "-- Press enter to continue --" << std::endl << flush;
             //std::cin.get(temp);
+        }
+
+        // Do a final pattern search till. with mesh size as the limiting factor.
+
+        int ps_counter = 0;
+        while (pop.mesh_size > 1e-4)
+        {
+            ps_counter++;
+            pop.patternsearch();
+            if (ps_counter%20 == 0)
+            {
+                cout << "PS iteration: " << ps_counter << "  ObjVal: " << pop.getBestVal() << std::endl;
+            }
         }
 
         //std::cout << "---------- Final Population (press enter) ------" << std::endl << flush;
