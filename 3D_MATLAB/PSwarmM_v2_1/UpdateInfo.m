@@ -123,17 +123,17 @@ Population.ActiveParticles=0;
 for i=1:Population.Size
     % Check if particle is active and we do not want to remove the
     % leader.
-    if Population.Active(i) && Population.Leader~=i
-        % compute particle velocity norm (for the stopping criteria.
-        VelocityNorm=norm(Population.vx(i,:));
-        Distance=norm(Population.x(i,:)-Population.x(Population.Leader,:));
-        if Distance<Population.Delta && VelocityNorm<Population.Delta
-            % Is neighbour
-            Population.Active(i)=false;
-        else
-            MaxVelocity=MaxVelocity+VelocityNorm;
-        end
-    end
+%     if Population.Active(i) && Population.Leader~=i
+%         % compute particle velocity norm (for the stopping criteria.
+%         VelocityNorm=norm(Population.vx(i,:));
+%         Distance=norm(Population.x(i,:)-Population.x(Population.Leader,:));
+%         if Distance<Population.Delta && VelocityNorm<Population.Delta
+%             % Is neighbour
+%             Population.Active(i)=false;
+%         else
+%             MaxVelocity=MaxVelocity+VelocityNorm;
+%         end
+%     end
     % Account for active particles.
     if Population.Active(i)
         Population.ActiveParticles=Population.ActiveParticles+1;

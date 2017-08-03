@@ -66,10 +66,10 @@ for i=1:size(vol_grid,2)
     end
 end
 
-x_search = x_space_length1 + x_space_length2;
-yz_search = pi * radius * radius;
-search_vol = x_search * yz_search;
-wp_size = size(feasible, 2) / size(vol_grid, 2) * search_vol;
-% wp_size = size(feasible, 2)/ (2000);
+% x_search = x_space_length1 + x_space_length2;
+% yz_search = pi * radius * radius;
+% search_vol = x_search * yz_search;
+% wp_size = size(feasible, 2) / size(vol_grid, 2) * search_vol;
+wp_size = size(feasible, 2)/ (1000);
 
 end

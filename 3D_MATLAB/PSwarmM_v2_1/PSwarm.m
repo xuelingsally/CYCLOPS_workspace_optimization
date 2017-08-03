@@ -461,10 +461,10 @@ Problem.CacheData=InitCache(Problem);
 
 % Initialise Population Weights
 Population.weight = ones(Population.Size, 1) * 1/Population.Size;
-Resample_counter = 0;
+%Resample_counter = 0;
 Population.weightchange = false;
 PFO = false;
-fy_old = inf;
+%fy_old = inf;
 PFO_counter = 0;
 
 % Main cycle of the algorithm
@@ -590,9 +590,28 @@ while(Problem.Stats.IterCounter<Problem.MaxIterations && Problem.Stats.ObjFunCou
         
 end
 
-% Do a final poll step
-[Problem,Population]=PollStep(Problem,Population, ...
-                varargin{:});
+
+% PFO
+for i=1:Population.Size
+    Population.weight(i) = likelihood_fn(Population.fy(i));
+    Population.x(i,:) = Population.y(i,:);
+end;
+[Problem, Population] = Resample_Particles(Problem, Population);
+Population.Size = 50;
+Population.weightchange = true;
+% PFO Loop
+for i=1:50
+    [~,Problem,Population]=ParticleSwarm(Problem,Population, varargin{:});
+    if PFO_counter == 10
+        [Problem, Population] = Resample_Particles(Problem, Population);
+        PFO_counter = 0;
+        X = sprintf('PFO: Objective Value: %d', Population.fy(Population.Leader));
+        disp(X);
+    end;
+    [Problem, Population]=UpdateInfo(Problem, Population);
+    PFO_counter = PFO_counter + 1;
+end;
+
 
 % End of main cycle ...
 
