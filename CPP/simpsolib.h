@@ -34,7 +34,8 @@ class EvalFN;
 // Particle Swarm Optimization (Kennedy and Eberhart 1995)
 // there are simplified versions where phy_g=0, omega=0, particle to update chosen at random (MOL, Pedersen 2009)
 int run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_number_iters,
-            float phi_p, float phi_g, double omega_initial, double omega_final, bool rand_particle_upd_flag);
+            float phi_p, float phi_g, double omega_initial, double omega_final, bool rand_particle_upd_flag,
+            int pfo_pop_size, int pfo_number_iters);
 
 // **********************************
 // Default simulation values here
@@ -72,6 +73,7 @@ public:
     vector<double> best_position;
     double best_value;
     int num_dims;           // Number of dimensions in optimization
+    double weight; // Particle Weight for Particle Filter Optimization
 };
 
 // Early declaration
@@ -141,10 +143,16 @@ public:
     bool evaluate();
     void update_vel();
     void update_pos();
+
     void rand_resample();
 
     void initpatternsearch();
-    void patternsearch();
+    bool patternsearch();
+
+    void pfo_resample();
+    void init_pfo(Population * old_pop);
+    double likelihood_fn(double value);
+
     double omega_final;
     double omega_initial;
 
@@ -156,6 +164,9 @@ public:
 
     // for random resample
     int rand_resample_count;
+    double rand_likelihood_factor;
+
+    bool PFO;
 
     Population()
     {

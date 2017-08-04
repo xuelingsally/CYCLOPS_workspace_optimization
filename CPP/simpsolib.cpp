@@ -45,6 +45,11 @@ bool simpsolib::Population::evaluate()
         function_cnt++;
         (*it_pool)->value=fn_value;
 
+        if (PFO == true)
+        {
+            (*it_pool)->weight = (*it_pool)->weight * likelihood_fn(fn_value);
+        }
+
         //std::cout << fn_value << std::endl;
 
         if (fn_value > (*it_pool)->best_value)
@@ -197,6 +202,8 @@ void simpsolib::Population::create()
 */
     pop_leader_index = 0;
     rand_resample_count = 0;
+    rand_likelihood_factor = 1.5;
+    PFO = false;
 }
 
 void simpsolib::Population::display()
@@ -331,7 +338,7 @@ void simpsolib::Population::rand_resample()
     for (std::vector<Organism*>::iterator it_pool = pool.begin(); it_pool != pool.end(); ++it_pool)
     {
         double random_num = ran2(&(semran2));
-        double likelihood = 1.5 + (*it_pool)->value;
+        double likelihood = rand_likelihood_factor + (*it_pool)->value;
         if (random_num >= likelihood)
         {
             rand_resample_count++;
@@ -380,7 +387,7 @@ void simpsolib::Population::initpatternsearch()
     }
 }
 
-void simpsolib::Population::patternsearch()
+bool simpsolib::Population::patternsearch()
 {
 
     //cout <<  "Pattern Search! " << endl;
@@ -479,6 +486,7 @@ void simpsolib::Population::patternsearch()
         if (mesh_size > 10e-6)
         {
             mesh_size = mesh_size * 0.5;
+            return false;
         }
         //cout << "Patternsearch Failed, MeshSize: " << mesh_size << endl;
         //writeFile << "  Patternsearch Failed, MeshSize: " << mesh_size << endl;
@@ -489,6 +497,7 @@ void simpsolib::Population::patternsearch()
         //if (mesh_size < 4)
         //{
         mesh_size = mesh_size * 2.0;
+        return true;
         //}
         /*
         cout << "New Leading Positon is: " << endl;
@@ -502,13 +511,177 @@ void simpsolib::Population::patternsearch()
         //cout << "Patternsearch Successful, MeshSize: " << mesh_size << endl;
         //writeFile << "  Patternsearch Successful, MeshSize: " << mesh_size << endl;
     }
-
+    return false;
 }
+
+
+//-----------------------------------------------------------------------------
+// Particle Filter Optimization
+//-----------------------------------------------------------------------------
+void simpsolib::Population::pfo_resample()
+{
+    // Normalising the Particles Weights
+    // Sum the weights first
+    double sum_weights = 0;
+    for (std::vector<Organism*>::iterator it_pool = pool.begin(); it_pool != pool.end(); ++it_pool)
+    {
+        sum_weights = sum_weights + (*it_pool)->weight;
+    }
+    //Normalizing:
+    for (std::vector<Organism*>::iterator it_pool = pool.begin(); it_pool != pool.end(); ++it_pool)
+    {
+        (*it_pool)->weight = (*it_pool)->weight / sum_weights;
+    }
+
+
+    // Creating Cummulative weight array.
+    std::vector<double> CWA;
+    CWA.resize(population_size);
+    CWA[0] = (*pool[0]).weight;
+    for (int i=1; i<population_size; i++)
+    {
+        CWA[i] = (*pool[i]).weight + CWA[i-1]; 
+    }
+
+    // Copying Out PFO Pop
+    std::vector<Organism*> temp_pop;
+    temp_pop.resize(population_size);
+
+    for (int i=0; i < population_size; i++)
+        temp_pop[i]=new Organism(num_dims);
+
+    temp_pop.resize(population_size);
+    for (int i=0; i<population_size; i++)
+    {
+        (*temp_pop[i]) = (*pool[i]);
+    }
+
+    pop_leader_index = 0;
+
+    double temp_pop_best_value = -1000;
+    // Sampling Particles from CWA
+    int chosen_particle = 0;
+    for (int i=0; i<population_size; i++)
+    {
+        double rand_no = ran2(&(semran2));
+        for (int j=0; j<population_size; j++)
+        {
+            if(rand_no <= CWA[j])
+            {
+                chosen_particle = j;
+                break;
+            }
+        }
+
+        (*pool[i]).position = (*temp_pop[chosen_particle]).position;
+        (*pool[i]).best_position = (*temp_pop[chosen_particle]).best_position;
+        (*pool[i]).value = (*temp_pop[chosen_particle]).value;
+        (*pool[i]).best_value = (*temp_pop[chosen_particle]).best_value;
+
+        for (int k=0; k<(*pool[i]).num_dims; k++)
+        {
+            (*pool[i]).velocity[k] = 0.0;
+        }
+        (*pool[i]).weight = 1/population_size;
+
+        if (temp_pop_best_value < (*pool[i]).best_value)
+        {
+            temp_pop_best_value = (*pool[i]).best_value;
+            pop_leader_index = i;
+        }
+    }
+}
+
+void simpsolib::Population::init_pfo(Population *old_pop)
+{
+    // initialise the weights of the old population to their old values
+    // and their positions to their best positions
+
+    for (int i=0; i<(*old_pop).getSize(); i++)
+    {
+        (*((*old_pop).pool[i])).weight = likelihood_fn((*((*old_pop).pool[i])).best_value);
+        (*((*old_pop).pool[i])).position = (*((*old_pop).pool[i])).best_position;
+    }
+
+    // Next we sample the pfo_pop based on the weight array of the old pop.
+    double sum_weights = 0;
+    for (std::vector<Organism*>::iterator it_pool = ((*old_pop).pool).begin(); it_pool != ((*old_pop).pool).end(); ++it_pool)
+    {
+        sum_weights = sum_weights + (*it_pool)->weight;
+    }
+    //Normalizing:
+    for (std::vector<Organism*>::iterator it_pool = ((*old_pop).pool).begin(); it_pool != ((*old_pop).pool).end(); ++it_pool)
+    {
+        (*it_pool)->weight = (*it_pool)->weight / sum_weights;
+    }
+
+
+    // Creating Cummulative weight array.
+    std::vector<double> CWA;
+    CWA.resize((*old_pop).getSize());
+    CWA[0] = (*((*old_pop).pool[0])).weight;
+    for (int i=1; i<(*old_pop).getSize(); i++)
+    {
+        CWA[i] = (*((*old_pop).pool[i])).weight + CWA[i-1]; 
+    }
+
+    pop_leader_index = 0;
+
+    double temp_pop_best_value = -1000;
+    // Sampling Particles from CWA
+    int chosen_particle = 0;
+
+    writeFile << "Particle Values: ";
+    for (int i=0; i<population_size; i++)
+    {
+        double rand_no = ran2(&(semran2));
+        for (int j=0; j<(*old_pop).getSize(); j++)
+        {
+            if(rand_no <= CWA[j])
+            {
+                chosen_particle = j;
+                break;
+            }
+        }
+
+        (*pool[i]).position = (*((*old_pop).pool[chosen_particle])).position;
+        (*pool[i]).best_position = (*((*old_pop).pool[chosen_particle])).best_position;
+        (*pool[i]).value = (*((*old_pop).pool[chosen_particle])).value;
+        (*pool[i]).best_value = (*((*old_pop).pool[chosen_particle])).best_value;
+        
+        for (int k=0; k<(*pool[i]).num_dims; k++)
+        {
+            (*pool[i]).velocity[k] = 0.0;
+        }
+        (*pool[i]).weight = 1/population_size;
+
+        if (temp_pop_best_value < (*pool[i]).best_value)
+        {
+            temp_pop_best_value = (*pool[i]).best_value;
+            pop_leader_index = i;
+        }
+        writeFile << (*pool[i]).value << ", ";
+    }
+    writeFile << std::endl << std::endl;
+
+    PFO = true;
+}
+
+double simpsolib::Population::likelihood_fn(double value)
+{
+    double temp_value = -value;
+    if (temp_value > 0)
+        return exp(-(temp_value));
+    else
+        return exp(-(temp_value - (- 0.5)));
+}
+
 //-----------------------------------------------------------------------------
 // Optimization Methods
 //-----------------------------------------------------------------------------
 int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_number_iters,
-                       float phi_p, float phi_g, double omega_initial, double omega_final, bool rand_particle_upd_flag)
+                       float phi_p, float phi_g, double omega_initial, double omega_final, bool rand_particle_upd_flag,
+                       int pfo_pop_size, int pfo_number_iters)
 {
     clock_t start,end,diff=0;
     start=clock();
@@ -534,6 +707,15 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
     Population_data pop_info;
     pop.setSize(pso_pop_size);
     pop.setNumIters(pso_number_iters);
+
+
+    // Create PFO population
+    Population pfo_pop(eval.num_parms);
+
+    pfo_pop.setEvalFN(eval);
+    Population_data pfo_pop_info;
+    pfo_pop.setSize(pfo_pop_size);
+    pfo_pop.setNumIters(pfo_number_iters);
 
     srand(clock());
 
@@ -561,11 +743,14 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
         // std::cin.get(temp);
         // pop_info.display_population_stats();
 
-        for (int i=1; i < pop.getNumIters() ; i++)
+        //--------------------------------------------------------------------------------------------------
+        // PSwarm + SA Loop
+        //--------------------------------------------------------------------------------------------------
+        for (int i=1; i <= pop.getNumIters() ; i++)
         {
             
-            std::cout << "Iteration: " << i << "  Leader: " << pop.pop_leader_index << "  ObjVal: " << pop.getBestVal() << "  meshsize: " << pop.mesh_size << "  RanResampleCount: " << pop.rand_resample_count << std::endl;
-            writeFile << "Iteration: " << i << "  Leader: " << pop.pop_leader_index << "  ObjVal: " << pop.getBestVal() << "  meshsize: " << pop.mesh_size << "  RanResampleCount: " << pop.rand_resample_count << std::endl;
+            std::cout << "Iteration: " << i << "  Leader: " << pop.pop_leader_index << "  ObjVal: " << pop.getBestVal() << "  meshsize: " << pop.mesh_size << "  RanResampleCount: " << pop.rand_resample_count << "  RanFactor: " << pop.rand_likelihood_factor << std::endl;
+            writeFile << "Iteration: " << i << "  Leader: " << pop.pop_leader_index << "  ObjVal: " << pop.getBestVal() << "  meshsize: " << pop.mesh_size << "  RanResampleCount: " << pop.rand_resample_count << "  RanFactor: " << pop.rand_likelihood_factor << std::endl;
             
             double omega_temp = omega_initial - ((omega_initial-omega_final) * i/pop.getNumIters());
             pop.setOmega(omega_temp);
@@ -577,7 +762,22 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
             // perform pattern search of particle swarm failed.
             if (!temp_success)
             {
-                pop.patternsearch();
+                bool ps_success = pop.patternsearch();
+                if (ps_success)
+                {
+                    if (pop.rand_likelihood_factor<1.5)
+                    {
+                        pop.rand_likelihood_factor+= 0.05;
+                    } 
+                } 
+                else
+                {
+                    if (pop.rand_likelihood_factor>1)
+                    {
+                        pop.rand_likelihood_factor-= 0.05;
+                    }
+                }
+
             }
 
             pop.rand_resample();
@@ -602,19 +802,46 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
             //std::cin.get(temp);
         }
 
-        // Do a final pattern search till. with mesh size as the limiting factor.
 
-        int ps_counter = 0;
-        while (pop.mesh_size > 1e-4)
+
+        //--------------------------------------------------------------------------------------------------
+        // PFO Loop
+        //--------------------------------------------------------------------------------------------------
+        pfo_pop.create(); // instantiate (new) the population
+        pfo_pop.setPhiP(phi_p);
+        pfo_pop.setPhiG(phi_g);
+        pfo_pop.setOmega(omega_final);
+        pfo_pop.omega_initial = omega_initial;
+        pfo_pop.omega_final = omega_final;
+        pfo_pop.setRandPartUpdFlag(rand_particle_upd_flag);
+
+        pfo_pop.evaluate();
+        pfo_pop_info.evaluate_population_info(&pfo_pop);
+
+        pfo_pop.init_pfo(&pop);
+        
+/*
+        for (int i=1; i <= pfo_pop.getNumIters() ; i++)
         {
-            ps_counter++;
-            pop.patternsearch();
-            if (ps_counter%20 == 0)
+
+            std::cout << "PFO Iteration: " << i << "  Leader: " << pfo_pop.pop_leader_index << "  ObjVal: " << pfo_pop.getBestVal() << std::endl;
+            writeFile << "PFO Iteration: " << i << "  Leader: " << pfo_pop.pop_leader_index << "  ObjVal: " << pfo_pop.getBestVal() << std::endl;
+            
+            pop.update_vel();
+            pop.update_pos();
+
+            pop.evaluate();
+
+            if(i%10 == 0)
             {
-                cout << "PS iteration: " << ps_counter << "  ObjVal: " << pop.getBestVal() << std::endl;
+                pfo_pop.pfo_resample();
+                std::cout << "PFO Resampling Step" << std::endl;
+                writeFile << "PFO Resampling Step" << std::endl;
             }
+
         }
 
+*/
         //std::cout << "---------- Final Population (press enter) ------" << std::endl << flush;
         //std::cin.get(temp);
         //pop.display();
@@ -658,6 +885,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
         writeFile << "];" << std::endl << std::endl;
 
         pop.destroy();  // del the population
+        pfo_pop.destroy(); // del the pfo population
     }
 
     end=clock();

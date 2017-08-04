@@ -163,13 +163,15 @@ int main()
 
     // Parameters for PSO
     int number_runs=5;
-    int pso_pop=500;
-    int pso_iters=50;
+    int pso_pop=200;
+    int pso_iters=80;
     float phi_p=0.50;
     float phi_g=0.50;;
     double omega_initial=0.90;
     double omega_final=0.50;
     bool rand_update=false; 
+    int pfo_pop=50;
+    int pfo_iters=30;
 
     //Create logging file
     //ofstream cout("output.txt")
@@ -179,7 +181,7 @@ int main()
     //simpsolib::EvalFN pso_eval_fn((char *)"DEJONG2", DEJONG2_FN_NUM_VARS,lower_range, upper_range, dejong2_test_fn_real);
     simpsolib::EvalFN pso_eval_fn((char *)"CYCLOPS_OPT", 15, lower_range, upper_range, dejong2_test_fn_real);
     pso_eval_fn.Input = fnInputs;
-    run_pso(pso_eval_fn, number_runs, pso_pop, pso_iters, phi_p, phi_g, omega_initial, omega_final, rand_update);
+    run_pso(pso_eval_fn, number_runs, pso_pop, pso_iters, phi_p, phi_g, omega_initial, omega_final, rand_update, pfo_pop, pfo_iters);
     
  
 /*

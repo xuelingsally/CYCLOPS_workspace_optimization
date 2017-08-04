@@ -151,7 +151,7 @@ cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,
 
     double radius = (B.block<2,1>(1,0)).norm();
 
-    double x_search = (x_space_length1 + x_space_length2);
+    //double x_search = (x_space_length1 + x_space_length2);
     double x_end = x_middle + x_space_length2;
     double x_step = length_scaffold/x_res;
     double y_step = 2 * radius /y_res;
@@ -232,9 +232,10 @@ cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,
             unfeasible.push_back(*vol_grid_iter);
     }
 
-    double yz_search = PI * radius * radius;
-    double search_vol = x_search * yz_search;
-    double wp_size = double(feasible.size())/double(vol_grid.size()) * search_vol;
+    //double yz_search = PI * radius * radius;
+    //double search_vol = x_search * yz_search;
+    //double wp_size = double(feasible.size())/double(vol_grid.size()) * search_vol;
+    double wp_size = double(feasible.size())/(x_res*y_res*z_res);
 
     dw_result Result;
     Result.feasible = feasible;
