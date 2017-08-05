@@ -609,6 +609,8 @@ void simpsolib::Population::init_pfo(Population *old_pop)
     {
         sum_weights = sum_weights + (*it_pool)->weight;
     }
+
+    writeFile << "Sum of weights: " << sum_weights << endl;
     //Normalizing:
     for (std::vector<Organism*>::iterator it_pool = ((*old_pop).pool).begin(); it_pool != ((*old_pop).pool).end(); ++it_pool)
     {
@@ -669,11 +671,14 @@ void simpsolib::Population::init_pfo(Population *old_pop)
 
 double simpsolib::Population::likelihood_fn(double value)
 {
-    double temp_value = -value;
-    if (temp_value > 0)
-        return exp(-(temp_value));
-    else
-        return exp(-(temp_value - (- 0.5)));
+    double temp_value = 0.2 -value;
+    // temp_value acts like the error in the particle filter, the smaller the error, the larger the likelihood
+    
+    // We do not want particles which can't reach more than half of the taskspace
+    if (value < -0.5)
+        return 0;
+    else 
+        return exp(-(temp_value*temp_value));
 }
 
 //-----------------------------------------------------------------------------
@@ -820,7 +825,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
 
         pfo_pop.init_pfo(&pop);
         
-/*
+
         for (int i=1; i <= pfo_pop.getNumIters() ; i++)
         {
 
@@ -841,7 +846,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
 
         }
 
-*/
+
         //std::cout << "---------- Final Population (press enter) ------" << std::endl << flush;
         //std::cin.get(temp);
         //pop.display();
