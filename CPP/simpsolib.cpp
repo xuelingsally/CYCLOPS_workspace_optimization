@@ -355,7 +355,7 @@ void simpsolib::Population::rand_resample()
 //-----------------------------------------------------------------------------
 // Pattern Search
 //-----------------------------------------------------------------------------
-void simpsolib::Population::initpatternsearch()
+void simpsolib::Population::reset_mesh_size()
 {
     // Determine the mesh size as the minimum of the search space x the search factor
     initial_search_factor = 0.2;
@@ -375,6 +375,11 @@ void simpsolib::Population::initpatternsearch()
     }
 
     mesh_size = temp_min * initial_search_factor;
+}
+
+void simpsolib::Population::initpatternsearch()
+{
+    reset_mesh_size();
 
     //mesh_size = 1;
 
@@ -793,6 +798,10 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
                 }
 
             }
+            else
+            {
+                pop.reset_mesh_size();
+            }
 
             pop.rand_resample();
             pop_info.evaluate_population_info(&pop);
@@ -878,9 +887,9 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
         nRunFitness[nRun]=pop_info.avg_value;
         nRunsAvgFitness+=pop_info.avg_value;
         
-        std::cout << "Max Value: " << pop.getBestVal() << std::endl;
+        std::cout << "Max Value: " << pfo_pop.getBestVal() << std::endl;
 
-        vector<double> temp_position = (pop.getBestPos());
+        vector<double> temp_position = (pfo_pop.getBestPos());
         std::cout << "eaB = [";
         writeFile << "eaB = [";
         for (unsigned int i=0; i < temp_position.size(); i++)

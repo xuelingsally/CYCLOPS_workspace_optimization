@@ -148,6 +148,7 @@ public:
 
     void initpatternsearch();
     bool patternsearch();
+    void reset_mesh_size();
 
     void pfo_resample();
     void init_pfo(Population * old_pop);

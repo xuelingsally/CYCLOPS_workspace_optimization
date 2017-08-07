@@ -15,6 +15,7 @@
 #include <vector>
 #include <cmath>
 #include "simtstlib.h"
+#include <time.h>
 
 using namespace simtstlib;
 
@@ -142,7 +143,9 @@ Call with idum a negative integer to initialize; thereafter, do not alter idum b
 RNMX should approximate the largest floating value that is less than 1.
 *******************************************************************************************/
 // seed random number generator for ran2
-long semran2s = -1000;
+//long semran2s = -1000;
+long semran2s = time(NULL);
+
 
 float simtstlib::ran2(long *idum)
 {

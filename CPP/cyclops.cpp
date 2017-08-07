@@ -14,8 +14,8 @@ Matrix3d cyclops::test_function(int num_vars, Vector3d position)
 	return Position_mat;
 }
 
-bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a, 
-	                        Matrix<double,3,6> B, Matrix<double,6,1> W,
+bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,Dynamic> a, 
+	                        Matrix<double,3,Dynamic> B, Matrix<double,6,1> W,
                             Vector3d f_ee, Vector3d r_ee,
                             VectorXd t_min, VectorXd t_max)
 {
@@ -36,7 +36,9 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
            0, 0, 1;
     T_r = R_y * R_z;
 
-    Matrix<double, 5, 6> A;
+    Matrix<double, 5, Dynamic> A;
+
+    A.resize(5,a.cols());
 
 
     // Create Structural Matrix, A
@@ -75,54 +77,112 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,6> a,
     // Obtaining Tension Solution
     // Analytical method with L1-norm Solution
 
-    Matrix<double,5,5> Partition_A = A.block<5,5>(0,0);
-    Matrix<double,5,1> Partition_B = A.block<5,1>(0,5);
+    int redundant = a.cols() - 5;
 
-    //cout << "A = " << endl << A << endl << endl;
-
-    Matrix<double,5,1> M = -Partition_A.inverse() * f;
-    Matrix<double,5,1> N = -Partition_A.inverse() * Partition_B;
-
-    //cout << "M = " << endl << M << endl << endl;
-    //cout << "N = " << endl << N << endl << endl;
-
-    Matrix<double, 6, 1> t_low;
-    Matrix<double, 6, 1> t_high;
-
-    for (int i=0; i<5; i++)
-    {
-        if (N(i,0) > 0)
-        {
-            t_low(i,0) = (t_min(i) - M(i,0))/N(i,0);
-            t_high(i,0) = (t_max(i) - M(i,0))/N(i,0);
-        }
-        else
-        {
-            t_low(i,0) = (t_max(i) - M(i,0))/N(i,0);
-            t_high(i,0) = (t_min(i) - M(i,0))/N(i,0);
-        }
-    }
-
-
-    t_low(5,0) = t_min(5);
-    t_high(5,0) = t_max(5);
-
-    double t_B_min, t_B_max;
-
-    MatrixXf::Index tempRow, tempCol;
-
-    t_B_min = t_low.maxCoeff(&tempRow, &tempCol);
-    t_B_max = t_high.minCoeff(&tempRow, &tempCol);
 
     bool feasible = false;
 
-    if (t_B_min <= t_B_max)
+
+    // Using the analytical method to test if a pose is feasible.
+    // Only can be used if there is only one redundant cable.
+    if (redundant == 1)
     {
-        feasible = true;
+
+        Matrix<double,5,5> Partition_A = A.block<5,5>(0,0);
+        Matrix<double,5,1> Partition_B = A.block<5,1>(0,5);
+        
+/*
+        Matrix<double, 5, Dynamic> Partition_B;
+        Partition_B.resize(5,redundant);
+
+        for (int i=0; i<redundant; i++)
+        {
+            Partition_B.block<5,1>(0,i) = A.block<5,1>(0,5+i);
+        }
+*/
+
+        //cout << "A = " << endl << A << endl << endl;
+
+        Matrix<double,5,1> M = -Partition_A.inverse() * f;
+        Matrix<double,5,1> N = -Partition_A.inverse() * Partition_B;
+        //Matrix<double,5, Dynamic> N;
+        //N.resize(5, redundant);
+
+        N = -Partition_A.inverse() * Partition_B;
+
+        //cout << "M = " << endl << M << endl << endl;
+        //cout << "N = " << endl << N << endl << endl;
+
+
+        Matrix<double, 6, 1> t_low;
+        Matrix<double, 6, 1> t_high;
+
+        for (int i=0; i<5; i++)
+        {
+            if (N(i,0) > 0)
+            {
+                t_low(i,0) = (t_min(i) - M(i,0))/N(i,0);
+                t_high(i,0) = (t_max(i) - M(i,0))/N(i,0);
+            }
+            else
+            {
+                t_low(i,0) = (t_max(i) - M(i,0))/N(i,0);
+                t_high(i,0) = (t_min(i) - M(i,0))/N(i,0);
+            }
+        }
+
+
+        t_low(5,0) = t_min(5);
+        t_high(5,0) = t_max(5);
+
+        double t_B_min, t_B_max;
+
+        MatrixXf::Index tempRow, tempCol;
+
+        t_B_min = t_low.maxCoeff(&tempRow, &tempCol);
+        t_B_max = t_high.minCoeff(&tempRow, &tempCol);
+
+
+        if (t_B_min <= t_B_max)
+        {
+            feasible = true;
+        }
+        else
+        {
+            feasible = false;
+        }
+
     }
+
+    // Using the L1 Norm solution
+    // Used if there is more than 1 redundant Cable
+
     else
     {
-        feasible = false;
+        int num_cables = A.cols();
+        MatrixXd I;
+        I.setIdentity(num_cables, num_cables);
+
+        VectorXd c;
+        c.resize(num_cables, 1);
+        for (int i=0; i<num_cables; i++)
+        {
+            c(i,0) = 1;
+        }
+
+        Matrix<double, Dynamic, 1> y; 
+        y.resize(num_cables, 1);
+
+        Matrix<double, Dynamic, 1> b;
+        b.resize(num_cables + 5, 1);
+
+        Matrix<double, Dynamic, Dynamic> A_;
+
+        A_.resize(5 + num_cables, num_cables);
+
+        // WIP
+
+
     }
 
 	return feasible;
