@@ -32,17 +32,10 @@ for i=1:size(a, 2)
     A(:,i) = [L(:,i); cross(a(:,i),L(:,i))];
 end
 
-% Removing DoF for torque in x-direction
-% A(4:5,:) = A(5:6,:);
-% A(6,:) = [];
 
 % Compute overall wrench
 cross_pdt_fee = cross(f_ee', r_ee');
 f=[f_ee';cross_pdt_fee]+W';
-
-% % Removing the torque in x-direction
-% f(4:5) = f(5:6);
-% f(6) = [];
 
 %% Obtaining Tension Solution
 % Using analytical method with L1-norm solution
@@ -84,6 +77,33 @@ else
     t = zeros(6,1);
 end
 
+% L1 Norm Solution
+% 
+% A(4:5,:) = A(5:6,:);
+% A(6,:) = [];
+% f(4:5) = f(5:6);
+% f(6) = [];
+% 
+% Partition_A = A(:,1:5);
+% Partition_B = A(:,6:end);
+% M = -Partition_A\(f);
+% N = -Partition_A\Partition_B;
+% 
+% a_ = ones(1,5) * -inv(Partition_A);
+% linprog_f = a_ * Partition_B + ones(1,size(Partition_B,2));
+% 
+% b_(1:5) = M - t_min(1:5);
+% b_(6:10) = t_max(1:5) - M;
+% 
+% A_(1:5,:) = -N;
+% A_(6:10,:) = N;
+% size(A_)
+% size(linprog_f)
+% [t, ~, feasible,~] = linprog(linprog_f, A_, b_, [], [], t_min(1:2), t_max(1:2));
+% 
+% if feasible ~=1
+%     t = zeros(2,1);
+% end
 
 end
 

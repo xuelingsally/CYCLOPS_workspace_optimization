@@ -83,36 +83,32 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,Dynamic> a,
     bool feasible = false;
 
 
+    Matrix<double,5,5> Partition_A = A.block<5,5>(0,0);
+    //Matrix<double,5,1> Partition_B = A.block<5,1>(0,5);
+    Matrix<double,5,Dynamic> Partition_B;
+    Partition_B.resize(5, redundant);
+    for (int i=0; i<redundant; i++)
+    {
+        Partition_B.block<5,1>(0,i) = A.block<5,1>(0,i+5);
+    }
+
+    //cout << "A = " << endl << A << endl << endl;
+
+    Matrix<double,5,1> M = -Partition_A.inverse() * f;
+    //Matrix<double,5,1> N = -Partition_A.inverse() * Partition_B;
+
+    Matrix<double,5,Dynamic> N;
+    N.resize(5,redundant);
+    N = -Partition_A.inverse() * Partition_B;
+
+    //cout << "M = " << endl << M << endl << endl;
+    //cout << "N = " << endl << N << endl << endl;
+
+
     // Using the analytical method to test if a pose is feasible.
     // Only can be used if there is only one redundant cable.
     if (redundant == 1)
     {
-
-        Matrix<double,5,5> Partition_A = A.block<5,5>(0,0);
-        Matrix<double,5,1> Partition_B = A.block<5,1>(0,5);
-        
-/*
-        Matrix<double, 5, Dynamic> Partition_B;
-        Partition_B.resize(5,redundant);
-
-        for (int i=0; i<redundant; i++)
-        {
-            Partition_B.block<5,1>(0,i) = A.block<5,1>(0,5+i);
-        }
-*/
-
-        //cout << "A = " << endl << A << endl << endl;
-
-        Matrix<double,5,1> M = -Partition_A.inverse() * f;
-        Matrix<double,5,1> N = -Partition_A.inverse() * Partition_B;
-        //Matrix<double,5, Dynamic> N;
-        //N.resize(5, redundant);
-
-        N = -Partition_A.inverse() * Partition_B;
-
-        //cout << "M = " << endl << M << endl << endl;
-        //cout << "N = " << endl << N << endl << endl;
-
 
         Matrix<double, 6, 1> t_low;
         Matrix<double, 6, 1> t_high;
@@ -152,37 +148,74 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,Dynamic> a,
             feasible = false;
         }
 
-    }
+    } 
+    
 
     // Using the L1 Norm solution
     // Used if there is more than 1 redundant Cable
+    // As per Hay and Snyman (2005)
 
     else
     {
-        int num_cables = A.cols();
-        MatrixXd I;
-        I.setIdentity(num_cables, num_cables);
-
-        VectorXd c;
-        c.resize(num_cables, 1);
-        for (int i=0; i<num_cables; i++)
+        Matrix<double,1,5> ones_5;
+        Matrix<double,1,5> a_;
+        for (int i=0; i<5; i++)
         {
-            c(i,0) = 1;
+            ones_5(0,i) = 1;
         }
 
-        Matrix<double, Dynamic, 1> y; 
-        y.resize(num_cables, 1);
+        a_ = ones_5 * (-Partition_A.inverse());
 
-        Matrix<double, Dynamic, 1> b;
-        b.resize(num_cables + 5, 1);
+
+        Matrix<double, 1, Dynamic> ones_redunt;
+        ones_redunt.resize(1, redundant);
+        for (int i=0; i<redundant; i++)
+        {
+            ones_redunt(0,i) = 1;
+        }
+
+        Matrix<double, 1, Dynamic> c;
+        c.resize(1,redundant);
+        c = a_ * Partition_B + ones_redunt;
+        Matrix<double, Dynamic, 1> c_;
+        c_.resize(redundant, 1);
+        c_ = c.transpose();
 
         Matrix<double, Dynamic, Dynamic> A_;
+        A_.resize(10+redundant, redundant);
+        for (int i=0; i<redundant; i++)
+        {
+            A_.block<5,1>(0,i) = -N.block<5,1>(0,i);
+            A_.block<5,1>(5,i) = N.block<5,1>(0,i);
+        }
 
-        A_.resize(5 + num_cables, num_cables);
+        Matrix<double, Dynamic, 1> b_;
+        b_.resize(10+redundant, redundant);
 
-        // WIP
+        b_.block<5,1>(0,0) = - t_min.block<5,1>(0,0) + M;
+        b_.block<5,1>(5,0) = t_max.block<5,1>(0,0) - M;
 
+        for (int i=0; i<redundant; i++)
+        {
+            for (int j=0; j<redundant; j++)
+            {
+                if (i==j)
+                {
+                    A_(i+10,j) = 1;
+                }
+                else
+                {
+                    A_(i+10,j) = 0; 
+                }
+            }
 
+            b_(10+i) = t_max(0,0) - t_min(0,0);
+        } 
+
+        Matrix<double, Dynamic, 1> y;
+        y.resize(redundant, 1);
+
+        feasible = igl::linprog(c_, A_, b_, 10+redundant, y);
     }
 
 	return feasible;
