@@ -16,6 +16,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include "simpsolib.h"
+#include <time.h>
 
 using namespace std;
 using namespace simpsolib;
@@ -28,7 +29,8 @@ ofstream writeFile("out.txt");
 int function_cnt = 0;  // function eval counter
 
 // seed random number generator for ran2
-long semran2 = -1000;
+//long semran2 = -1000;
+long semran2 = time(NULL);
 
 bool simpsolib::Population::evaluate()
 {
