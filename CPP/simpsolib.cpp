@@ -566,7 +566,7 @@ void simpsolib::Population::pfo_resample()
         double rand_no = ran2(&(semran2));
         for (int j=0; j<population_size; j++)
         {
-            if(rand_no <= CWA[j])
+            if(rand_no < CWA[j])
             {
                 chosen_particle = j;
                 break;
@@ -610,22 +610,29 @@ void simpsolib::Population::init_pfo(Population *old_pop)
         sum_weights = sum_weights + (*it_pool)->weight;
     }
 
-    writeFile << "Sum of weights: " << sum_weights << endl;
+    double temp_sum_weights = 0;
     //Normalizing:
     for (std::vector<Organism*>::iterator it_pool = ((*old_pop).pool).begin(); it_pool != ((*old_pop).pool).end(); ++it_pool)
     {
         (*it_pool)->weight = (*it_pool)->weight / sum_weights;
+        temp_sum_weights = temp_sum_weights + (*it_pool)->weight;
     }
 
+    writeFile << "Sum of weights: " << temp_sum_weights << endl;
 
     // Creating Cummulative weight array.
     std::vector<double> CWA;
     CWA.resize((*old_pop).getSize());
     CWA[0] = (*((*old_pop).pool[0])).weight;
+
+    writeFile << "Weights are: ";
     for (int i=1; i<(*old_pop).getSize(); i++)
     {
         CWA[i] = (*((*old_pop).pool[i])).weight + CWA[i-1]; 
+
+        writeFile << CWA[i] << ", ";
     }
+    writeFile << endl << endl;
 
     pop_leader_index = 0;
 
@@ -639,16 +646,16 @@ void simpsolib::Population::init_pfo(Population *old_pop)
         double rand_no = ran2(&(semran2));
         for (int j=0; j<(*old_pop).getSize(); j++)
         {
-            if(rand_no <= CWA[j])
+            if(rand_no < CWA[j])
             {
                 chosen_particle = j;
                 break;
             }
         }
 
-        (*pool[i]).position = (*((*old_pop).pool[chosen_particle])).position;
+        (*pool[i]).position = (*((*old_pop).pool[chosen_particle])).best_position;
         (*pool[i]).best_position = (*((*old_pop).pool[chosen_particle])).best_position;
-        (*pool[i]).value = (*((*old_pop).pool[chosen_particle])).value;
+        (*pool[i]).value = (*((*old_pop).pool[chosen_particle])).best_value;
         (*pool[i]).best_value = (*((*old_pop).pool[chosen_particle])).best_value;
         
         for (int k=0; k<(*pool[i]).num_dims; k++)
@@ -820,10 +827,9 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
         pfo_pop.omega_final = omega_final;
         pfo_pop.setRandPartUpdFlag(rand_particle_upd_flag);
 
+        pfo_pop.init_pfo(&pop);
         pfo_pop.evaluate();
         pfo_pop_info.evaluate_population_info(&pfo_pop);
-
-        pfo_pop.init_pfo(&pop);
         
 
         for (int i=1; i <= pfo_pop.getNumIters() ; i++)
@@ -832,10 +838,10 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
             std::cout << "PFO Iteration: " << i << "  Leader: " << pfo_pop.pop_leader_index << "  ObjVal: " << pfo_pop.getBestVal() << std::endl;
             writeFile << "PFO Iteration: " << i << "  Leader: " << pfo_pop.pop_leader_index << "  ObjVal: " << pfo_pop.getBestVal() << std::endl;
             
-            pop.update_vel();
-            pop.update_pos();
+            pfo_pop.update_vel();
+            pfo_pop.update_pos();
 
-            pop.evaluate();
+            pfo_pop.evaluate();
 
             if(i%10 == 0)
             {

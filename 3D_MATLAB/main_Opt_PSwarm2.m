@@ -40,6 +40,7 @@ f_ee = [-1,0,0;
          0,1,0;
         0,0,-1;
          0,0,1];
+%f_ee = 5 * f_ee;
 
 %% Taskspace Definition: List of points that form the boundary of the space
 % that the surgeon needs the tool to move in for the operation.
@@ -57,7 +58,7 @@ taskspace(:,end+1) = [35, 5, -10];
 taskspace(:,end+1) = [30, 5, 5];
 taskspace(:,end+1) = [30, -5, -5];
 taskspace(:,end+1) = [30, -5, 5];
-taskspace(:,end+1) = [40, 7, -10];
+%taskspace(:,end+1) = [40, 7, -10];
 
 % Based on the tooltip, find the poses that the CG of the overtube+tool is
 % required to reach.
@@ -107,9 +108,9 @@ InitPop(1).x = [0; 0; 0; 0; 0; 0; ...
 
 % InitPop(1).x = zeros(14,1);
 Options = PSwarm('defaults');
-Options.Size = 500;
-Options.MaxObj = 50000;
-Options.MaxIter = 50000;
+Options.Size = 50;
+Options.MaxObj = 5000;
+Options.MaxIter = 5000;
 Options.IPrint = 10;
 
 % Running PSwarm
