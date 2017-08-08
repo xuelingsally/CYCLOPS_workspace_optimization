@@ -248,7 +248,8 @@ double simpsolib::EvalFN::evaluate(vector<double> position)
 double simpsolib::EvalFN::evaluate(vector<double> position, cyclops::fnInputs Input)
 {
     int tmp_num_dims=position.size();
-    Matrix<double, 15, 1> eaB;
+    Matrix<double, Dynamic, 1> eaB;
+    eaB.resize(tmp_num_dims, 1);
 
     for (int i=0; i< tmp_num_dims; i++)
         eaB(i,0) = position[i];
@@ -375,6 +376,7 @@ void simpsolib::Population::reset_mesh_size()
     }
 
     mesh_size = temp_min * initial_search_factor;
+    //cout << mesh_size << endl;
 }
 
 void simpsolib::Population::initpatternsearch()
@@ -685,7 +687,7 @@ void simpsolib::Population::init_pfo(Population *old_pop)
 
 double simpsolib::Population::likelihood_fn(double value)
 {
-    double temp_value = 0.2 -value;
+    double temp_value = 0.4 -value;
     // temp_value acts like the error in the particle filter, the smaller the error, the larger the likelihood
     
     // We do not want particles which can't reach more than half of the taskspace
@@ -700,7 +702,7 @@ double simpsolib::Population::likelihood_fn(double value)
 //-----------------------------------------------------------------------------
 int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_number_iters,
                        float phi_p, float phi_g, double omega_initial, double omega_final, bool rand_particle_upd_flag,
-                       int pfo_pop_size, int pfo_number_iters)
+                       int pfo_pop_size, int pfo_number_iters, int pfo_resample_factor)
 {
     clock_t start,end,diff=0;
     start=clock();
@@ -825,6 +827,25 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
             //std::cin.get(temp);
         }
 
+        std::cout << "PSwarm Max Value: " << pop.getBestVal() << std::endl;
+        writeFile << "PSwarm Max Value: " << pop.getBestVal() << std::endl;
+
+        vector<double> temp_position_pso = (pop.getBestPos());
+        std::cout << "eaB = [";
+        writeFile << "eaB = [";
+        for (unsigned int i=0; i < temp_position_pso.size(); i++)
+        {
+            std::cout << temp_position_pso[i];
+            writeFile << temp_position_pso[i];
+            if (i < temp_position_pso.size()-1)
+            {
+                std::cout << "; ";
+                writeFile << "; ";
+            }
+        }
+
+        std::cout << "];" << std::endl;
+        writeFile << "];" << std::endl << std::endl;
 
 
         //--------------------------------------------------------------------------------------------------
@@ -854,7 +875,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
 
             pfo_pop.evaluate();
 
-            if(i%10 == 0)
+            if(i%pfo_resample_factor == 0)
             {
                 pfo_pop.pfo_resample();
                 std::cout << "PFO Resampling Step" << std::endl;
@@ -886,8 +907,11 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
 
         nRunFitness[nRun]=pop_info.avg_value;
         nRunsAvgFitness+=pop_info.avg_value;
+
+
         
-        std::cout << "Max Value: " << pfo_pop.getBestVal() << std::endl;
+        std::cout << "Final Max Value: " << pfo_pop.getBestVal() << std::endl;
+        writeFile << "Final Max Value: " << pfo_pop.getBestVal() << std::endl;
 
         vector<double> temp_position = (pfo_pop.getBestPos());
         std::cout << "eaB = [";

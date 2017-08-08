@@ -36,9 +36,9 @@ struct dw_result {
 	vector<Vector3d> unfeasible;
 };
 
-double x_space_length(Matrix<double,3,6> a, Matrix<double,3,6> B, Vector3d p);
+double x_space_length(Matrix<double,3,Dynamic> a, Matrix<double,3,Dynamic> B, Vector3d p);
 
-dw_result dex_workspace(Matrix<double,3,6> a, Matrix<double,3,6> B,
+dw_result dex_workspace(Matrix<double,3,Dynamic> a, Matrix<double,3,Dynamic> B,
 	                    Matrix<double,6,1> W, vector<Vector3d> f_ee_vec, 
 	                    Vector3d r_ee, Vector2d phi_min, Vector2d phi_max,
 	                    VectorXd t_min, VectorXd t_max,
@@ -57,7 +57,7 @@ struct fnInputs {
     double length_scaffold;
 };
 
-double objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W,
+double objective_function(Matrix<double,Dynamic,1> eaB, Matrix<double,6,1> W,
 	                      vector<Vector3d> f_ee_vec,
 	                      Vector2d phi_min, Vector2d phi_max,
 	                      VectorXd t_min, VectorXd t_max,

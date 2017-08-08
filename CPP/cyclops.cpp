@@ -40,7 +40,6 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,Dynamic> a,
 
     A.resize(5,a.cols());
 
-
     // Create Structural Matrix, A
     for (int i=0; i<a.cols(); i++)
     {
@@ -62,6 +61,7 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,Dynamic> a,
         A.block<3,1>(0,i) = l_hat;
         A.block<2,1>(3,i) = tau.block<2,1>(1,0);    
     }
+
 
     // Compute overall wrench
     // We ignore torque in the x direction
@@ -181,6 +181,7 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,Dynamic> a,
         c_.resize(redundant, 1);
         c_ = c.transpose();
 
+
         Matrix<double, Dynamic, Dynamic> A_;
         A_.resize(10+redundant, redundant);
         for (int i=0; i<redundant; i++)
@@ -190,10 +191,11 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,Dynamic> a,
         }
 
         Matrix<double, Dynamic, 1> b_;
-        b_.resize(10+redundant, redundant);
+        b_.resize(10+redundant, 1);
 
         b_.block<5,1>(0,0) = - t_min.block<5,1>(0,0) + M;
         b_.block<5,1>(5,0) = t_max.block<5,1>(0,0) - M;
+
 
         for (int i=0; i<redundant; i++)
         {
@@ -215,13 +217,14 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,Dynamic> a,
         Matrix<double, Dynamic, 1> y;
         y.resize(redundant, 1);
 
+
         feasible = igl::linprog(c_, A_, b_, 10+redundant, y);
     }
 
 	return feasible;
 }
 
-cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,6> B,
+cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,Dynamic> a, Matrix<double,3,Dynamic> B,
                         Matrix<double,6,1> W, vector<Vector3d> f_ee_vec, 
                         Vector3d r_ee, Vector2d phi_min, Vector2d phi_max,
                         VectorXd t_min, VectorXd t_max,
@@ -232,7 +235,14 @@ cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,
     int z_res = 10;
 
     // Determining Search Volume;
-    Matrix<double,1,6> B_x = B.block<1,6>(0,0);
+    Matrix<double,1,Dynamic> B_x; 
+    B_x.resize(1,B.cols());
+    for (int i=0; i<B.cols(); i++)
+    {
+        B_x(0,i) = B(0,i);
+    }
+    //B_x = B.block<1,B.cols()>(0,0);
+
     MatrixXf::Index tempRow, tempCol;
     double x_middle = (B_x.maxCoeff(&tempRow, &tempCol) + B_x.minCoeff(&tempRow, &tempCol))/2;
 
@@ -337,7 +347,7 @@ cyclops::dw_result cyclops::dex_workspace(Matrix<double,3,6> a, Matrix<double,3,
     return Result;
 }
 
-double cyclops::x_space_length(Matrix<double,3,6> a, Matrix<double,3,6> B, Vector3d p)
+double cyclops::x_space_length(Matrix<double,3,Dynamic> a, Matrix<double,3,Dynamic> B, Vector3d p)
 {
     double max_length = 0;
 
@@ -356,7 +366,7 @@ double cyclops::x_space_length(Matrix<double,3,6> a, Matrix<double,3,6> B, Vecto
     return max_length;
 }
 
-double cyclops::objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W,
+double cyclops::objective_function(Matrix<double,Dynamic,1> eaB, Matrix<double,6,1> W,
 	                      vector<Vector3d> f_ee_vec,
 	                      Vector2d phi_min, Vector2d phi_max,
 	                      VectorXd t_min, VectorXd t_max,
@@ -367,7 +377,14 @@ double cyclops::objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W
 	double val = 0.0;
     //cout << eaB << endl;
 	// Finding the attachment and feeding points based on design vector
-	Matrix<double,3,6> a, B;
+	Matrix<double,3,Dynamic> a, B;
+
+    int num_tendons = (eaB.rows() - 15)/3 + 6;
+    a.resize(3,num_tendons);
+    B.resize(3,num_tendons);
+
+
+    // Feeding and attachment points for the 6 main tendons.
 	for(int i=0; i<6; i++)
 	{
 		double cos_mul = cos(eaB(i,0));
@@ -385,6 +402,21 @@ double cyclops::objective_function(Matrix<double,15,1> eaB, Matrix<double,6,1> W
         B(1,i) = radius_scaffold * cos_mul;
         B(2,i) = radius_scaffold * sin_mul;
 	}
+
+    // Feeding and attachment points for the 'extra' tendons
+    for (int i=0; i<num_tendons - 6; i++)
+    {
+        double cos_mul = cos(eaB(i*3+15, 0));
+        double sin_mul = sin(eaB(i*3+15, 0));
+
+        a(0,i+6) = eaB(i*3+15+1,0);
+        a(1,i+6) = radius_tool * cos_mul;
+        a(2,i+6) = radius_tool * sin_mul;
+
+        B(0,i+6) = eaB(i*3+15+2,0);
+        B(1,i+6) = radius_scaffold * cos_mul;
+        B(2,i+6) = radius_scaffold * sin_mul;
+    }
 
 /*
     cout << "a = [";

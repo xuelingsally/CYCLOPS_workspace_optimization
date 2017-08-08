@@ -1,0 +1,24 @@
+CYCLOPS_PARAM
+radius_tool 1.0
+radius_scaffold 30.0
+length_scaffold 100.0
+length_overtube 60.0
+dist_tool_back 30.0
+num_tendons 8
+min_tension 5.0
+max_tension 60.0
+orientation_limit 10.0
+external_wrench 0.0 0.0 0.0 0.0 0.0 0.0
+end_effector_force_limit 1.0
+tool_tip_limit 70.0
+angle_lower_limit 0.0
+angle_upper_limit 360.0
+
+OPTIMIZATION_PARAM
+num_runs 1
+pso_population_size 500
+pso_num_iters 50
+pfo_population_size 50
+pfo_num_iters 20
+pfo_resample_factor 5
+

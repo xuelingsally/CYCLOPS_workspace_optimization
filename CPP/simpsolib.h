@@ -35,7 +35,7 @@ class EvalFN;
 // there are simplified versions where phy_g=0, omega=0, particle to update chosen at random (MOL, Pedersen 2009)
 int run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_number_iters,
             float phi_p, float phi_g, double omega_initial, double omega_final, bool rand_particle_upd_flag,
-            int pfo_pop_size, int pfo_number_iters);
+            int pfo_pop_size, int pfo_number_iters, int pfo_resample_factor);
 
 // **********************************
 // Default simulation values here
