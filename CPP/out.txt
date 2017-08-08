@@ -1,2 +1,6 @@
-Iteration: 1  Leader: 386  ObjVal: -1  meshsize: 1.25664  RanResampleCount: 0  RanFactor: 1.5
-Iteration: 2  Leader: 386  ObjVal: -1  meshsize: 0.628319  RanResampleCount: 491  RanFactor: 1.45
+Iteration: 1  Leader: 438  ObjVal: -0.923077  meshsize: 1.25664  RanResampleCount: 0  RanFactor: 1.5
+Iteration: 2  Leader: 438  ObjVal: -0.871795  meshsize: 2.51327  RanResampleCount: 495  RanFactor: 1.5
+Iteration: 3  Leader: 438  ObjVal: -0.846154  meshsize: 5.02655  RanResampleCount: 990  RanFactor: 1.5
+Iteration: 4  Leader: 438  ObjVal: -0.692308  meshsize: 10.0531  RanResampleCount: 1484  RanFactor: 1.5
+Iteration: 5  Leader: 438  ObjVal: -0.679487  meshsize: 20.1062  RanResampleCount: 1979  RanFactor: 1.5
+Iteration: 6  Leader: 438  ObjVal: -0.423077  meshsize: 40.2124  RanResampleCount: 2473  RanFactor: 1.5
