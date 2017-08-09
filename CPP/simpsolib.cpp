@@ -627,13 +627,14 @@ void simpsolib::Population::init_pfo(Population *old_pop)
         temp_sum_weights = temp_sum_weights + (*it_pool)->weight;
     }
 
-    writeFile << "Sum of weights: " << temp_sum_weights << endl;
+    //writeFile << "Sum of weights: " << temp_sum_weights << endl;
 
     // Creating Cummulative weight array.
     std::vector<double> CWA;
     CWA.resize((*old_pop).getSize());
     CWA[0] = (*((*old_pop).pool[0])).weight;
 
+/*
     writeFile << "Weights are: ";
     for (int i=1; i<(*old_pop).getSize(); i++)
     {
@@ -642,7 +643,7 @@ void simpsolib::Population::init_pfo(Population *old_pop)
         writeFile << CWA[i] << ", ";
     }
     writeFile << endl << endl;
-
+*/
     pop_leader_index = 0;
 
     double temp_pop_best_value = -1000;
