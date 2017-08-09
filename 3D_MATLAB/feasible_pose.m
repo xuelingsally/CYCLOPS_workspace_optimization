@@ -105,5 +105,18 @@ end
 %     t = zeros(2,1);
 % end
 
+
+% Minimum Norm Solution (from Ming)
+% k=5*ones(6,1);
+% I=eye(6);
+% % Tendon tension vector
+% t=pinv(A)*(-f)+(I-pinv(A)*A)*k;
+% 
+% if min(t) < t_min(1) || max(t) > t_max(1)
+%     feasible = 0;
+% else
+%     feasible = 1;
+% end
+
 end
 
