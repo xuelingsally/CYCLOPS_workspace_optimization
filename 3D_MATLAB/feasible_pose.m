@@ -32,13 +32,14 @@ for i=1:size(a, 2)
     A(:,i) = [L(:,i); cross(a(:,i),L(:,i))];
 end
 
-
 % Compute overall wrench
 cross_pdt_fee = cross(f_ee', r_ee');
 f=[f_ee';cross_pdt_fee]+W';
 
+A(4,:) = [];
+f(4) = [];
 %% Obtaining Tension Solution
-% Using analytical method with L1-norm solution
+% Using analytical method for L1-norm solution
 Partition_A = A(:,1:5);
 Partition_B = A(:,6);
 M = -Partition_A\(f);
@@ -108,19 +109,19 @@ end
 
 % Minimum Norm Solution
 % I = eye(size(a,2));
-% k = ones(size(a,2),1)* 10;
+% k = ones(size(a,2),1)* 5;
 % t_mn = pinv(A) * (-f);
 % t_nul = (I-pinv(A)*A)*k;
 % t = t_mn + t_nul;
 % 
-% % ensure that solution fulfills condition that t_i > t_min
-% 
-% [min_t_nul, min_index] = min(t_nul);
-% 
-% if min_t_nul > 0
-%     factor = (t_min(1) - t(min_index))/min_t_nul;
-%     t = t + t_nul * (factor + 1e-10);
-% end   
+% % % ensure that solution fulfills condition that t_i > t_min
+% % 
+% % [min_t_nul, min_index] = min(t_nul);
+% % 
+% % if min_t_nul > 0
+% %     factor = (t_min(1) - t(min_index))/min_t_nul;
+% %     t = t + t_nul * (factor + 1e-10);
+% % end   
 %     
 % % Mark Solution as not feasible if t_i < t_max
 % if (max(t) >= t_max(1)) || (min(t) < t_min(1))

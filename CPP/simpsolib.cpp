@@ -254,10 +254,24 @@ double simpsolib::EvalFN::evaluate(vector<double> position, cyclops::fnInputs In
     for (int i=0; i< tmp_num_dims; i++)
         eaB(i,0) = position[i];
 
-    double temp_result = cyclops::objective_function(eaB, Input.W, Input.f_ee_vec, Input.phi_min,
+    double temp_result = -1000;
+
+    if (Input.taskspace[0].rows() == 3)
+    {
+        // Taskspace Type 1 (Dexterity)
+        temp_result = cyclops::objective_function(eaB, Input.W, Input.f_ee_vec, Input.phi_min,
                               Input.phi_max, Input.t_min, Input.t_max,
                               Input.taskspace, Input.radius_tool, Input.radius_scaffold,
                               Input.length_scaffold);
+    }
+    else if (Input.taskspace[0].rows() == 5)
+    {
+        // Taskspace Type 2 
+        temp_result = cyclops::objective_function2(eaB, Input.W, Input.f_ee_vec, Input.phi_min,
+                              Input.phi_max, Input.t_min, Input.t_max,
+                              Input.taskspace, Input.radius_tool, Input.radius_scaffold,
+                              Input.length_scaffold);
+    }
     //std::cout << temp_result << std::endl;
     return temp_result;
 

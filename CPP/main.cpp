@@ -166,27 +166,59 @@ int main()
 
 
     // Taskspace Definition
-    string tp_filename = "./taskspace.txt";
+    string tp_filename = "./taskspace2a.txt";
     ifstream inTaskspace;
     inTaskspace.open(tp_filename.c_str());
     inTaskspace >> temp; //Take the in the heading word
 
-    Eigen::Vector3d tp_temp;
+    Eigen::VectorXd tp_temp;
 
-    while (!inTaskspace.eof())
+    int TP_type;
+    inTaskspace >> TP_type;
+
+    if (TP_type == 1)
     {
-        double tp_temp_scalar;
-        inTaskspace >> tp_temp_scalar;
-        if( inTaskspace.eof() ) break;
+        tp_temp.resize(3,1);
 
-        tp_temp(0) = tp_temp_scalar;
-        inTaskspace >>  tp_temp_scalar;
-        tp_temp(1) = tp_temp_scalar;
-        inTaskspace >>  tp_temp_scalar;
-        tp_temp(2) = tp_temp_scalar;
+        while (!inTaskspace.eof())
+        {
+            double tp_temp_scalar;
+            inTaskspace >> tp_temp_scalar;
+            if( inTaskspace.eof() ) break;
 
-        fnInputs.taskspace.push_back(tp_temp/1000.0);
-        //std::cout << tp_temp.transpose() << std::endl;
+            tp_temp(0) = tp_temp_scalar;
+            inTaskspace >>  tp_temp_scalar;
+            tp_temp(1) = tp_temp_scalar;
+            inTaskspace >>  tp_temp_scalar;
+            tp_temp(2) = tp_temp_scalar;
+
+            fnInputs.taskspace.push_back(tp_temp/1000.0);
+            //std::cout << tp_temp.transpose() << std::endl;
+        }
+    }
+    else if (TP_type == 2)
+    {
+        tp_temp.resize(5,1);
+
+        while (!inTaskspace.eof())
+        {
+            double tp_temp_scalar;
+            inTaskspace >> tp_temp_scalar;
+            if( inTaskspace.eof() ) break;
+
+            tp_temp(0) = tp_temp_scalar;
+            inTaskspace >>  tp_temp_scalar;
+            tp_temp(1) = tp_temp_scalar;
+            inTaskspace >>  tp_temp_scalar;
+            tp_temp(2) = tp_temp_scalar;
+            inTaskspace >>  tp_temp_scalar;
+            tp_temp(3) = tp_temp_scalar;
+            inTaskspace >>  tp_temp_scalar;
+            tp_temp(4) = tp_temp_scalar;
+
+            fnInputs.taskspace.push_back(tp_temp/1000.0);
+            //std::cout << tp_temp.transpose() << std::endl;
+        }
     }
 
     std::cout << "No. of points in taskspace: " << fnInputs.taskspace.size() << std::endl <<std::endl;

@@ -61,7 +61,7 @@ taskspace(:,end+1) = [30, -5, 5];
 draw_cyclops_full(a,B, taskspace, radius_tool, radius_scaffold, length_scaffold, length_overtube, dist_tool_b_cg, dist_tooltip);
 
 %Tensions
-t_min = 5 * ones(6,1);
+t_min = 1 * ones(6,1);
 t_max = 60 * ones(6,1);
 
 % Orientation limits
