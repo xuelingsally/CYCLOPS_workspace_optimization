@@ -456,6 +456,11 @@ double cyclops::objective_function(Matrix<double,Dynamic,1> eaB, Matrix<double,6
 				return val;
 			}
 		}
+        if (a(0,i) >= eaB(14))
+        {
+            val = -1.5;
+            return val;
+        }
 	}
 
 	// Based on the tooltip, find the poses that the CG of the tool has to reach
@@ -642,7 +647,15 @@ double cyclops::objective_function2(Matrix<double,Dynamic,1> eaB, Matrix<double,
                 return val;
             }
         }
+        // Check that the tooltip is greater than the max value of a_x
+        if (a(0,i) >= eaB(14))
+        {
+            val = -1.5;
+            return val;
+        }
     }
+    
+
 
     // Based on the tooltip, find the poses that the CG of the tool has to reach
     double dist_tooltip = eaB(14);

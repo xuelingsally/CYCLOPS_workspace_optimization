@@ -35,7 +35,7 @@ for i=1:size(a,2)
 end
 
 % Draw Taskspace
-plot3(taskspace(1,:), taskspace(2,:), taskspace(3,:), 'bx');
+plot3(taskspace(1,:), taskspace(2,:), taskspace(3,:), 'b.');
 
 %axis([-length_scaffold-5 (dist_tooltip + x_middle + (length_overtube + x_middle - dist_tool_b_cg) +10) -(radius_scaffold+5) radius_scaffold+5 -(radius_scaffold+5) radius_scaffold+5 ]);
 axis([-length_scaffold-5 (max(taskspace(1,:))+10) -(radius_scaffold+5) radius_scaffold+5 -(radius_scaffold+5) radius_scaffold+5 ]);
