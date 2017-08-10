@@ -42,9 +42,13 @@ f(4) = [];
 % Using analytical method for L1-norm solution
 Partition_A = A(:,1:5);
 Partition_B = A(:,6);
+
+% For unfeasible points the matrix approaches singularity
+% This line will stop the warning message from MATLAB.
+warning('off', 'all');
 M = -Partition_A\(f);
 N = -Partition_A\Partition_B;
-
+warning('on', 'all');
 t_low = zeros(6,1);
 t_high = zeros(6,1);
 
