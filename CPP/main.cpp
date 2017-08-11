@@ -363,9 +363,9 @@ int main()
     run_pso(pso_eval_fn, number_runs, pso_pop, pso_iters, phi_p, phi_g, omega_initial, omega_final, rand_update, pfo_pop, pfo_iters, pfo_resample_factor);
     
 
-
 /*
-    Eigen::Matrix<double,3,7> a, B;
+
+    Eigen::Matrix<double,3,6> a, B;
     
     a << 30.0, 30.0, 30.0, -30.0, -30.0, -30.0, 0.0,
          0.5, -1.0, 0.5, 0.5, -1.0, 0.5, 1.0,
@@ -404,10 +404,17 @@ int main()
     std::cout << "f_ee is: " << f_ee << std::endl << std::endl;
 
 
+    Eigen::Vector3d f_ee;
+    Eigen::Vector3d r_ee;
+    f_ee << 0.0, 0.0, 0.0;
+    r_ee << 100.0, 0.0, 0.0;
+
+
     Eigen::Matrix<double,5,1> P;
-    P << -50.0, 0.0, 0.0, 0.0, 0.0;
+    //P << -50.0, 0.0, 0.0, 0.0, 0.0;
     //P << -200, 0, 0, 0, 0;
     //P << -0.0660, -0.0060, -0.0000, 0, 0;
+    P << -94.909,  -9.543,   3.704,   0.019,   0.325;
 
     Eigen::Matrix<double, 6, 1> t_min, t_max;
     t_min << 5.0,5.0,5.0,5.0,5.0,5.0;
@@ -415,7 +422,7 @@ int main()
     
     Eigen::Vector2d phi_min, phi_max;
     phi_min << -10.0/180.0 * PI, -10.0/180.0 * PI;
-    phi_max << 10.0/180.0 * PI, 10.0/180.0 * PI;
+    phi_max << 10.0/180.0 * PI, 10.0/180.0 * PI; 
 
     bool result = cyclops::feasible_pose(P/1000.0, a/1000.0, B/1000.0, W, f_ee, r_ee/1000.0, t_min, t_max);
 
@@ -442,15 +449,22 @@ int main()
 
 
 
+
     Eigen::Matrix<double, 15, 1> eaB;
+    
     eaB << 4.0349, 6.0938, 1.8321, 4.3546, 6.2832, 2.0008,
     -7.2716, -11.3936, -21.7060, 11.5591, 16.7089, 19.7650,
     -85.1078, -4.9541,
     70.0000;
 
-    double val = cyclops::objective_function(eaB, W, f_ee_vec, phi_min, phi_max,
+    eaB << 2.29107, 4.44011, 0, 2.36897, 4.48342, 0,
+           -14.5614, -15.2628, -15.4661, 7.05804, 7.64285, 7.72333,
+           -70, 0, 
+           100;
+
+    double val = cyclops::objective_function2(eaB, W, fnInputs.f_ee_vec, phi_min, phi_max,
                           t_min, t_max, fnInputs.taskspace, radius_tool, 
-                          radius_scaffold);
+                          radius_scaffold, length_scaffold);
 
     std::cout << "Value of Objective Function is: " << val << std::endl;
 */

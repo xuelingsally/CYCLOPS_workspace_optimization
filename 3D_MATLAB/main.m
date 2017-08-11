@@ -5,11 +5,11 @@ clc;
 
 % Constants (All units in mm)
 % Radius of overtube/tool
-radius_tool = 1;
+radius_tool = 1.75;
 % Radius of Scaffold
 radius_scaffold = 30;
 % Length of the scaffold
-length_scaffold = 100;
+length_scaffold = 70;
 % Lenght of overtube
 length_overtube = 60;
 % Distance of back of tool to CG of tool
@@ -38,9 +38,9 @@ a(:,6) = [-30, radius_tool * cos(ea(6)), radius_tool * sin(ea(6))];
 B(:,1) = [0, radius_scaffold * cos(ea(1)), radius_scaffold * sin(ea(1))];
 B(:,2) = [0, radius_scaffold * cos(ea(2)), radius_scaffold * sin(ea(2))];
 B(:,3) = [0, radius_scaffold * cos(ea(3)), radius_scaffold * sin(ea(3))];
-B(:,4) = [-100, radius_scaffold * cos(ea(4)), radius_scaffold * sin(ea(4))];
-B(:,5) = [-100, radius_scaffold * cos(ea(5)), radius_scaffold * sin(ea(5))];
-B(:,6) = [-100, radius_scaffold * cos(ea(6)), radius_scaffold * sin(ea(6))];
+B(:,4) = [-70, radius_scaffold * cos(ea(4)), radius_scaffold * sin(ea(4))];
+B(:,5) = [-70, radius_scaffold * cos(ea(5)), radius_scaffold * sin(ea(5))];
+B(:,6) = [-70, radius_scaffold * cos(ea(6)), radius_scaffold * sin(ea(6))];
 
 % Taskspace Definition: List of points that form the boundary of the space
 % that the surgeon needs the tool to move in for the operation.

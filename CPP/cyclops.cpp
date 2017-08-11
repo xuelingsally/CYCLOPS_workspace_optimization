@@ -674,21 +674,22 @@ double cyclops::objective_function2(Matrix<double,Dynamic,1> eaB, Matrix<double,
         Matrix<double,5,1> r_ee_temp;
         r_ee_temp << r_ee(0), r_ee(1), r_ee(2), 0.0, 0.0;
         Matrix<double,5,1> taskspace_temp = (*taskspace_iter) - r_ee_temp/1000;
+        //cout << taskspace_temp.transpose() * 1000 << ";" <<std::endl;
 
         for (f_ee_iter = f_ee_vec.begin(); f_ee_iter!=f_ee_vec.end(); ++f_ee_iter)
         {
-
 
             bool feasible_temp = false;
             Matrix<double,5,1> P;
             P << (taskspace_temp)(0,0), (taskspace_temp)(1,0), (taskspace_temp)(2,0), (taskspace_temp)(3,0), (taskspace_temp)(4,0);
             feasible_temp = feasible_pose(P, a/1000.0, B/1000.0, W, *f_ee_iter, r_ee/1000.0, t_min, t_max);
-            if (feasible_temp)
+            if (!feasible_temp)
             {
                 val = val - 1.0;
             }
         }
     }
+    //cout << dist_tooltip << endl;
 
     if (val < 0.0)
     {
