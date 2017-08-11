@@ -100,10 +100,24 @@ int main()
     //W << 0.0,0.0,0.0,0.0,0.0,0.0;
     std::cout << "Wrench Vector: " << W.transpose() << std::endl;
 
-    // End Effector Force Limit
-    double f_ee_factor = 1.0;
-    inData >> temp >> f_ee_factor;
-    std::cout << "End Effector Force Limit: " << f_ee_factor << std::endl;
+    // End Effector Force 
+    int f_ee_vec_size;
+    
+    inData >> temp >> f_ee_vec_size;
+    for (int i=0; i<f_ee_vec_size; i++)
+    {
+        Eigen::Vector3d f_ee_temp;
+        double f_ee_scalar;
+        inData >> f_ee_scalar;
+        f_ee_temp(0) = f_ee_scalar;
+        inData >> f_ee_scalar;
+        f_ee_temp(1) = f_ee_scalar;
+        inData >> f_ee_scalar;
+        f_ee_temp(2) = f_ee_scalar;
+
+        fnInputs.f_ee_vec.push_back(f_ee_temp);        
+    }
+    std::cout << "End Effector Force Vector Size: " << fnInputs.f_ee_vec.size() << std::endl;
 
     // Tool Tip Max Length(from cg)
     double tool_tip_limit = 70.0;
@@ -147,6 +161,7 @@ int main()
     // Wrench Vector
     fnInputs.W = W;
 
+/*
     // end effector force
     Eigen::Vector3d f_ee;
     f_ee << -1.0,0.0,0.0;
@@ -163,7 +178,7 @@ int main()
     fnInputs.f_ee_vec.push_back(f_ee * f_ee_factor);
     f_ee(2) = 1.0;
     fnInputs.f_ee_vec.push_back(f_ee * f_ee_factor);
-
+*/
 
     // Taskspace Definition
     string tp_filename = "./taskspace2a.txt";
