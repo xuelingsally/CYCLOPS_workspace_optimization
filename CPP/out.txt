@@ -1,0 +1,27 @@
+Iteration: 1  Leader: 74  ObjVal: -0.872054  meshsize: 1.25664  RanResampleCount: 0  RanFactor: 1.5
+Iteration: 2  Leader: 149  ObjVal: -0.767677  meshsize: 1.25664  RanResampleCount: 200  RanFactor: 1.5
+Iteration: 3  Leader: 38  ObjVal: -0.707071  meshsize: 1.25664  RanResampleCount: 379  RanFactor: 1.5
+Iteration: 4  Leader: 38  ObjVal: -0.599327  meshsize: 2.51327  RanResampleCount: 542  RanFactor: 1.5
+Iteration: 5  Leader: 38  ObjVal: -0.572391  meshsize: 5.02655  RanResampleCount: 711  RanFactor: 1.5
+Iteration: 6  Leader: 34  ObjVal: -0.491582  meshsize: 1.25664  RanResampleCount: 883  RanFactor: 1.5
+Iteration: 7  Leader: 116  ObjVal: -0.393939  meshsize: 1.25664  RanResampleCount: 1050  RanFactor: 1.5
+Iteration: 8  Leader: 116  ObjVal: -0.319865  meshsize: 2.51327  RanResampleCount: 1226  RanFactor: 1.5
+Iteration: 9  Leader: 116  ObjVal: -0.316498  meshsize: 5.02655  RanResampleCount: 1394  RanFactor: 1.5
+Iteration: 10  Leader: 83  ObjVal: -0.259259  meshsize: 1.25664  RanResampleCount: 1563  RanFactor: 1.5
+
+eaB = [3.53777; 6.01042; 1.13867; 6.28319; 2.59294; 3.37699; -27.9067; -8.68504; -15.9568; 22.8096; 29.9342; 16.7425; -35.3906; -34.3034; 59.737];
+
+Iteration: 11  Leader: 83  ObjVal: -0.0909091  meshsize: 1.25664  RanResampleCount: 1724  RanFactor: 1.5
+Iteration: 12  Leader: 83  ObjVal: -0.0808081  meshsize: 2.51327  RanResampleCount: 1900  RanFactor: 1.5
+Iteration: 13  Leader: 83  ObjVal: -0.0639731  meshsize: 5.02655  RanResampleCount: 2072  RanFactor: 1.5
+Iteration: 14  Leader: 83  ObjVal: -0.0606061  meshsize: 10.0531  RanResampleCount: 2243  RanFactor: 1.5
+Iteration: 15  Leader: 83  ObjVal: -0.037037  meshsize: 20.1062  RanResampleCount: 2390  RanFactor: 1.5
+Iteration: 16  Leader: 83  ObjVal: -0.00673401  meshsize: 40.2124  RanResampleCount: 2561  RanFactor: 1.5
+Iteration: 17  Leader: 83  ObjVal: -0.00673401  meshsize: 20.1062  RanResampleCount: 2739  RanFactor: 1.45
+Iteration: 18  Leader: 83  ObjVal: -0.00673401  meshsize: 10.0531  RanResampleCount: 2920  RanFactor: 1.4
+Iteration: 19  Leader: 83  ObjVal: -0.00673401  meshsize: 5.02655  RanResampleCount: 3105  RanFactor: 1.35
+Iteration: 20  Leader: 198  ObjVal: -0.003367  meshsize: 1.25664  RanResampleCount: 3288  RanFactor: 1.35
+
+eaB = [3.65697; 6.09537; 1.44513; 6.28319; 2.43274; 3.49833; -25.6485; -9.36243; -14.2041; 28.833; 29.9825; 24.852; -35.36; -33.547; 58.4386];
+
+Iteration: 21  Leader: 83  ObjVal: 0.02  meshsize: 1.25664  RanResampleCount: 3474  RanFactor: 1.35
