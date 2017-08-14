@@ -21,5 +21,5 @@ pso_population_size 500
 pso_num_iters 50
 pfo_population_size 50
 pfo_num_iters 20
-pfo_resample_factor 5
+pfo_resample_factor 10
 

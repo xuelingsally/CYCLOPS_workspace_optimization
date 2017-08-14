@@ -648,16 +648,16 @@ void simpsolib::Population::init_pfo(Population *old_pop)
     CWA.resize((*old_pop).getSize());
     CWA[0] = (*((*old_pop).pool[0])).weight;
 
-/*
-    writeFile << "Weights are: ";
+
+    //writeFile << "Weights are: ";
     for (int i=1; i<(*old_pop).getSize(); i++)
     {
         CWA[i] = (*((*old_pop).pool[i])).weight + CWA[i-1]; 
 
-        writeFile << CWA[i] << ", ";
+        //writeFile << CWA[i] << ", ";
     }
-    writeFile << endl << endl;
-*/
+    //writeFile << endl << endl;
+
     pop_leader_index = 0;
 
     double temp_pop_best_value = -1000;
@@ -702,14 +702,20 @@ void simpsolib::Population::init_pfo(Population *old_pop)
 
 double simpsolib::Population::likelihood_fn(double value)
 {
-    double temp_value = 0.4 -value;
+    double temp_value = -value;
+
+    if (temp_value < 0)
+    {
+        temp_value = temp_value * 10.0;
+    }
+
     // temp_value acts like the error in the particle filter, the smaller the error, the larger the likelihood
     
     // We do not want particles which can't reach more than half of the taskspace
     if (value < -0.5)
         return 0;
     else 
-        return exp(-(temp_value*temp_value));
+        return exp(-(temp_value - (-1.0)) );
 }
 
 //-----------------------------------------------------------------------------
