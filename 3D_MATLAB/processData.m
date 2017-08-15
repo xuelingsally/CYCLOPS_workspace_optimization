@@ -1,10 +1,11 @@
-function output = processData(DataMat, DistFromScaffold)
+function output = processData(DataMat, T_Dist)
 
-DataMat_x = DataMat(1,:);
-
-min_x = min(DataMat_x);
-
-translate_x = abs(min_x) + DistFromScaffold;
+% DataMat_x = DataMat(1,:);
+% 
+% min_x = min(DataMat_x);
+% 
+% translate_x = abs(min_x) + T_Dist(1);
+% translate_z = abs(min_z)
 
 fileID = fopen('taskspace.txt','w');
 fprintf(fileID, 'TP_TYPE 2\n');
@@ -18,7 +19,7 @@ counter2 = 1;
 counter = 10;
 for i=1:size(DataMat,2)
     if counter == 10
-        DataMat(1,i) = DataMat(1,i) + translate_x;
+        %DataMat(1,i) = DataMat(1,i) + translate_x;
         output(:,counter2) = DataMat(:,i);
         fprintf(fileID, '%4.3f %4.3f %4.3f %4.3f %4.3f \n', DataMat(:,i));
         counter = 0;

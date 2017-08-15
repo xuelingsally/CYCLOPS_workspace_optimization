@@ -19,12 +19,12 @@ dist_tool_b_cg = 30;
 dist_tooltip = 70;
 
 % Euler Angles
-ea(1) = 60/180 * pi;
-ea(2) = 180/180 * pi;
-ea(3) = 300/180 * pi;
-ea(4) = 60/180 * pi;
-ea(5) = 180/180 * pi;
-ea(6) = 300/180 * pi;
+ea(1) = 30/180 * pi;
+ea(2) = 150/180 * pi;
+ea(3) = 270/180 * pi;
+ea(4) = 30/180 * pi;
+ea(5) = 150/180 * pi;
+ea(6) = 270/180 * pi;
 
 % Attachment Points
 a(:,1) = [30, radius_tool * sin(ea(1)), radius_tool * cos(ea(1))];
@@ -45,19 +45,22 @@ B(:,6) = [-70, radius_scaffold * sin(ea(6)), radius_scaffold * cos(ea(6))];
 
 % Taskspace Definition: List of points that form the boundary of the space
 % that the surgeon needs the tool to move in for the operation.
-taskspace = [];
-taskspace(:,end+1) = [20, 5, 5];
-taskspace(:,end+1) = [20, -5, 5];
-taskspace(:,end+1) = [20, -5, -5];
-taskspace(:,end+1) = [20, 5, -5];
-taskspace(:,end+1) = [25, 5, -6];
-taskspace(:,end+1) = [25, 5, 6];
-taskspace(:,end+1) = [25, -5, -6];
-taskspace(:,end+1) = [25, -5, 6];
-taskspace(:,end+1) = [35, 5, -10];
-taskspace(:,end+1) = [30, 5, 5];
-taskspace(:,end+1) = [30, -5, -5];
-taskspace(:,end+1) = [30, -5, 5];
+% taskspace = [];
+% taskspace(:,end+1) = [20, 5, 5];
+% taskspace(:,end+1) = [20, -5, 5];
+% taskspace(:,end+1) = [20, -5, -5];
+% taskspace(:,end+1) = [20, 5, -5];
+% taskspace(:,end+1) = [25, 5, -6];
+% taskspace(:,end+1) = [25, 5, 6];
+% taskspace(:,end+1) = [25, -5, -6];
+% taskspace(:,end+1) = [25, -5, 6];
+% taskspace(:,end+1) = [35, 5, -10];
+% taskspace(:,end+1) = [30, 5, 5];
+% taskspace(:,end+1) = [30, -5, -5];
+% taskspace(:,end+1) = [30, -5, 5];
+
+load('data1.mat');
+taskspace = data(1:3,:);
 
 draw_cyclops_full(a,B, taskspace, radius_tool, radius_scaffold, length_scaffold, length_overtube, dist_tool_b_cg, dist_tooltip);
 

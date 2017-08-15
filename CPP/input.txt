@@ -7,15 +7,15 @@ dist_tool_back 30.0
 num_tendons 6
 min_tension 1.0
 max_tension 60.0
-orientation_limit 0.0
+orientation_limit 10.0
 external_wrench 0.0 0.0 0.0 0.0 0.0 0.0
 mass_tool 0.0
 cg_tool 0.0
 end_effector_force_vectors 1
 0 0 -0.1
 tool_tip_limit 100.0
-angle_lower_limit 30.0
-angle_upper_limit 270.0
+angle_lower_limit -210.0
+angle_upper_limit 30.0
 
 OPTIMIZATION_PARAM
 num_runs 5
