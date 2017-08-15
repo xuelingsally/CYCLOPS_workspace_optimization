@@ -383,25 +383,24 @@ double cyclops::objective_function(Matrix<double,Dynamic,1> eaB, Matrix<double,6
     a.resize(3,num_tendons);
     B.resize(3,num_tendons);
 
-
     // Feeding and attachment points for the 6 main tendons.
-	for(int i=0; i<6; i++)
-	{
-		double cos_mul = cos(eaB(i,0));
-		double sin_mul = sin(eaB(i,0));
+    for(int i=0; i<6; i++)
+    {
+        double cos_mul = cos(eaB(i,0));
+        double sin_mul = sin(eaB(i,0));
 
-		a(0,i) = eaB(i+6,0);
-		a(1,i) = radius_tool * cos_mul;
-        a(2,i) = radius_tool * sin_mul;
+        a(0,i) = eaB(i+6,0);
+        a(1,i) = radius_tool * sin_mul; //y-component
+        a(2,i) = radius_tool * cos_mul; //z-component
 
         if(i<3)
-        	B(0,i) = eaB(12,0);
+            B(0,i) = eaB(12,0);
         else
-        	B(0,i) = eaB(13,0);
+            B(0,i) = eaB(13,0);
 
-        B(1,i) = radius_scaffold * cos_mul;
-        B(2,i) = radius_scaffold * sin_mul;
-	}
+        B(1,i) = radius_scaffold * sin_mul; //y-component
+        B(2,i) = radius_scaffold * cos_mul; //z-component
+    }
 
     // Feeding and attachment points for the 'extra' tendons
     for (int i=0; i<num_tendons - 6; i++)
@@ -410,12 +409,12 @@ double cyclops::objective_function(Matrix<double,Dynamic,1> eaB, Matrix<double,6
         double sin_mul = sin(eaB(i*3+15, 0));
 
         a(0,i+6) = eaB(i*3+15+1,0);
-        a(1,i+6) = radius_tool * cos_mul;
-        a(2,i+6) = radius_tool * sin_mul;
+        a(1,i+6) = radius_tool * sin_mul; 
+        a(2,i+6) = radius_tool * cos_mul;
 
         B(0,i+6) = eaB(i*3+15+2,0);
-        B(1,i+6) = radius_scaffold * cos_mul;
-        B(2,i+6) = radius_scaffold * sin_mul;
+        B(1,i+6) = radius_scaffold * sin_mul;
+        B(2,i+6) = radius_scaffold * cos_mul;
     }
 
 /*
@@ -582,16 +581,16 @@ double cyclops::objective_function2(Matrix<double,Dynamic,1> eaB, Matrix<double,
         double sin_mul = sin(eaB(i,0));
 
         a(0,i) = eaB(i+6,0);
-        a(1,i) = radius_tool * cos_mul;
-        a(2,i) = radius_tool * sin_mul;
+        a(1,i) = radius_tool * sin_mul; //y-component
+        a(2,i) = radius_tool * cos_mul; //z-component
 
         if(i<3)
             B(0,i) = eaB(12,0);
         else
             B(0,i) = eaB(13,0);
 
-        B(1,i) = radius_scaffold * cos_mul;
-        B(2,i) = radius_scaffold * sin_mul;
+        B(1,i) = radius_scaffold * sin_mul; //y-component
+        B(2,i) = radius_scaffold * cos_mul; //z-component
     }
 
     // Feeding and attachment points for the 'extra' tendons
@@ -601,12 +600,12 @@ double cyclops::objective_function2(Matrix<double,Dynamic,1> eaB, Matrix<double,
         double sin_mul = sin(eaB(i*3+15, 0));
 
         a(0,i+6) = eaB(i*3+15+1,0);
-        a(1,i+6) = radius_tool * cos_mul;
-        a(2,i+6) = radius_tool * sin_mul;
+        a(1,i+6) = radius_tool * sin_mul; 
+        a(2,i+6) = radius_tool * cos_mul;
 
         B(0,i+6) = eaB(i*3+15+2,0);
-        B(1,i+6) = radius_scaffold * cos_mul;
-        B(2,i+6) = radius_scaffold * sin_mul;
+        B(1,i+6) = radius_scaffold * sin_mul;
+        B(2,i+6) = radius_scaffold * cos_mul;
     }
 
 /*
@@ -654,8 +653,6 @@ double cyclops::objective_function2(Matrix<double,Dynamic,1> eaB, Matrix<double,
             return val;
         }
     }
-    
-
 
     // Based on the tooltip, find the poses that the CG of the tool has to reach
     double dist_tooltip = eaB(14);

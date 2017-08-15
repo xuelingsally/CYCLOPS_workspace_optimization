@@ -27,20 +27,21 @@ ea(5) = 180/180 * pi;
 ea(6) = 300/180 * pi;
 
 % Attachment Points
-a(:,1) = [30, radius_tool * cos(ea(1)), radius_tool * sin(ea(1))];
-a(:,2) = [30, radius_tool * cos(ea(2)), radius_tool * sin(ea(2))];
-a(:,3) = [30, radius_tool * cos(ea(3)), radius_tool * sin(ea(3))];
-a(:,4) = [-30, radius_tool * cos(ea(4)), radius_tool * sin(ea(4))];
-a(:,5) = [-30, radius_tool * cos(ea(5)), radius_tool * sin(ea(5))];
-a(:,6) = [-30, radius_tool * cos(ea(6)), radius_tool * sin(ea(6))];
+a(:,1) = [30, radius_tool * sin(ea(1)), radius_tool * cos(ea(1))];
+a(:,2) = [30, radius_tool * sin(ea(2)), radius_tool * cos(ea(2))];
+a(:,3) = [30, radius_tool * sin(ea(3)), radius_tool * cos(ea(3))];
+a(:,4) = [-30, radius_tool * sin(ea(4)), radius_tool * cos(ea(4))];
+a(:,5) = [-30, radius_tool * sin(ea(5)), radius_tool * cos(ea(5))];
+a(:,6) = [-30, radius_tool * sin(ea(6)), radius_tool * cos(ea(6))];
 
 % Base Frame 
-B(:,1) = [0, radius_scaffold * cos(ea(1)), radius_scaffold * sin(ea(1))];
-B(:,2) = [0, radius_scaffold * cos(ea(2)), radius_scaffold * sin(ea(2))];
-B(:,3) = [0, radius_scaffold * cos(ea(3)), radius_scaffold * sin(ea(3))];
-B(:,4) = [-70, radius_scaffold * cos(ea(4)), radius_scaffold * sin(ea(4))];
-B(:,5) = [-70, radius_scaffold * cos(ea(5)), radius_scaffold * sin(ea(5))];
-B(:,6) = [-70, radius_scaffold * cos(ea(6)), radius_scaffold * sin(ea(6))];
+B(:,1) = [0, radius_scaffold * sin(ea(1)), radius_scaffold * cos(ea(1))];
+B(:,2) = [0, radius_scaffold * sin(ea(2)), radius_scaffold * cos(ea(2))];
+B(:,3) = [0, radius_scaffold * sin(ea(3)), radius_scaffold * cos(ea(3))];
+B(:,4) = [-70, radius_scaffold * sin(ea(4)), radius_scaffold * cos(ea(4))];
+B(:,5) = [-70, radius_scaffold * sin(ea(5)), radius_scaffold * cos(ea(5))];
+B(:,6) = [-70, radius_scaffold * sin(ea(6)), radius_scaffold * cos(ea(6))];
+
 
 % Taskspace Definition: List of points that form the boundary of the space
 % that the surgeon needs the tool to move in for the operation.
