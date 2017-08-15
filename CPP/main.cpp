@@ -29,6 +29,7 @@
 #include "cyclops.h"
 
 #define PI 3.141592654
+#define g 9.81
 
 using namespace simgalib;
 using namespace simpsolib;
@@ -99,6 +100,13 @@ int main()
     }
     //W << 0.0,0.0,0.0,0.0,0.0,0.0;
     std::cout << "Wrench Vector: " << W.transpose() << std::endl;
+    // Mass of tool and CG Position
+    double mass = 0.0;
+    double CG_pos = 0.0;
+    inData >> temp >> mass >> temp >> CG_pos;
+
+    std::cout << "Mass of Tool: " << mass << std::endl;
+    std::cout << "CG of Tool: " << CG_pos << std::endl;
 
     // End Effector Force 
     int f_ee_vec_size;
@@ -159,7 +167,15 @@ int main()
 
 
     // Wrench Vector
-    fnInputs.W = W;
+    Eigen::Vector3d r_cg, f_cg;
+    f_cg << 0.0, mass * -g, 0.0;
+    r_cg << CG_pos, 0.0, 0.0;
+    Eigen::Vector3d tau_f_cg = f_cg.cross(r_cg/1000);
+    Eigen::Matrix<double,6,1> W_cg;
+    W_cg << f_cg(0,0), f_cg(1,0), f_cg(2,0), tau_f_cg(0,0), tau_f_cg(1,0), tau_f_cg(2,0);
+    fnInputs.W = W + W_cg;
+
+    cout << (fnInputs.W).transpose() << endl;
 
 /*
     // end effector force

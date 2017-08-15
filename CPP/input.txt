@@ -9,6 +9,8 @@ min_tension 1.0
 max_tension 60.0
 orientation_limit 10.0
 external_wrench 0.0 0.0 0.0 0.0 0.0 0.0
+mass_tool 0.0
+cg_tool 0.0
 end_effector_force_vectors 1
 0 0 -0.1
 tool_tip_limit 100.0
