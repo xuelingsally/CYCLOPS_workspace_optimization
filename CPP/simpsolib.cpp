@@ -502,6 +502,80 @@ bool simpsolib::Population::patternsearch()
         }
     }
 
+    // Additional Directions (Moving front and back 3 tendons tgt)
+    if (!success)
+    {
+        for (int i=0; i<2; i++)
+        {
+            vector<double> d_plus = (*pool[pop_leader_index]).best_position;
+            
+            d_plus[3*i+6] = d_plus[3*i+6] + mesh_size * SearchDirVec[3*i+6];
+            d_plus[3*i+6+1] = d_plus[3*i+6+1] + mesh_size * SearchDirVec[3*i+6+1];
+            d_plus[3*i+6+2] = d_plus[3*i+6+2] + mesh_size * SearchDirVec[3*i+6+2];
+            
+            if (d_plus[i] > evaluator.upper_range[i])
+            {
+                d_plus[i] = evaluator.upper_range[i];
+            }
+            else if (d_plus[i] < evaluator.lower_range[i])
+            {
+                d_plus[i] = evaluator.lower_range[i];
+            }
+
+            fn_value = evaluator.evaluate(d_plus, evaluator.Input);
+            function_cnt++;
+
+            if (fn_value > (*pool[pop_leader_index]).best_value)
+            {
+                (*pool[pop_leader_index]).position = d_plus;
+                (*pool[pop_leader_index]).best_position = d_plus;
+                (*pool[pop_leader_index]).best_value = fn_value;
+                (*pool[pop_leader_index]).value = fn_value;
+
+                //since this is the pop leader, it is also the best value
+                overall_best_position=d_plus;
+                overall_best_value=fn_value;
+
+                success = true;
+                break;
+            }
+
+            vector<double> d_minus = (*pool[pop_leader_index]).best_position;
+
+            d_minus[3*i+6] = d_minus[3*i+6] - mesh_size * SearchDirVec[3*i+6];
+            d_minus[3*i+6+1] = d_minus[3*i+6+1] - mesh_size * SearchDirVec[3*i+6+1];
+            d_minus[3*i+6+2] = d_minus[3*i+6+2] - mesh_size * SearchDirVec[3*i+6+2];
+            
+            if (d_minus[i] > evaluator.upper_range[i])
+            {
+                d_minus[i] = evaluator.upper_range[i];
+            }
+            else if (d_minus[i] < evaluator.lower_range[i])
+            {
+                d_minus[i] = evaluator.lower_range[i];
+            }
+
+            fn_value = evaluator.evaluate(d_minus, evaluator.Input);
+            function_cnt++;
+
+            if (fn_value > (*pool[pop_leader_index]).best_value)
+            {
+                (*pool[pop_leader_index]).position = d_minus;
+                (*pool[pop_leader_index]).best_position = d_minus;
+                (*pool[pop_leader_index]).best_value = fn_value;
+                (*pool[pop_leader_index]).value = fn_value;
+
+                //since this is the pop leader, it is also the best value
+                overall_best_position = d_minus;
+                overall_best_value = fn_value;
+
+                success = true;
+                break;
+            }
+
+        }
+    }
+
 
     if (!success)
     {
