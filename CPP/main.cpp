@@ -175,7 +175,7 @@ int main()
     W_cg << f_cg(0,0), f_cg(1,0), f_cg(2,0), tau_f_cg(0,0), tau_f_cg(1,0), tau_f_cg(2,0);
     fnInputs.W = W + W_cg;
 
-    cout << (fnInputs.W).transpose() << endl;
+   // cout << (fnInputs.W).transpose() << endl;
 
 /*
     // end effector force
@@ -197,7 +197,7 @@ int main()
 */
 
     // Taskspace Definition
-    string tp_filename = "./taskspace2a.txt";
+    string tp_filename = "./taskspace2b.txt";
     ifstream inTaskspace;
     inTaskspace.open(tp_filename.c_str());
     inTaskspace >> temp; //Take the in the heading word
