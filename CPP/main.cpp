@@ -237,17 +237,17 @@ int main()
             inTaskspace >> tp_temp_scalar;
             if( inTaskspace.eof() ) break;
 
-            tp_temp(0) = tp_temp_scalar;
+            tp_temp(0) = tp_temp_scalar/1000.0;
             inTaskspace >>  tp_temp_scalar;
-            tp_temp(1) = tp_temp_scalar;
+            tp_temp(1) = tp_temp_scalar/1000.0;
             inTaskspace >>  tp_temp_scalar;
-            tp_temp(2) = tp_temp_scalar;
+            tp_temp(2) = tp_temp_scalar/1000.0;
             inTaskspace >>  tp_temp_scalar;
             tp_temp(3) = tp_temp_scalar;
             inTaskspace >>  tp_temp_scalar;
             tp_temp(4) = tp_temp_scalar;
 
-            fnInputs.taskspace.push_back(tp_temp/1000.0);
+            fnInputs.taskspace.push_back(tp_temp);
             //std::cout << tp_temp.transpose() << std::endl;
         }
     }

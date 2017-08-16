@@ -1,13 +1,13 @@
 load('data_r_tp.mat');
 taskspace = data_r_tp;
 taskspace(1,:) = taskspace(1,:) + abs(min(taskspace(1,:))) + 5;
-taskspace(3,:) = taskspace(3,:) - 13;
+taskspace(3,:) = taskspace(3,:) - 8;
 data1 = taskspace;
 
 data1_t = [];
 R = [];
 
-dist_tooltip = 50;
+%dist_tooltip = 50;
 
 for i=1:size(data1,2)
     phi_y = data1(5,i);

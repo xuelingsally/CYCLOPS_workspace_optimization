@@ -654,6 +654,12 @@ double cyclops::objective_function2(Matrix<double,Dynamic,1> eaB, Matrix<double,
         }
     }
 
+    if (abs(eaB(12) - eaB(13)) < 5.0)
+    {
+        val = -1.5;
+        return val;
+    }
+
     // Based on the tooltip, find the poses that the CG of the tool has to reach
     double dist_tooltip = eaB(14);
     Vector3d r_ee;
@@ -673,6 +679,8 @@ double cyclops::objective_function2(Matrix<double,Dynamic,1> eaB, Matrix<double,
         double alpha_y = (*taskspace_iter)(3,0);
         double alpha_z = (*taskspace_iter)(4,0);
 
+        //cout << "alpha_y: " << alpha_y << "  alpha_z: " << alpha_z << endl;
+
         // Find the required position of the tool
         // Define rotation Matrix
         Matrix3d R_y, R_z, T_r;
@@ -685,12 +693,13 @@ double cyclops::objective_function2(Matrix<double,Dynamic,1> eaB, Matrix<double,
         T_r = R_y * R_z;
 
         Vector3d r_ee_rotated = -T_r * r_ee;
+        //cout << r_ee_rotated.transpose() << endl;
 
         //r_ee_temp << r_ee(0), r_ee(1), r_ee(2), 0.0, 0.0;
         r_ee_temp << r_ee_rotated(0,0), r_ee_rotated(1,0), r_ee_rotated(2,0), 0.0, 0.0;
 
         Matrix<double,5,1> taskspace_temp = (*taskspace_iter) + r_ee_temp/1000;
-        cout << taskspace_temp.transpose() * 1000 << ";" <<std::endl;
+        //cout << taskspace_temp.transpose() * 1000 << ";" <<std::endl;
 
         for (f_ee_iter = f_ee_vec.begin(); f_ee_iter!=f_ee_vec.end(); ++f_ee_iter)
         {
@@ -705,7 +714,7 @@ double cyclops::objective_function2(Matrix<double,Dynamic,1> eaB, Matrix<double,
             }
         }
     }
-    cout << endl << dist_tooltip << endl << endl;
+    //cout << endl << dist_tooltip << endl << endl;
 
     if (val < 0.0)
     {
