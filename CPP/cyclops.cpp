@@ -654,7 +654,7 @@ double cyclops::objective_function2(Matrix<double,Dynamic,1> eaB, Matrix<double,
         }
     }
 
-    if (abs(eaB(12) - eaB(13)) < 5.0)
+    if (abs(eaB(12) - eaB(13)) < 0.05 * length_scaffold)
     {
         val = -1.5;
         return val;
