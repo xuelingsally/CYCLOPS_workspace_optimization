@@ -689,8 +689,8 @@ double cyclops::objective_function2(Matrix<double,Dynamic,1> eaB, Matrix<double,
         //r_ee_temp << r_ee(0), r_ee(1), r_ee(2), 0.0, 0.0;
         r_ee_temp << r_ee_rotated(0,0), r_ee_rotated(1,0), r_ee_rotated(2,0), 0.0, 0.0;
 
-        Matrix<double,5,1> taskspace_temp = (*taskspace_iter) - r_ee_temp/1000;
-        //cout << taskspace_temp.transpose() * 1000 << ";" <<std::endl;
+        Matrix<double,5,1> taskspace_temp = (*taskspace_iter) + r_ee_temp/1000;
+        cout << taskspace_temp.transpose() * 1000 << ";" <<std::endl;
 
         for (f_ee_iter = f_ee_vec.begin(); f_ee_iter!=f_ee_vec.end(); ++f_ee_iter)
         {
@@ -705,7 +705,7 @@ double cyclops::objective_function2(Matrix<double,Dynamic,1> eaB, Matrix<double,
             }
         }
     }
-    //cout << dist_tooltip << endl;
+    cout << endl << dist_tooltip << endl << endl;
 
     if (val < 0.0)
     {

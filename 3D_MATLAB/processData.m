@@ -1,4 +1,4 @@
-function output = processData(DataMat, T_Dist)
+function output = processData(DataMat)
 
 % DataMat_x = DataMat(1,:);
 % 

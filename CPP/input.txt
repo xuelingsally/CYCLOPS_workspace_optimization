@@ -1,6 +1,6 @@
 CYCLOPS_PARAM
 radius_tool 1.75
-radius_scaffold 30
+radius_scaffold 50.0
 length_scaffold 70.0
 length_overtube 60.0
 dist_tool_back 30.0
@@ -14,8 +14,8 @@ cg_tool 0.0
 end_effector_force_vectors 1
 0 0 -0.1
 tool_tip_limit 100.0
-angle_lower_limit -210.0
-angle_upper_limit 30.0
+angle_lower_limit -180.0
+angle_upper_limit 0.0
 
 OPTIMIZATION_PARAM
 num_runs 5

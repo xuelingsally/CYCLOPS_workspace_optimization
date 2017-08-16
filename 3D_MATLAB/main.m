@@ -19,12 +19,12 @@ dist_tool_b_cg = 30;
 dist_tooltip = 70;
 
 % Euler Angles
-ea(1) = 30/180 * pi;
-ea(2) = 150/180 * pi;
-ea(3) = 270/180 * pi;
-ea(4) = 30/180 * pi;
-ea(5) = 150/180 * pi;
-ea(6) = 270/180 * pi;
+ea(1) = 0/180 * pi;
+ea(2) = -90/180 * pi;
+ea(3) = -180/180 * pi;
+ea(4) = 0/180 * pi;
+ea(5) = -90/180 * pi;
+ea(6) = -180/180 * pi;
 
 % Attachment Points
 a(:,1) = [30, radius_tool * sin(ea(1)), radius_tool * cos(ea(1))];
@@ -33,6 +33,13 @@ a(:,3) = [30, radius_tool * sin(ea(3)), radius_tool * cos(ea(3))];
 a(:,4) = [-30, radius_tool * sin(ea(4)), radius_tool * cos(ea(4))];
 a(:,5) = [-30, radius_tool * sin(ea(5)), radius_tool * cos(ea(5))];
 a(:,6) = [-30, radius_tool * sin(ea(6)), radius_tool * cos(ea(6))];
+
+% a(:,1) = [30, radius_tool * sin(30), radius_tool * cos(-30)];
+% a(:,2) = [30, radius_tool * sin(-90), radius_tool * cos(-90)];
+% a(:,3) = [30, radius_tool * sin(-210), radius_tool * cos(-210)];
+% a(:,4) = [-30, radius_tool * sin(30), radius_tool * cos(-30)];
+% a(:,5) = [-30, radius_tool * sin(-90), radius_tool * cos(-90)];
+% a(:,6) = [-30, radius_tool * sin(-210), radius_tool * cos(-210)];
 
 % Base Frame 
 B(:,1) = [0, radius_scaffold * sin(ea(1)), radius_scaffold * cos(ea(1))];
