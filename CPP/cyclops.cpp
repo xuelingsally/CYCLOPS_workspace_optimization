@@ -674,13 +674,20 @@ double cyclops::objective_function2(Matrix<double,Dynamic,1> eaB, Matrix<double,
         double alpha_z = (*taskspace_iter)(4,0);
 
         // Find the required position of the tool
-        double r_ee_g_z = sin(alpha_z) * dist_tooltip;
-        double h_y = cos(alpha_z) * dist_tooltip;
-        double r_ee_g_y = sin(alpha_y) * h_y;
-        double r_ee_g_x = cos(alpha_y) * h_y;
+        // Define rotation Matrix
+        Matrix3d R_y, R_z, T_r;
+        R_y << cos(alpha_y), 0, sin(alpha_y),
+               0, 1, 0,
+               -sin(alpha_y), 0, cos(alpha_y);
+        R_z << cos(alpha_z), -sin(alpha_z), 0,
+               sin(alpha_z), cos(alpha_z), 0,
+               0, 0, 1;
+        T_r = R_y * R_z;
+
+        Vector3d r_ee_rotated = -T_r * r_ee;
 
         //r_ee_temp << r_ee(0), r_ee(1), r_ee(2), 0.0, 0.0;
-        r_ee_temp << r_ee_g_x, r_ee_g_y, r_ee_g_z, 0.0, 0.0;
+        r_ee_temp << r_ee_rotated(0,0), r_ee_rotated(1,0), r_ee_rotated(2,0), 0.0, 0.0;
 
         Matrix<double,5,1> taskspace_temp = (*taskspace_iter) - r_ee_temp/1000;
         //cout << taskspace_temp.transpose() * 1000 << ";" <<std::endl;

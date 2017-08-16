@@ -1,24 +1,25 @@
-load('relative_data.mat');
-
-data1 = relative_data;
-data1(1,:) = data1(1,:) + 18;
+load('data_r_tp.mat');
+taskspace = data_r_tp;
+taskspace(1,:) = taskspace(1,:) + abs(min(taskspace(1,:))) + 5;
+% data1 = relative_data;
+% data1(1,:) = data1(1,:) + 18;
+data1 = taskspace;
 
 data1_t = [];
+R = [];
 
 for i=1:size(data1,2)
-%     r_ee_g_z = sin(data1(6,i)) * dist_tooltip;
-%     h_y = cos(data1(6,i)) * dist_tooltip;
-%     r_ee_g_y = sin(data1(5,i)) * h_y;
-%     r_ee_g_x = cos(data1(5,i)) * h_y;
-%     data1_t(:,i) = [data1(1,i) - r_ee_g_x; data1(2,i) - r_ee_g_y; data1(3,i) + r_ee_g_z; data1(4,i); data1(5,i); data1(6,i)];
-    r_ee_g_y = sin(data1(5,i));
-    r_ee_g_z = sin(data1(6,i)) * cos(data1(5,i));
-    r_ee_g_x = cos(data1(6,i)) * cos(data1(5,i));
+    phi_y = data1(5,i);
+    phi_z = data1(6,i);
     
-    r_ee = [r_ee_g_x; r_ee_g_y; r_ee_g_z];
-    r_ee = -r_ee/norm(r_ee) * dist_tooltip;
+    R_y = [cos(phi_y), 0, sin(phi_y); 0, 1, 0; -sin(phi_y), 0, cos(phi_y)];
+    R_z = [cos(phi_z), -sin(phi_z), 0; sin(phi_z), cos(phi_z), 0; 0, 0, 1];
+    R = R_y * R_z;
     
-    data1_t(:,i) = [data1(1,i) + r_ee(1); data1(2,i) + r_ee(2); data1(3,i) + r_ee(3); data1(4,i); data1(5,i); data1(6,i)];
+    r_ee_temp = [dist_tooltip;0;0];
+    
+    data1_t(1:3,i) = -R * r_ee_temp + data1(1:3,i);
+    data1_t(4:6,i) = data1(4:6,i);
 end
 
 taskspace = data1;

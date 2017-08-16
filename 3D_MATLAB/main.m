@@ -59,8 +59,9 @@ B(:,6) = [-70, radius_scaffold * sin(ea(6)), radius_scaffold * cos(ea(6))];
 % taskspace(:,end+1) = [30, -5, -5];
 % taskspace(:,end+1) = [30, -5, 5];
 
-load('data1.mat');
-taskspace = data(1:3,:);
+load('data_r_tp.mat');
+taskspace = data_r_tp;
+taskspace(1,:) = taskspace(1,:) + abs(min(taskspace(1,:))) + 5;
 
 draw_cyclops_full(a,B, taskspace, radius_tool, radius_scaffold, length_scaffold, length_overtube, dist_tool_b_cg, dist_tooltip);
 
