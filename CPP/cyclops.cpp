@@ -880,7 +880,7 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
     curve_vec = r_ee - r_curve;
 
     // Find the curving angles (i.e. gamma_y (pitch) and gamma_z (yaw))
-    double gamma_y = atan2(curve_vec(2), -curve_vec(0));
+    double gamma_y = atan2(-curve_vec(2), curve_vec(0));
     double gamma_z = atan2(curve_vec(1), curve_vec(0));
 
     // Checking if the points in the taskspace are feasible across the given forces on the end effector
