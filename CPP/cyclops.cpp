@@ -909,7 +909,10 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
                0, 0, 1;
         T_r = R_z * R_y;
 
-        Vector3d r_ee_rotated = -T_r * r_ee;
+        Vector3d r_ee_offset;
+        r_ee_offset << r_ee(0), -r_ee(1), -r_ee(2);
+
+        Vector3d r_ee_rotated = -T_r * r_ee_offset;
         //cout << r_ee_rotated.transpose() << endl;
 
         //r_ee_temp << r_ee(0), r_ee(1), r_ee(2), 0.0, 0.0;
