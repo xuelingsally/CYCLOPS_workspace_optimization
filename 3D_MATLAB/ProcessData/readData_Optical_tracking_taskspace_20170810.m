@@ -64,28 +64,26 @@ end
 plot3(p(1,:),p(2,:),p(3,:),'.r')
 axis equal 
 
-% Relative Taskspace
-mean_p = mean(p,2);
+% Relative trans and rot
+max_x = max(p(1,:));
+min_x = min(p(1,:));
+max_y = max(p(2,:));
+min_y = min(p(2,:));
+max_z = max(p(3,:));
+min_z = min(p(3,:));
+
+cx = min_x + (max_x - min_x)/2;
+cy = min_y + (max_y - min_y)/2;
+cz = min_z + (max_z - min_z)/2;
+
 p_relative = [];
 for i=1:size(p,2)
-    p_relative(1:3,i) = p(:,i) - mean_p;
+    p_relative(1:3,i) = p(:,i) - [cx; cy; cz];
     p_relative(4:6,i) = Rotation_angle(:,i);
 end
 
 data_r_tp = p_relative;
 save('data_r_tp.mat', 'data_r_tp');
-
-% Relative trans and rot
-% max_x = max(Translation_taskspace(1,:));
-% min_x = min(Translation_taskspace(1,:));
-% max_y = max(Translation_taskspace(2,:));
-% min_y = min(Translation_taskspace(2,:));
-% max_z = max(Translation_taskspace(3,:));
-% min_z = min(Translation_taskspace(3,:));
-% 
-% cx = min_x + (max_x - min_x)/2;
-% cy = min_y + (max_y - min_y)/2;
-% cz = min_z + (max_z - min_z)/2;
 
 % Relative_Translation = Translation_taskspace - repmat([cx;cy;cz],1,length(Translation_taskspace(1,:)));
 % figure 

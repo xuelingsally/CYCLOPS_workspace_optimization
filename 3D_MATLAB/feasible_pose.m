@@ -15,7 +15,7 @@ phi_z = P(5);
 % Rotation Matrix for attachment points
 R_y = [cos(phi_y), 0, sin(phi_y); 0, 1, 0; -sin(phi_y), 0, cos(phi_y)];
 R_z = [cos(phi_z), -sin(phi_z), 0; sin(phi_z), cos(phi_z), 0; 0, 0, 1];
-T_r = R_y * R_z;
+T_r = R_z * R_y;
 
 % Create Structural Matrix, A
 for i=1:size(a, 2)

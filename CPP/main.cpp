@@ -67,6 +67,17 @@ int main()
     // Number of Tendons
     int num_tendons = 8;
     inData >> temp >> num_tendons;
+
+    // Is the tool curved?
+    int curve = 0;
+    inData >> temp >> curve;
+    if (curve == 0)
+        fnInputs.curve_tool = false;
+    else
+    {
+        fnInputs.curve_tool = true;
+        curve = 1;
+    }
     
     std::cout << "CYCLOPS PARAMS" << std::endl;
     std::cout << "Radius Tool: " << radius_tool << std::endl;
@@ -75,6 +86,7 @@ int main()
     std::cout << "Length Overtube: " << length_overtube << std::endl;
     std::cout << "Distance Tool Back: " << dist_tool_b_cg << std::endl;
     std::cout << "Number of Tendons: " << num_tendons << std::endl;
+    std::cout << "Curved Tool: " << fnInputs.curve_tool << std::endl;
     
     // Tensions
     double tension_min = 5.0;
@@ -288,8 +300,8 @@ int main()
     vector<double> lower_range;
     vector<double> upper_range;
 
-    lower_range.resize((num_tendons - 6)*3 + 15);
-    upper_range.resize((num_tendons - 6)*3 + 15);
+    lower_range.resize((num_tendons - 6)*3 + 15 + curve *3);
+    upper_range.resize((num_tendons - 6)*3 + 15 + curve *3);
 
     // Limits for basic six tendons
     // Limits for e (angles)
@@ -299,6 +311,13 @@ int main()
         upper_range[i]= angle_upper_limit/180.0 * PI;
     }
     // Limits for a
+    /*
+    for (int i=6; i<12; i++)
+    {
+        lower_range[i] = -dist_tool_b_cg;
+        upper_range[i] = (length_overtube - dist_tool_b_cg);
+    }*/
+    
     // Front 3 tendons
     for (int i=6; i<9; i++)
     {
@@ -311,6 +330,7 @@ int main()
         lower_range[i] = 0.0;
         upper_range[i] = (length_overtube - dist_tool_b_cg);
     }
+    
     // Limits for B
     for (int i=12; i<14; i++)
     {
@@ -318,18 +338,33 @@ int main()
         upper_range[i] = 0.0;
     }
     // Limits for tooltip
-    lower_range[14] = 0.0;
-    upper_range[14] = tool_tip_limit;
+    if (curve == 0)
+    {
+        // No curve we only optimise for r_ee_x
+        lower_range[14] = 0.0;
+        upper_range[14] = tool_tip_limit;
+    }
+    else
+    {
+        lower_range[14] = 0.0;
+        upper_range[14] = tool_tip_limit;
+        lower_range[15] = -radius_scaffold;
+        upper_range[15] = radius_scaffold;
+        lower_range[16] = -radius_scaffold;
+        upper_range[16] = radius_scaffold;
+        lower_range[17] = 0.0;
+        upper_range[17] = tool_tip_limit;
+    }
 
     // Limits for additional Tendons
     for (int i=0; i<num_tendons-6; i++)
     {
-        lower_range[15+i*3] = 0.0;
-        upper_range[15+i*3] = 2.0 * PI;
-        lower_range[15+i*3+1] = -dist_tool_b_cg;
-        upper_range[15+i*3+1] = (length_overtube - dist_tool_b_cg);
-        lower_range[15+i*3+2] = -length_scaffold;
-        upper_range[15+i*3+2] = 0.0;
+        lower_range[15+i*3+curve*3] = 0.0;
+        upper_range[15+i*3+curve*3] = 2.0 * PI;
+        lower_range[15+i*3+1+curve*3] = -dist_tool_b_cg;
+        upper_range[15+i*3+1+curve*3] = (length_overtube - dist_tool_b_cg);
+        lower_range[15+i*3+2+curve*3] = -length_scaffold;
+        upper_range[15+i*3+2+curve*3] = 0.0;
     }
 
 //---------------------------------------------------------------------------------
@@ -367,7 +402,7 @@ int main()
     std::cout << "PFO Resample Factor: " << pfo_resample_factor << std::endl << std::endl;
 
     std::cout << "STARTING OPTIMIZATION" << std::endl;
-    int num_dims = 15 + (num_tendons - 6) * 3;
+    int num_dims = 15 + (num_tendons - 6) * 3 + curve * 3;
     //Create logging file
     //ofstream cout("output.txt")
 

@@ -7,7 +7,7 @@ clc;
 % Radius of overtube/tool
 radius_tool = 1.75;
 % Radius of Scaffold
-radius_scaffold = 30;
+radius_scaffold = 26.128;
 % Length of the scaffold
 length_scaffold = 70;
 % Lenght of overtube
@@ -19,12 +19,12 @@ dist_tool_b_cg = 30;
 dist_tooltip = 70;
 
 % Euler Angles
-ea(1) = 0/180 * pi;
+ea(1) = 30/180 * pi;
 ea(2) = -90/180 * pi;
-ea(3) = -180/180 * pi;
-ea(4) = 0/180 * pi;
+ea(3) = -210/180 * pi;
+ea(4) = 30/180 * pi;
 ea(5) = -90/180 * pi;
-ea(6) = -180/180 * pi;
+ea(6) = -210/180 * pi;
 
 % Attachment Points
 a(:,1) = [30, radius_tool * sin(ea(1)), radius_tool * cos(ea(1))];
