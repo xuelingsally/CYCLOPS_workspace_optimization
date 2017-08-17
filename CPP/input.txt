@@ -1,7 +1,7 @@
 CYCLOPS_PARAM
 radius_tool 1.75
 radius_scaffold 26.128
-length_scaffold 120.0
+length_scaffold 100.0
 length_overtube 60.0
 dist_tool_back 30.0
 num_tendons 6
@@ -21,7 +21,7 @@ angle_upper_limit 30.0
 OPTIMIZATION_PARAM
 num_runs 5
 pso_population_size 500
-pso_num_iters 60
+pso_num_iters 70
 pfo_population_size 50
 pfo_num_iters 30
 pfo_resample_factor 10
