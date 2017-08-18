@@ -19,7 +19,7 @@ for i=1:size(data1,2)
     R = R_z * R_y;
     
     %r_ee_temp = [dist_tooltip; 0; 0];
-    r_ee_temp = r_ee;
+    r_ee_temp = [r_ee(1); -r_ee(2); -r_ee(3)];
     
     data1_t(1:3,i) = -R * r_ee_temp + data1(1:3,i);
     data1_t(4:6,i) = data1(4:6,i);

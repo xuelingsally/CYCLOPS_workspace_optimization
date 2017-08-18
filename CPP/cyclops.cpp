@@ -865,13 +865,6 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
         return val;
     }
 
-    // curve cannot exceed the tooltip
-    if (eaB(14) < eaB(17))
-    {
-        val = -1.5;
-        return val;
-    }
-
     double curve_x = eaB(17);
     Vector3d r_ee, r_curve, curve_vec;
     r_ee << eaB(14), eaB(15), eaB(16);
