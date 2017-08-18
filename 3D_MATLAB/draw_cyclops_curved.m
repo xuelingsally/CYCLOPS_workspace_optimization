@@ -45,15 +45,20 @@ x = x * length_overtube + x_middle + min(a(1,:));
 s = surf(x,y,z, 'EdgeColor', 'none', 'FaceColor','k');
 
 % Draw tool to curve point
-[y,z,x] = cylinder(radius_tool, 20);
-temp = (length_overtube + x_middle + min(a(1,:)));
-x = temp + x * (curve_x + x_middle - temp);
-s = surf(x,y,z, 'EdgeColor', 'none', 'FaceColor','r');
+% [y,z,x] = cylinder(radius_tool, 20);
+% temp = (length_overtube + x_middle + min(a(1,:)));
+% x = temp + x * (curve_x + x_middle - temp);
+% s = surf(x,y,z, 'EdgeColor', 'none', 'FaceColor','r');
 
 % Draw tool from curve point to tip
-x = [curve_x + x_middle, r_ee(1)];
+x = [curve_x + x_middle, r_ee(1)+x_middle];
 y = [0, r_ee(2)];
 z = [0, r_ee(3)];
+plot3(x, y, z, 'r-', 'LineWidth', 1);
+
+x = [x_middle,curve_x + x_middle];
+y = [0, 0];
+z = [0,0];
 plot3(x, y, z, 'r-', 'LineWidth', 1);
 
 % Draw Tendons

@@ -865,6 +865,11 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
         return val;
     }
 
+    if (eaB(17) > eaB(14))
+    {
+        return -1.5;
+    }
+
     double curve_x = eaB(17);
     Vector3d r_ee, r_curve, curve_vec;
     r_ee << eaB(14), eaB(15), eaB(16);
@@ -875,6 +880,8 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
     // Find the curving angles (i.e. gamma_y (pitch) and gamma_z (yaw))
     double gamma_y = atan2(-curve_vec(2), curve_vec(0));
     double gamma_z = atan2(curve_vec(1), curve_vec(0));
+
+   // cout << "Gamma Y is: " << gamma_y << "Gamma_z is: " << gamma_z << endl;
 
     // Checking if the points in the taskspace are feasible across the given forces on the end effector
     vector<VectorXd>::iterator taskspace_iter;
@@ -906,13 +913,14 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
         r_ee_offset << r_ee(0), -r_ee(1), -r_ee(2);
 
         Vector3d r_ee_rotated = -T_r * r_ee_offset;
-        //cout << r_ee_rotated.transpose() << endl;
+        //cout << "r_ee_rotated is: " << r_ee_rotated.transpose() << endl;
 
         //r_ee_temp << r_ee(0), r_ee(1), r_ee(2), 0.0, 0.0;
         r_ee_temp << r_ee_rotated(0,0)/1000.0, r_ee_rotated(1,0)/1000.0, r_ee_rotated(2,0)/1000.0, -gamma_y, -gamma_z;
 
         Matrix<double,5,1> taskspace_temp = (*taskspace_iter) + r_ee_temp;
-        //cout << taskspace_temp.transpose() * 1000 << ";" <<std::endl;
+        //cout << "Original taskspace is: " << (*taskspace_iter).transpose() << ";" << endl;
+        //cout << "Moved taskspace is: " << taskspace_temp.transpose() << ";" <<std::endl << endl;
 
         for (f_ee_iter = f_ee_vec.begin(); f_ee_iter!=f_ee_vec.end(); ++f_ee_iter)
         {

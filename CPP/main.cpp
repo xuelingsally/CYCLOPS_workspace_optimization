@@ -501,21 +501,17 @@ int main()
 
 
 
-    Eigen::Matrix<double, 15, 1> eaB;
+    Eigen::Matrix<double, 18, 1> eaB;
     
-    eaB << 4.0349, 6.0938, 1.8321, 4.3546, 6.2832, 2.0008,
-    -7.2716, -11.3936, -21.7060, 11.5591, 16.7089, 19.7650,
-    -85.1078, -4.9541,
-    70.0000;
+    eaB << -3.2535, -1.1420, 0.5236, -3.6652, 0.5236, -1.2702,
+           -10.4870, -7.6943, -9.7298, 14.9779, 5.4373, 5.5362,
+           -119.9850, 0,
+           100.7753, 1.7687, -1.9062,
+            70.0000;
 
-    eaB << 2.29107, 4.44011, 0, 2.36897, 4.48342, 0,
-           -14.5614, -15.2628, -15.4661, 7.05804, 7.64285, 7.72333,
-           -70, 0, 
-           100;
-
-    double val = cyclops::objective_function2(eaB, W, fnInputs.f_ee_vec, phi_min, phi_max,
-                          t_min, t_max, fnInputs.taskspace, radius_tool, 
-                          radius_scaffold, length_scaffold);
+    double val = cyclops::objective_function2c(eaB, fnInputs.W, fnInputs.f_ee_vec, fnInputs.phi_min, fnInputs.phi_max,
+                          fnInputs.t_min, fnInputs.t_max, fnInputs.taskspace, fnInputs.radius_tool, 
+                          fnInputs.radius_scaffold, fnInputs.length_scaffold);
 
     std::cout << "Value of Objective Function is: " << val << std::endl;
 */
