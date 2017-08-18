@@ -10,6 +10,8 @@ R = [];
 
 %dist_tooltip = 50;
 
+r_ee = [eaB(15); eaB(16); eaB(17)];
+
 for i=1:size(data1,2)
     phi_y = data1(5,i);
     phi_z = data1(6,i);
