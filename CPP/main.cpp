@@ -348,10 +348,10 @@ int main()
     {
         lower_range[14] = 0.0;
         upper_range[14] = tool_tip_limit;
-        lower_range[15] = -radius_scaffold;
-        upper_range[15] = radius_scaffold;
-        lower_range[16] = -radius_scaffold;
-        upper_range[16] = radius_scaffold;
+        lower_range[15] = -PI;
+        upper_range[15] = PI;
+        lower_range[16] = -PI;
+        upper_range[16] = PI;
         lower_range[17] = 0.0;
         upper_range[17] = tool_tip_limit;
     }
@@ -506,7 +506,7 @@ int main()
     eaB << -3.2535, -1.1420, 0.5236, -3.6652, 0.5236, -1.2702,
            -10.4870, -7.6943, -9.7298, 14.9779, 5.4373, 5.5362,
            -119.9850, 0,
-           100.7753, 1.7687, -1.9062,
+           100.7753, 0.2, -0.2,
             70.0000;
 
     double val = cyclops::objective_function2c(eaB, fnInputs.W, fnInputs.f_ee_vec, fnInputs.phi_min, fnInputs.phi_max,

@@ -870,35 +870,56 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
         return -1.5;
     }
 
-    double curve_x = eaB(17);
-    Vector3d r_ee, r_curve, curve_vec;
-    r_ee << eaB(14), eaB(15), eaB(16);
-    r_curve << curve_x, 0.0, 0.0;
-
-    curve_vec = r_ee - r_curve;
+    Vector3d r_curve, r_ee;
+    //r_ee << eaB(14), 0, 0;
+    r_curve << eaB(17), 0.0, 0.0;
 
     // Find the curving angles (i.e. gamma_y (pitch) and gamma_z (yaw))
-    double gamma_y = atan2(-curve_vec(2), curve_vec(0));
-    double gamma_z = atan2(curve_vec(1), curve_vec(0));
+    double gamma_y = eaB(15);
+    double gamma_z = eaB(16);
+    // Define rotation Matrix for the curve of tool
+    Matrix3d R_y_c, R_z_c, T_r_c;
+    R_y_c << cos(gamma_y), 0, sin(gamma_y),
+           0, 1, 0,
+           -sin(gamma_y), 0, cos(gamma_y);
+    R_z_c << cos(gamma_z), -sin(gamma_z), 0,
+           sin(gamma_z), cos(gamma_z), 0,
+           0, 0, 1;
+    T_r_c = R_z_c * R_y_c;
 
-   // cout << "Gamma Y is: " << gamma_y << "Gamma_z is: " << gamma_z << endl;
+    double curve_length_x = eaB(14) - eaB(17);
+    Vector3d x_unit;
+    x_unit << 1, 0, 0;
+
+    // Find r_ee
+    Vector3d r_ee_dir = T_r_c * x_unit;
+
+    double r_ee_dir_x = r_ee_dir(0,0);
+    //cout << r_ee_dir_x << endl;
+    r_ee_dir = (r_ee_dir / r_ee_dir_x * curve_length_x);
+
+    r_ee = r_ee_dir + r_curve;
+
+    //cout << r_ee.transpose() << endl;
+    //cout << "Gamma Y is: " << gamma_y << "Gamma_z is: " << gamma_z << endl;
 
     // Checking if the points in the taskspace are feasible across the given forces on the end effector
     vector<VectorXd>::iterator taskspace_iter;
     vector<Vector3d>::iterator f_ee_iter;
 
-
     for (taskspace_iter = taskspace.begin(); taskspace_iter!=taskspace.end(); ++taskspace_iter)
     {
 
-        Matrix<double,5,1> r_ee_temp;
         // The taskspace orientation
         double alpha_y = (*taskspace_iter)(3,0);
         double alpha_z = (*taskspace_iter)(4,0);
 
+        Vector3d taskspace_pt;
+        taskspace_pt << (*taskspace_iter)(0,0), (*taskspace_iter)(1,0), (*taskspace_iter)(2,0);
+
         //cout << "alpha_y: " << alpha_y << "  alpha_z: " << alpha_z << endl;
 
-        // Find the required position of the tool
+        // Find the required position of the curve of the tool
         // Define rotation Matrix
         Matrix3d R_y, R_z, T_r;
         R_y << cos(alpha_y), 0, sin(alpha_y),
@@ -909,18 +930,22 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
                0, 0, 1;
         T_r = R_z * R_y;
 
-        Vector3d r_ee_offset;
-        r_ee_offset << r_ee(0), -r_ee(1), -r_ee(2);
+        Vector3d r_ee_rotated1 = -T_r * x_unit;
+        double r_ee_rotated1_x_temp = r_ee_rotated1(0,0);
+        r_ee_rotated1 = r_ee_rotated1 / r_ee_rotated1_x_temp * curve_length_x;
+        //cout << "r_ee_rotated1 is: " << r_ee_rotated1.transpose() << endl;
 
-        Vector3d r_ee_rotated = -T_r * r_ee_offset;
-        //cout << "r_ee_rotated is: " << r_ee_rotated.transpose() << endl;
+        Vector3d taskspace_at_curve = taskspace_pt + r_ee_rotated1/1000.0;
 
-        //r_ee_temp << r_ee(0), r_ee(1), r_ee(2), 0.0, 0.0;
-        r_ee_temp << r_ee_rotated(0,0)/1000.0, r_ee_rotated(1,0)/1000.0, r_ee_rotated(2,0)/1000.0, -gamma_y, -gamma_z;
 
-        Matrix<double,5,1> taskspace_temp = (*taskspace_iter) + r_ee_temp;
-        //cout << "Original taskspace is: " << (*taskspace_iter).transpose() << ";" << endl;
-        //cout << "Moved taskspace is: " << taskspace_temp.transpose() << ";" <<std::endl << endl;
+        // Find the required position of the tool
+        Vector3d r_ee_rotated2 = -T_r_c * r_curve;
+        Vector3d taskspace_at_tool = taskspace_at_curve + r_ee_rotated2/1000.0;
+
+        Matrix<double,5,1> taskspace_temp;
+        taskspace_temp << taskspace_at_tool(0,0), taskspace_at_tool(1,0), taskspace_at_tool(0,0), alpha_y - gamma_y, alpha_z - gamma_z;
+        cout << "Original taskspace is: " << (*taskspace_iter).transpose() << ";" << endl;
+        cout << "Moved taskspace is: " << taskspace_temp.transpose() << ";" <<std::endl << endl;
 
         for (f_ee_iter = f_ee_vec.begin(); f_ee_iter!=f_ee_vec.end(); ++f_ee_iter)
         {
