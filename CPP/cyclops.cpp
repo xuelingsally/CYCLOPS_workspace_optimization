@@ -939,13 +939,26 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
 
 
         // Find the required position of the tool
-        Vector3d r_ee_rotated2 = -T_r_c * r_curve;
+        // Define rotation Matrix
+        double beta_y = alpha_y - gamma_y;
+        double beta_z = alpha_z - gamma_z;
+        Matrix3d R_y_2, R_z_2, T_r_2;
+        R_y_2 << cos(beta_y), 0, sin(beta_y),
+               0, 1, 0,
+               -sin(beta_y), 0, cos(beta_y);
+        R_z_2 << cos(beta_z), -sin(beta_z), 0,
+               sin(beta_z), cos(beta_z), 0,
+               0, 0, 1;
+        T_r_2 = R_z_2 * R_y_2;
+
+        Vector3d r_ee_rotated2 = -T_r_2 * r_curve;
         Vector3d taskspace_at_tool = taskspace_at_curve + r_ee_rotated2/1000.0;
 
         Matrix<double,5,1> taskspace_temp;
-        taskspace_temp << taskspace_at_tool(0,0), taskspace_at_tool(1,0), taskspace_at_tool(0,0), alpha_y - gamma_y, alpha_z - gamma_z;
-        cout << "Original taskspace is: " << (*taskspace_iter).transpose() << ";" << endl;
-        cout << "Moved taskspace is: " << taskspace_temp.transpose() << ";" <<std::endl << endl;
+        taskspace_temp << taskspace_at_tool(0,0), taskspace_at_tool(1,0), taskspace_at_tool(0,0), beta_y, beta_z;
+        //cout << "Original taskspace is: " << (*taskspace_iter).transpose() << ";" << endl;
+        //cout << "Moved taskspace is: " << taskspace_temp.transpose() << ";" <<std::endl << endl;
+        cout << taskspace_temp.transpose() << ";" << endl;
 
         for (f_ee_iter = f_ee_vec.begin(); f_ee_iter!=f_ee_vec.end(); ++f_ee_iter)
         {

@@ -411,7 +411,7 @@ int main()
     //simpsolib::EvalFN pso_eval_fn((char *)"DEJONG2", DEJONG2_FN_NUM_VARS,lower_range, upper_range, dejong2_test_fn_real);
     simpsolib::EvalFN pso_eval_fn((char *)"CYCLOPS_OPT", num_dims, lower_range, upper_range, dejong2_test_fn_real);
     pso_eval_fn.Input = fnInputs;
-    run_pso(pso_eval_fn, number_runs, pso_pop, pso_iters, phi_p, phi_g, omega_initial, omega_final, rand_update, pfo_pop, pfo_iters, pfo_resample_factor);
+    //run_pso(pso_eval_fn, number_runs, pso_pop, pso_iters, phi_p, phi_g, omega_initial, omega_final, rand_update, pfo_pop, pfo_iters, pfo_resample_factor);
     
 
 /*
@@ -500,13 +500,13 @@ int main()
 
 
 
-
+*/
     Eigen::Matrix<double, 18, 1> eaB;
     
     eaB << -3.2535, -1.1420, 0.5236, -3.6652, 0.5236, -1.2702,
            -10.4870, -7.6943, -9.7298, 14.9779, 5.4373, 5.5362,
            -119.9850, 0,
-           100.7753, 0.2, -0.2,
+           100.7753, 0.2, 0.2,
             70.0000;
 
     double val = cyclops::objective_function2c(eaB, fnInputs.W, fnInputs.f_ee_vec, fnInputs.phi_min, fnInputs.phi_max,
@@ -514,6 +514,6 @@ int main()
                           fnInputs.radius_scaffold, fnInputs.length_scaffold);
 
     std::cout << "Value of Objective Function is: " << val << std::endl;
-*/
+
     return 0;
 }
