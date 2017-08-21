@@ -209,7 +209,7 @@ int main()
 */
 
     // Taskspace Definition
-    string tp_filename = "./taskspace2b.txt";
+    string tp_filename = "./taskspace.txt";
     ifstream inTaskspace;
     inTaskspace.open(tp_filename.c_str());
     inTaskspace >> temp; //Take the in the heading word
@@ -348,10 +348,10 @@ int main()
     {
         lower_range[14] = 0.0;
         upper_range[14] = tool_tip_limit;
-        lower_range[15] = -PI;
-        upper_range[15] = PI;
-        lower_range[16] = -PI;
-        upper_range[16] = PI;
+        lower_range[15] = -PI/2;
+        upper_range[15] = PI/2;
+        lower_range[16] = -PI/2;
+        upper_range[16] = PI/2;
         lower_range[17] = 0.0;
         upper_range[17] = tool_tip_limit;
     }
@@ -411,7 +411,7 @@ int main()
     //simpsolib::EvalFN pso_eval_fn((char *)"DEJONG2", DEJONG2_FN_NUM_VARS,lower_range, upper_range, dejong2_test_fn_real);
     simpsolib::EvalFN pso_eval_fn((char *)"CYCLOPS_OPT", num_dims, lower_range, upper_range, dejong2_test_fn_real);
     pso_eval_fn.Input = fnInputs;
-    //run_pso(pso_eval_fn, number_runs, pso_pop, pso_iters, phi_p, phi_g, omega_initial, omega_final, rand_update, pfo_pop, pfo_iters, pfo_resample_factor);
+    run_pso(pso_eval_fn, number_runs, pso_pop, pso_iters, phi_p, phi_g, omega_initial, omega_final, rand_update, pfo_pop, pfo_iters, pfo_resample_factor);
     
 
 /*
@@ -500,7 +500,7 @@ int main()
 
 
 
-*/
+
     Eigen::Matrix<double, 18, 1> eaB;
     
     eaB << -3.2535, -1.1420, 0.5236, -3.6652, 0.5236, -1.2702,
@@ -514,6 +514,6 @@ int main()
                           fnInputs.radius_scaffold, fnInputs.length_scaffold);
 
     std::cout << "Value of Objective Function is: " << val << std::endl;
-
+*/
     return 0;
 }

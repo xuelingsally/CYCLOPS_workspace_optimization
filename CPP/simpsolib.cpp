@@ -388,6 +388,7 @@ void simpsolib::Population::rand_resample()
 void simpsolib::Population::reset_mesh_size()
 {
     // Determine the mesh size as the minimum of the search space x the search factor
+    
     initial_search_factor = 0.2;
     double temp_min = 999999999;
     for (int i=0; i<num_dims; i++)
@@ -405,6 +406,8 @@ void simpsolib::Population::reset_mesh_size()
     }
 
     mesh_size = temp_min * initial_search_factor;
+    
+    //mesh_size = 1.0;
     //cout << mesh_size << endl;
 }
 
@@ -420,7 +423,7 @@ void simpsolib::Population::initpatternsearch()
     
     for (int i=0; i<num_dims; i++)
     {
-        //SearchDirVec[i] = (evaluator.upper_range[i] - evaluator.lower_range[i]) * 0.05;
+        //SearchDirVec[i] = (evaluator.upper_range[i] - evaluator.lower_range[i]) * 0.2;
         SearchDirVec[i] = 1.0;
     }
 }
@@ -896,7 +899,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
                 bool ps_success = pop.patternsearch();
                 if (ps_success)
                 {
-                    if (pop.rand_likelihood_factor<1.5)
+                    if (pop.rand_likelihood_factor<1.6)
                     {
                         pop.rand_likelihood_factor+= 0.05;
                     } 

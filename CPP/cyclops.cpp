@@ -930,12 +930,12 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
                0, 0, 1;
         T_r = R_z * R_y;
 
-        Vector3d r_ee_rotated1 = -T_r * x_unit;
+        Vector3d r_ee_rotated1 = T_r * x_unit;
         double r_ee_rotated1_x_temp = r_ee_rotated1(0,0);
         r_ee_rotated1 = r_ee_rotated1 / r_ee_rotated1_x_temp * curve_length_x;
         //cout << "r_ee_rotated1 is: " << r_ee_rotated1.transpose() << endl;
 
-        Vector3d taskspace_at_curve = taskspace_pt + r_ee_rotated1/1000.0;
+        Vector3d taskspace_at_curve = taskspace_pt - r_ee_rotated1/1000.0;
 
 
         // Find the required position of the tool
@@ -951,14 +951,14 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
                0, 0, 1;
         T_r_2 = R_z_2 * R_y_2;
 
-        Vector3d r_ee_rotated2 = -T_r_2 * r_curve;
-        Vector3d taskspace_at_tool = taskspace_at_curve + r_ee_rotated2/1000.0;
+        Vector3d r_ee_rotated2 = T_r_2 * r_curve;
+        Vector3d taskspace_at_tool = taskspace_at_curve - r_ee_rotated2/1000.0;
 
         Matrix<double,5,1> taskspace_temp;
-        taskspace_temp << taskspace_at_tool(0,0), taskspace_at_tool(1,0), taskspace_at_tool(0,0), beta_y, beta_z;
+        taskspace_temp << taskspace_at_tool(0,0), taskspace_at_tool(1,0), taskspace_at_tool(2,0), beta_y, beta_z;
         //cout << "Original taskspace is: " << (*taskspace_iter).transpose() << ";" << endl;
         //cout << "Moved taskspace is: " << taskspace_temp.transpose() << ";" <<std::endl << endl;
-        cout << taskspace_temp.transpose() << ";" << endl;
+        //cout << taskspace_temp.transpose() << ";" << endl;
 
         for (f_ee_iter = f_ee_vec.begin(); f_ee_iter!=f_ee_vec.end(); ++f_ee_iter)
         {
