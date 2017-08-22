@@ -40,19 +40,22 @@ t_max = ones(6,1) * 60;
 W = zeros(1,6);
 
 f_ee = [0,0,-0.1];
+feas = [];
+unfeas = [];
 
-counter = 1;
 for i=1:size(taskspace3,2);
     P = taskspace3(:,i);
+    P(1:3,:) = P(1:3,:)/1000;
     P(4:5) = P(5:6);
     P(6) = [];
     
     P = P';
     
-    [~, feasible] = feasible_pose(P, a, B, W, f_ee, r_ee', t_min, t_max);
+    [~, feasible] = feasible_pose(P, a/1000, B/1000, W, f_ee, r_ee'/1000, t_min, t_max);
     
     if feasible == 1
-        feas(:,counter) = P;
-        counter = counter + 1;
+        feas(:,end+1) = P;
+    else
+        unfeas(:,end+1) = P;
     end
 end

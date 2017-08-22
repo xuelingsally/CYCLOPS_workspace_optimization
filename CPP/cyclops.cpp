@@ -865,6 +865,7 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
         return val;
     }
 
+
     if (eaB(17) > eaB(14))
     {
         return -1.5;

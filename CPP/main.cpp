@@ -506,8 +506,13 @@ int main()
     eaB << -3.2535, -1.1420, 0.5236, -3.6652, 0.5236, -1.2702,
            -10.4870, -7.6943, -9.7298, 14.9779, 5.4373, 5.5362,
            -119.9850, 0,
-           100.7753, 0.2, 0.2,
-            70.0000;
+           100.7753, 0.3, 0.2,
+            25.0000;
+
+    //eaB << 0.5236, -1.0257, -2.1287, -1.4468, 0.5150, -3.6652,
+    //       -13.0146, -2.9159, -15.1972, 6.3325, 3.6564, 26.4041,
+    //       -91.4513, -12.2077,
+    //       89.3397, -0.7930, -0.5890, 35.5969;
 
     double val = cyclops::objective_function2c(eaB, fnInputs.W, fnInputs.f_ee_vec, fnInputs.phi_min, fnInputs.phi_max,
                           fnInputs.t_min, fnInputs.t_max, fnInputs.taskspace, fnInputs.radius_tool, 
