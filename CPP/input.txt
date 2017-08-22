@@ -19,7 +19,7 @@ angle_lower_limit -210.0
 angle_upper_limit 30.0
 
 OPTIMIZATION_PARAM
-num_runs 5
+num_runs 10
 pso_population_size 1000
 pso_num_iters 70
 pfo_population_size 50
