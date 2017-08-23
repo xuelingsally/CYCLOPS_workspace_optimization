@@ -370,7 +370,7 @@ void simpsolib::Population::rand_resample()
     for (std::vector<Organism*>::iterator it_pool = pool.begin(); it_pool != pool.end(); ++it_pool)
     {
         double random_num = ran2(&(semran2));
-        double likelihood = rand_likelihood_factor + (*it_pool)->value;
+        double likelihood = rand_likelihood_factor + (*it_pool)->best_value;
         if (random_num >= likelihood)
         {
             rand_resample_count++;
