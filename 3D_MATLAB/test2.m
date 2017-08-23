@@ -1,7 +1,7 @@
 close all;
 
 radius_tool = 1.75;
-radius_scaffold = 35;
+radius_scaffold = 30;
 
 load('data_r_tp.mat');
 taskspace = data_r_tp;
