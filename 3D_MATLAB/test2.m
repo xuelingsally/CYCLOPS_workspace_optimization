@@ -1,7 +1,7 @@
 close all;
 
 radius_tool = 1.75;
-radius_scaffold = 30;
+radius_scaffold = 35;
 
 load('data_r_tp.mat');
 taskspace = data_r_tp;
@@ -20,6 +20,21 @@ gamma_z = eaB(17);
 
 curve_length_x = eaB(15) - eaB(18);
 
+
+R_y_c = [cos(gamma_y), 0, sin(gamma_y); 0, 1, 0; -sin(gamma_y), 0, cos(gamma_y)];
+R_z_c = [cos(gamma_z), -sin(gamma_z), 0; sin(gamma_z), cos(gamma_z), 0; 0, 0, 1];
+R_c = R_z_c * R_y_c;
+
+r_ee_dir = R_c * [1;0;0];
+r_ee_dir_x = r_ee_dir(1);
+r_ee_dir = r_ee_dir / r_ee_dir_x * curve_length_x;
+
+% r_ee_dir is the vector from the curving point to the end effector of the tool
+curve_length = norm(r_ee_dir);
+
+r_ee = r_ee_dir + r_curve;
+
+
 for i=1:size(data1,2)
     alpha_y = data1(5,i);
     alpha_z = data1(6,i);
@@ -28,9 +43,7 @@ for i=1:size(data1,2)
     R_z = [cos(alpha_z), -sin(alpha_z), 0; sin(alpha_z), cos(alpha_z), 0; 0, 0, 1];
     R = R_z * R_y;
     
-    temp = R * [1;0;0];
-    temp_x = temp(1);
-    temp = temp/ temp_x * curve_length_x;
+    temp = R * [curve_length;0;0];
     
     data_t1(1:3,i) = -temp + data1(1:3,i);
     

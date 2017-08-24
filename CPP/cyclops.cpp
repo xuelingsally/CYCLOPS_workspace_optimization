@@ -899,6 +899,10 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
     //cout << r_ee_dir_x << endl;
     r_ee_dir = (r_ee_dir / r_ee_dir_x * curve_length_x);
 
+    double curve_length = r_ee_dir.norm();
+    Vector3d curve_to_ee;
+    curve_to_ee << curve_length, 0.0, 0.0;
+
     r_ee = r_ee_dir + r_curve;
 
     //cout << r_ee.transpose() << endl;
@@ -931,9 +935,7 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
                0, 0, 1;
         T_r = R_z * R_y;
 
-        Vector3d r_ee_rotated1 = T_r * x_unit;
-        double r_ee_rotated1_x_temp = r_ee_rotated1(0,0);
-        r_ee_rotated1 = r_ee_rotated1 / r_ee_rotated1_x_temp * curve_length_x;
+        Vector3d r_ee_rotated1 = T_r * curve_to_ee;
         //cout << "r_ee_rotated1 is: " << r_ee_rotated1.transpose() << endl;
 
         Vector3d taskspace_at_curve = taskspace_pt - r_ee_rotated1/1000.0;
