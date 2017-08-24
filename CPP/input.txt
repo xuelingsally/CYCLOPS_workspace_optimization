@@ -1,9 +1,9 @@
 CYCLOPS_PARAM
 radius_tool 1.75
-radius_scaffold 27.3586
-length_scaffold 70.0
-length_overtube 60.0
-dist_tool_back 30.0
+radius_scaffold 28.64
+length_scaffold 45.83
+length_overtube 40.0
+dist_tool_back 20.0
 num_tendons 6
 curved_tool 0
 min_tension 1.0

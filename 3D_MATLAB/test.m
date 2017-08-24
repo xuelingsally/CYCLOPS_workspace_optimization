@@ -1,8 +1,8 @@
-load('data_r_tp.mat');
-taskspace = data_r_tp;
-taskspace(1,:) = taskspace(1,:) + abs(min(taskspace(1,:))) + 5;
-taskspace(2,:) = taskspace(2,:) + radius_scaffold/2;
-taskspace(3,:) = taskspace(3,:) + abs(min(taskspace(3,:))) - radius_scaffold - 3;
+% load('data_r_tp.mat');
+% taskspace = data_r_tp;
+% taskspace(1,:) = taskspace(1,:) + abs(min(taskspace(1,:))) + 5;
+% taskspace(2,:) = taskspace(2,:) + radius_scaffold/2;
+% taskspace(3,:) = taskspace(3,:) + abs(min(taskspace(3,:))) - radius_scaffold - 3;
 data1 = taskspace;
 
 data1_t = [];
