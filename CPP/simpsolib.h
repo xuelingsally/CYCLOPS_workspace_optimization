@@ -153,6 +153,8 @@ public:
     void pfo_resample();
     void init_pfo(Population * old_pop);
     double likelihood_fn(double value);
+    void pfo_add_noise_velocity();
+    void pfo_add_noise_position();
 
     double omega_final;
     double omega_initial;

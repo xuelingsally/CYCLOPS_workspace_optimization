@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include "simpsolib.h"
 #include <time.h>
+#include <random>
 
 using namespace std;
 using namespace simpsolib;
@@ -314,7 +315,7 @@ void simpsolib::Population::update_vel()
     double r_p;
     double r_g;
 
-    // evaluate value
+    
     for (std::vector<Organism*>::iterator it_pool = pool.begin(); it_pool != pool.end(); ++it_pool)
     {
         r_p=ran2(&(semran2));
@@ -341,7 +342,7 @@ void simpsolib::Population::update_vel()
 
 void simpsolib::Population::update_pos()
 {
-    // evaluate value
+    
     for (std::vector<Organism*>::iterator it_pool = pool.begin(); it_pool != pool.end(); ++it_pool)
     {
         for (int i=0; i< num_dims; i++) // Shi, Eberhart (1998, 2001)
@@ -810,6 +811,64 @@ double simpsolib::Population::likelihood_fn(double value)
         return exp(-(temp_value - (-1.0)) );
 }
 
+void simpsolib::Population::pfo_add_noise_velocity()
+{
+
+    std::default_random_engine generator;
+    std::normal_distribution<double> distribution(0,0.01);
+
+    for (std::vector<Organism*>::iterator it_pool = pool.begin(); it_pool != pool.end(); ++it_pool)
+    {
+
+        for (int i=0; i< num_dims; i++) // Shi, Eberhart (1998, 2001)
+        {
+
+            //std::cout << overall_best_position[i] << std::endl;
+            (*it_pool)->velocity[i] =  (*it_pool)->velocity[i] + distribution(generator) * evaluator.max_velocity_vector[i];
+            
+            // Limit velocity in each dimension to full dynamic range in search space (Simplifying PSO, Pedersen 2009)
+            /*if (fabs((*it_pool)->velocity[i]) > (evaluator.upper_range[i] - evaluator.lower_range[i]))
+            {
+                (*it_pool)->velocity[i]=ran2(&(semran2))*(evaluator.upper_range[i] - evaluator.lower_range[i]);
+            }*/
+            if (fabs((*it_pool)->velocity[i]) > evaluator.max_velocity_vector[i])
+            {
+                (*it_pool)->velocity[i]=evaluator.max_velocity_vector[i];
+            }
+        }
+    }
+}
+
+
+void simpsolib::Population::pfo_add_noise_position()
+{
+
+    std::default_random_engine generator;
+    std::normal_distribution<double> distribution(0,0.01);
+
+    for (std::vector<Organism*>::iterator it_pool = pool.begin(); it_pool != pool.end(); ++it_pool)
+    {
+        for (int i=0; i< num_dims; i++) // Shi, Eberhart (1998, 2001)
+        {
+
+            (*it_pool)->position[i] = (*it_pool)->position[i] + distribution(generator) * evaluator.max_velocity_vector[i];
+   
+            // Limit velocity in each dimension to full dynamic range in search space (Simplifying PSO, Pedersen 2009)
+            if ((*it_pool)->position[i] > (evaluator.upper_range[i]))
+            {
+                (*it_pool)->position[i]=evaluator.upper_range[i];
+            }
+            else if ((*it_pool)->position[i] < (evaluator.lower_range[i]))
+            {
+                (*it_pool)->position[i]=evaluator.lower_range[i];
+            }
+
+            //if (it_pool == pool.begin())
+            //    std::cout << (*it_pool)->position[i] << ", ";
+        }
+    }
+}
+
 //-----------------------------------------------------------------------------
 // Optimization Methods
 //-----------------------------------------------------------------------------
@@ -984,7 +1043,9 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
             writeFile << "PFO Iteration: " << i << "  Leader: " << pfo_pop.pop_leader_index << "  ObjVal: " << pfo_pop.getBestVal() << std::endl;
             
             pfo_pop.update_vel();
+            pfo_pop.pfo_add_noise_velocity();
             pfo_pop.update_pos();
+            pfo_pop.pfo_add_noise_position();
 
             pfo_pop.evaluate();
 

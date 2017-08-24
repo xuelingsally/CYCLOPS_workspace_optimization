@@ -1,13 +1,14 @@
 close all;
 
 radius_tool = 1.75;
-radius_scaffold = 35;
+radius_scaffold = 27.3586;
 
 load('data_r_tp.mat');
 taskspace = data_r_tp;
 taskspace(1,:) = taskspace(1,:) + abs(min(taskspace(1,:))) + 5;
-taskspace(2,:) = taskspace(2,:) + radius_scaffold/2;
-taskspace(3,:) = taskspace(3,:) + abs(min(taskspace(3,:))) - radius_scaffold - 3;
+taskspace(2,:) = taskspace(2,:) + radius_scaffold/2 - 4;
+%taskspace(3,:) = taskspace(3,:) + abs(min(taskspace(3,:))) - radius_scaffold - 3;
+taskspace(3,:) = taskspace(3,:) - 13;
 data1 = taskspace;
 
 data_t1 = [];
