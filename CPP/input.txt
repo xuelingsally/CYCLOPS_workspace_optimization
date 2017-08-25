@@ -1,6 +1,6 @@
 CYCLOPS_PARAM
 radius_tool 1.75
-radius_scaffold 28.64
+radius_scaffold 30.51
 length_scaffold 45.83
 length_overtube 40.0
 dist_tool_back 20.0

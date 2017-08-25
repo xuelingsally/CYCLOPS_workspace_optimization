@@ -16,9 +16,9 @@ DataMat(6,:) = [];
 output = [];
 
 counter2 = 1;
-counter = 10;
+counter = 5;
 for i=1:size(DataMat,2)
-    if counter == 10
+    if counter == 5
         %DataMat(1,i) = DataMat(1,i) + translate_x;
         output(:,counter2) = DataMat(:,i);
         fprintf(fileID, '%4.3f %4.3f %4.3f %4.3f %4.3f \n', DataMat(:,i));
