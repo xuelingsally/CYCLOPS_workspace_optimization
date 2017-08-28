@@ -291,7 +291,7 @@ double simpsolib::EvalFN::evaluate(vector<double> position, cyclops::fnInputs In
 
     else if (Input.taskspace[0].rows() == 8)
     {
-        // Taskspace Type 2 
+        // Taskspace Type 3 
         if (!Input.curve_tool)
         {
             // Straight Tool -> eaB size is 15 + 3n

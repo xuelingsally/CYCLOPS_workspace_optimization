@@ -9,7 +9,7 @@ hold;
 % Draw scaffold;
 [y,z,x] = cylinder(radius_scaffold, 20);
 x = x * -length_scaffold;
-surf(x,y,z, 'FaceAlpha', 0.4, 'EdgeColor', 'none', 'FaceColor', 'y');
+surf(x,y,z, 'FaceAlpha', 0.2, 'EdgeColor', 'none', 'FaceColor', 'y');
 
 % Draw Overtube;
 [y,z,x] = cylinder(radius_tool, 20);
