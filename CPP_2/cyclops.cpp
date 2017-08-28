@@ -988,7 +988,7 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
 
     // Calculate and return the ratio of scaffold length not used wrt scaffold length.
 
-    val = (length_scaffold - (eaB(12) - eaB(13)))/length_scaffold;
+    val = (length_scaffold - abs(eaB(12) - eaB(13)))/length_scaffold;
     //cout << "Returned2 " << val << endl;
     return val;
 }

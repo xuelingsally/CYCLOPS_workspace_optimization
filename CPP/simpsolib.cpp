@@ -288,6 +288,28 @@ double simpsolib::EvalFN::evaluate(vector<double> position, cyclops::fnInputs In
         }
 
     }
+
+    else if (Input.taskspace[0].rows() == 8)
+    {
+        // Taskspace Type 2 
+        if (!Input.curve_tool)
+        {
+            // Straight Tool -> eaB size is 15 + 3n
+            temp_result = cyclops::objective_function2(eaB, Input.W, Input.f_ee_vec, Input.phi_min,
+                                  Input.phi_max, Input.t_min, Input.t_max,
+                                  Input.taskspace, Input.radius_tool, Input.radius_scaffold,
+                                  Input.length_scaffold);
+        }
+        else
+        {
+            // Curved tool-> eaB size is 18 + 3n
+            temp_result = cyclops::objective_function3c(eaB, Input.W, Input.f_ee_vec, Input.phi_min,
+                                  Input.phi_max, Input.t_min, Input.t_max,
+                                  Input.taskspace, Input.radius_tool, Input.radius_scaffold,
+                                  Input.length_scaffold);
+        }
+
+    }
     //std::cout << temp_result << std::endl;
     return temp_result;
 

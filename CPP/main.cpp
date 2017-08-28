@@ -189,24 +189,6 @@ int main()
 
    // cout << (fnInputs.W).transpose() << endl;
 
-/*
-    // end effector force
-    Eigen::Vector3d f_ee;
-    f_ee << -1.0,0.0,0.0;
-    fnInputs.f_ee_vec.push_back(f_ee * f_ee_factor);
-    f_ee(0) = 1.0;
-    fnInputs.f_ee_vec.push_back(f_ee * f_ee_factor);
-    f_ee(0) = 0.0;
-    f_ee(1) = -1.0;
-    fnInputs.f_ee_vec.push_back(f_ee * f_ee_factor);
-    f_ee(1) = 1.0;
-    fnInputs.f_ee_vec.push_back(f_ee * f_ee_factor);
-    f_ee(1) = 0.0;
-    f_ee(2) = -1.0;
-    fnInputs.f_ee_vec.push_back(f_ee * f_ee_factor);
-    f_ee(2) = 1.0;
-    fnInputs.f_ee_vec.push_back(f_ee * f_ee_factor);
-*/
 
     // Taskspace Definition
     string tp_filename = "./taskspace.txt";
@@ -258,6 +240,36 @@ int main()
             tp_temp(3) = tp_temp_scalar;
             inTaskspace >>  tp_temp_scalar;
             tp_temp(4) = tp_temp_scalar;
+
+            fnInputs.taskspace.push_back(tp_temp);
+            //std::cout << tp_temp.transpose() << std::endl;
+        }
+    }
+    else if (TP_type == 3)
+    {
+        tp_temp.resize(8,1);
+
+        while (!inTaskspace.eof())
+        {
+            double tp_temp_scalar;
+            inTaskspace >> tp_temp_scalar;
+            if( inTaskspace.eof() ) break;
+
+            tp_temp(0) = tp_temp_scalar/1000.0;
+            inTaskspace >>  tp_temp_scalar;
+            tp_temp(1) = tp_temp_scalar/1000.0;
+            inTaskspace >>  tp_temp_scalar;
+            tp_temp(2) = tp_temp_scalar/1000.0;
+            inTaskspace >>  tp_temp_scalar;
+            tp_temp(3) = tp_temp_scalar;
+            inTaskspace >>  tp_temp_scalar;
+            tp_temp(4) = tp_temp_scalar;
+            inTaskspace >>  tp_temp_scalar;
+            tp_temp(5) = tp_temp_scalar;
+            inTaskspace >>  tp_temp_scalar;
+            tp_temp(6) = tp_temp_scalar;
+            inTaskspace >>  tp_temp_scalar;
+            tp_temp(7) = tp_temp_scalar;
 
             fnInputs.taskspace.push_back(tp_temp);
             //std::cout << tp_temp.transpose() << std::endl;
