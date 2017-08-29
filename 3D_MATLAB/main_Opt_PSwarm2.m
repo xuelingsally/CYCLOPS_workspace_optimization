@@ -54,7 +54,7 @@ taskspace(:,end+1) = [25, 5, 6];
 taskspace(:,end+1) = [25, -5, -6];
 taskspace(:,end+1) = [25, -5, 6];
 taskspace(:,end+1) = [30, 5, -5];
-taskspace(:,end+1) = [35, 5, -10];
+%taskspace(:,end+1) = [35, 5, -10];
 taskspace(:,end+1) = [30, 5, 5];
 taskspace(:,end+1) = [30, -5, -5];
 taskspace(:,end+1) = [30, -5, 5];
@@ -108,9 +108,9 @@ InitPop(1).x = [0; 0; 0; 0; 0; 0; ...
 
 % InitPop(1).x = zeros(14,1);
 Options = PSwarm('defaults');
-Options.Size = 50;
-Options.MaxObj = 5000;
-Options.MaxIter = 5000;
+Options.Size = 500;
+Options.MaxObj = 50000;
+Options.MaxIter = 50000;
 Options.IPrint = 10;
 
 % Running PSwarm

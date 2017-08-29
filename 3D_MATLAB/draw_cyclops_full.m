@@ -9,17 +9,17 @@ hold;
 % Draw scaffold;
 [y,z,x] = cylinder(radius_scaffold, 20);
 x = x * -length_scaffold;
-surf(x,y,z, 'FaceAlpha', 0.2, 'EdgeColor', 'none', 'FaceColor', 'y');
+surf(x,y,z, 'FaceAlpha', 0.1, 'EdgeColor', 'none', 'FaceColor', '[1,0.5,0.5]');
 
 % Draw Overtube;
 [y,z,x] = cylinder(radius_tool, 20);
 x = x * length_overtube + x_middle - dist_tool_b_cg;
-s = surf(x,y,z, 'EdgeColor', 'none', 'FaceColor','k');
+s = surf(x,y,z, 'EdgeColor', 'none', 'FaceColor','[0.5,0.5,0.5]');
 
 % Draw tool;
 [y,z,x] = cylinder(radius_tool, 20);
 x = x * (dist_tooltip + x_middle - (length_overtube + x_middle - dist_tool_b_cg)) + (length_overtube + x_middle - dist_tool_b_cg);
-surf(x,y,z, 'EdgeColor', 'none', 'FaceColor', 'r');
+surf(x,y,z, 'EdgeColor', 'none', 'FaceColor', '[0.7,0.7,0.7]');
 
 
 % Draw Tendons
@@ -31,7 +31,8 @@ for i=1:size(a,2)
     y = [a_b(2), b(2)];
     z = [a_b(3), b(3)];
     
-    plot3(x, y, z, 'g-');
+    plot3(x, y, z, 'r-');
+    plot3(x, y, z, 'rx'); 
 end
 
 % Draw Taskspace

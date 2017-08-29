@@ -5,7 +5,7 @@ clc;
 
 % Constants (All units in mm)
 % Radius of overtube/tool
-radius_tool = 1;
+radius_tool = 1.5;
 % Radius of Scaffold
 radius_scaffold = 30;
 % Length of the scaffold

@@ -1,3 +1,5 @@
+load('L.mat');
+load('R.mat');
 
 c_x = ( max(dataR(:,1)) - min(dataR(:,1)) )/2;
 c_y = ( max(dataR(:,2)) - min(dataR(:,2)) )/2;

@@ -1,7 +1,7 @@
 close all;
 
 radius_tool = 1.75;
-radius_scaffold = 27.3586;
+radius_scaffold = 23.4502;
 %radius_scaffold = 28.64;
 %radius_scaffold = 30.51;
 

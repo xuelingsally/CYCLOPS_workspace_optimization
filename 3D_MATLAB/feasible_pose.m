@@ -36,8 +36,8 @@ end
 cross_pdt_fee = cross(f_ee', r_ee');
 f=[f_ee';cross_pdt_fee]+W';
 
-A(4,:) = [];
-f(4) = [];
+%A(4,:) = [];
+%f(4) = [];
 %% Obtaining Tension Solution
 % Using analytical method for L1-norm solution
 Partition_A = A(:,1:5);
@@ -104,10 +104,10 @@ end
 % A_(6:10,:) = N;
 % size(A_)
 % size(linprog_f)
-% [t, ~, feasible,~] = linprog(linprog_f, A_, b_, [], [], t_min(1:2), t_max(1:2));
+% [t, ~, feasible,~] = linprog(linprog_f, A_, b_, [], [], t_min(1:size(Partition_B,2)), t_max(1:size(Partition_B,2)));
 % 
 % if feasible ~=1
-%     t = zeros(2,1);
+%     t = zeros(size(Partition_B,2),1);
 % end
 
 
