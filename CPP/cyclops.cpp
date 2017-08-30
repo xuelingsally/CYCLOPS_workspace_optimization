@@ -182,19 +182,34 @@ bool cyclops::feasible_pose(Matrix<double, 5,1> P, Matrix<double,3,Dynamic> a,
         c_ = c.transpose();
 
 
-        Matrix<double, Dynamic, Dynamic> A_;
+        Matrix<double, Dynamic, Dynamic> A_, A_2a, A_2b;
         A_.resize(10+redundant, redundant);
+        A_2a.resize(5, redundant);
+        A_2b.resize(5, redundant);
+
+
+        VectorXd t_min_redunt;
+        t_min_redunt.resize(redundant,1);
+        for (int i=0; i<redundant; i++)
+        {
+            t_min_redunt(i,0) = t_min(i);
+        }
+
+
         for (int i=0; i<redundant; i++)
         {
             A_.block<5,1>(0,i) = -N.block<5,1>(0,i);
             A_.block<5,1>(5,i) = N.block<5,1>(0,i);
+
+            A_2a.block<5,1>(0,i) = -N.block<5,1>(0,i);
+            A_2b.block<5,1>(0,i) = N.block<5,1>(0,i);
         }
 
         Matrix<double, Dynamic, 1> b_;
         b_.resize(10+redundant, 1);
 
-        b_.block<5,1>(0,0) = - t_min.block<5,1>(0,0) + M;
-        b_.block<5,1>(5,0) = t_max.block<5,1>(0,0) - M;
+        b_.block<5,1>(0,0) = -t_min.block<5,1>(0,0) + M - A_2a*t_min_redunt;
+        b_.block<5,1>(5,0) =  t_max.block<5,1>(0,0) - M - A_2b*t_min_redunt;
 
 
         for (int i=0; i<redundant; i++)

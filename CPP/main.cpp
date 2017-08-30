@@ -19,7 +19,6 @@
 #include <ctime>
 #include <cmath>
 #include <queue>
-#include "simgalib.h"
 #include "simpsolib.h"
 #include "simtstlib.h"
 #include <fstream>
@@ -31,7 +30,6 @@
 #define PI 3.141592654
 #define g 9.81
 
-using namespace simgalib;
 using namespace simpsolib;
 using namespace simtstlib;
 
@@ -330,13 +328,15 @@ int main()
         upper_range[i] = (length_overtube - dist_tool_b_cg);
     }*/
     
-    // Front 3 tendons
+
+    // Using halfspace method
+    // Back 3 tendons
     for (int i=6; i<9; i++)
     {
         lower_range[i] = -dist_tool_b_cg;
         upper_range[i] = 0.0;
     }
-    // Back 3 Tendons
+    // Front 3 Tendons
     for (int i=9; i<12; i++)
     {
         lower_range[i] = 0.0;
@@ -344,11 +344,20 @@ int main()
     }
     
     // Limits for B
+    /*
     for (int i=12; i<14; i++)
     {
         lower_range[i] = -length_scaffold;
         upper_range[i] = 0.0;
-    }
+    }*/
+
+    //Using halfsapce method
+    lower_range[12] = -length_scaffold;
+    upper_range[12] = -length_scaffold/2.0;
+    lower_range[13] = -length_scaffold/2.0;
+    upper_range[13] = 0.0;
+
+
     // Limits for tooltip
     if (curve == 0)
     {
@@ -371,8 +380,8 @@ int main()
     // Limits for additional Tendons
     for (int i=0; i<num_tendons-6; i++)
     {
-        lower_range[15+i*3+curve*3] = 0.0;
-        upper_range[15+i*3+curve*3] = 2.0 * PI;
+        lower_range[15+i*3+curve*3] = angle_lower_limit/180.0 * PI;
+        upper_range[15+i*3+curve*3] = angle_upper_limit/180.0 * PI;
         lower_range[15+i*3+1+curve*3] = -dist_tool_b_cg;
         upper_range[15+i*3+1+curve*3] = (length_overtube - dist_tool_b_cg);
         lower_range[15+i*3+2+curve*3] = -length_scaffold;

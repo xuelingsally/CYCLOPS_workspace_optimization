@@ -23,6 +23,8 @@ dataL_r(:,4) = 0;
 dataL_r(:,5) = dataL(:,5);
 dataL_r(:,6) = dataL(:,4);
 
-dataL_r(:,7) = dataL(:,9); % x is z
-dataL_r(:,8) = dataL(:,7); % y is x
-dataL_r(:,9) = dataL(:,8); % z is y
+dataL_r(:,7:9) = dataL(:,7:9);
+
+% dataL_r(:,7) = dataL(:,9); % x is z
+% dataL_r(:,8) = dataL(:,7); % y is x
+% dataL_r(:,9) = dataL(:,8); % z is y
