@@ -135,11 +135,14 @@ for i=1:size(a,2)
 end
 
 % Draw Taskspace
-plot3(taskspace(1,:), taskspace(2,:), taskspace(3,:), 'b.');
+if size(taskspace > 0)
+    plot3(taskspace(1,:), taskspace(2,:), taskspace(3,:), 'b.');
+end
 
 max_tp_x = max(taskspace(1,:));
 max_x_axis = max([max_tp_x, r_ee(1)+x_middle]);
 
-axis([min(B(1,:))-5 (max_x_axis+10) -(radius_scaffold+5) radius_scaffold+5 -(radius_scaffold+5) radius_scaffold+5 ]);
+%axis([min(B(1,:))-5 (max_x_axis+10) -(radius_scaffold+5) radius_scaffold+5 -(radius_scaffold+5) radius_scaffold+5 ]);
+axis([-85 50 -(radius_scaffold+5) radius_scaffold+5 -(radius_scaffold+5) radius_scaffold+5 ]);
 
 end
