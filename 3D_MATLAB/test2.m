@@ -1,23 +1,23 @@
 close all;
 
-% addpath data;
-% load('./data/L.mat');
-% load('./data/R.mat');
-% relative_tp;
+addpath data;
+load('./data/L.mat');
+load('./data/R.mat');
+relative_tp;
 
 radius_tool = 1.75;
-%radius_scaffold = 23.4502;
+radius_scaffold = 23.4502;
 %radius_scaffold = 28.64;
-radius_scaffold = 30.51;
+%radius_scaffold = 30.51;
 
-load('data_r_tp.mat');
+%load('data_r_tp.mat');
 taskspace = data_r_tp;
-%taskspace = dataR_r';
+taskspace = dataR_r';
 taskspace(1,:) = taskspace(1,:) + abs(min(taskspace(1,:))) + 5;
-taskspace(2,:) = taskspace(2,:) + radius_scaffold/2 - 7.4;
-%taskspace(2,:) = taskspace(2,:) + radius_scaffold/2;
-%taskspace(3,:) = taskspace(3,:) + abs(min(taskspace(3,:))) - radius_scaffold - 3;
-taskspace(3,:) = taskspace(3,:) - 13;
+%taskspace(2,:) = taskspace(2,:) + radius_scaffold/2 - 7.4;
+taskspace(2,:) = taskspace(2,:) + radius_scaffold/2;
+taskspace(3,:) = taskspace(3,:) + abs(min(taskspace(3,:))) - radius_scaffold - 3;
+%taskspace(3,:) = taskspace(3,:) - 13;
 data1 = taskspace;
 
 data_t1 = [];

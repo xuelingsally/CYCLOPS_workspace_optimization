@@ -26,6 +26,7 @@ using namespace Eigen;
 
 // create writeFile variable
 ofstream writeFile("out.txt");
+ofstream writePlot("plot.txt");
 
 int function_cnt = 0;  // function eval counter
 
@@ -1015,6 +1016,21 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
                 }
                 writeFile << "];" << std::endl << std::endl;
             }
+
+            if (i%2 == 0)
+            {
+                vector<double> temp_position = (pop.getBestPos());
+                writePlot << std::endl << "eaBv(:,end+1) = [";
+                for (int j=0; j < pop.getNumDims(); j++)
+                {
+                    writePlot << temp_position[j];
+                    if (j < pop.getNumDims()-1)
+                        writePlot << "; ";
+                }
+                writePlot << "];" << std::endl;
+            }
+
+
             //pop_info.display_population_stats();
 
             // std::cout << "iteration: "<< i << "-- Press enter to continue --" << std::endl << flush;
@@ -1078,6 +1094,19 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
                 writeFile << "PFO Resampling Step" << std::endl;
             }
 
+            if (i%2 == 0)
+            {
+                vector<double> temp_position = (pfo_pop.getBestPos());
+                writePlot << std::endl << "eaBv(:,end+1) = [";
+                for (int j=0; j < pfo_pop.getNumDims(); j++)
+                {
+                    writePlot << temp_position[j];
+                    if (j < pfo_pop.getNumDims()-1)
+                        writePlot << "; ";
+                }
+                writePlot << "];" << std::endl;
+            }
+
         }
 
 
@@ -1128,6 +1157,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
 
         pop.destroy();  // del the population
         pfo_pop.destroy(); // del the pfo population
+        writePlot << std::endl;
     }
 
     end=clock();

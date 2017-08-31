@@ -1,6 +1,8 @@
 % Euler Angles
 ea(1:6) = eaB(1:6);
 
+a = [];
+B= [];
 % Attachment Points
 a(:,1) = [eaB(7), radius_tool * cos(ea(1)), radius_tool * sin(ea(1))];
 a(:,2) = [eaB(8), radius_tool * cos(ea(2)), radius_tool * sin(ea(2))];
@@ -32,6 +34,15 @@ B(:,6) = [eaB(14), radius_scaffold * cos(ea(6)), radius_scaffold * sin(ea(6))];
 % B(:,4) = [eaB(14), radius_scaffold * sin(ea(4)), radius_scaffold * cos(ea(4))];
 % B(:,5) = [eaB(14), radius_scaffold * sin(ea(5)), radius_scaffold * cos(ea(5))];
 % B(:,6) = [eaB(14), radius_scaffold * sin(ea(6)), radius_scaffold * cos(ea(6))];
+
+add_cables = (size(eaB,1) - 18) / 3;
+
+for i=1:add_cables
+    ea(end+1) = eaB(19+(i-1)*3);
+    a(:,end+1) = [eaB(20+(i-1)*3), radius_tool * cos(ea(end)), radius_tool * sin(ea(end))];
+    B(:,end+1) = [eaB(21+(i-1)*3), radius_scaffold * cos(ea(end)), radius_scaffold * sin(ea(end))];
+end
+
 
 gamma_y = eaB(16);
 gamma_z = eaB(17);
