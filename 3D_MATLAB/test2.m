@@ -6,12 +6,12 @@ load('./data/R.mat');
 relative_tp;
 
 radius_tool = 1.75;
-radius_scaffold = 23.4502;
+radius_scaffold = 26.5491;
 %radius_scaffold = 28.64;
 %radius_scaffold = 30.51;
 
 %load('data_r_tp.mat');
-taskspace = data_r_tp;
+%taskspace = data_r_tp;
 taskspace = dataR_r';
 taskspace(1,:) = taskspace(1,:) + abs(min(taskspace(1,:))) + 5;
 %taskspace(2,:) = taskspace(2,:) + radius_scaffold/2 - 7.4;

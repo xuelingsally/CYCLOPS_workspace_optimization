@@ -1,18 +1,16 @@
 close all;
 
 radius_tool = 1.75;
-radius_scaffold = 26.5491;
-%radius_scaffold = 28.64;
-%radius_scaffold = 30.51;
+radius_scaffold = 35;
 
-%load('data_r_tp.mat');
-%taskspace = data_r_tp;
-taskspace = dataL_r';
+load('data_r_tp.mat');
+taskspace = data_r_tp;
+
 taskspace(1,:) = taskspace(1,:) + abs(min(taskspace(1,:))) + 5;
-%taskspace(2,:) = taskspace(2,:) + radius_scaffold/2 - 7.4;
-taskspace(2,:) = taskspace(2,:) - radius_scaffold/2;
-taskspace(3,:) = taskspace(3,:) + abs(min(taskspace(3,:))) - radius_scaffold - 3;
-%taskspace(3,:) = taskspace(3,:) - 13;
+taskspace(2,:) = taskspace(2,:) + radius_scaffold/2 - 7.4;
+%taskspace(2,:) = taskspace(2,:) + radius_scaffold/2;
+%taskspace(3,:) = taskspace(3,:) + abs(min(taskspace(3,:))) - radius_scaffold - 3;
+taskspace(3,:) = taskspace(3,:) - 13;
 data1 = taskspace;
 
 data_t1 = [];
@@ -62,7 +60,6 @@ for i=1:size(data1,2)
     temp2 = R_2 * r_curve;
     data_t2(1:3,i) = -temp2 + data_t1(1:3,i);
     data_t2(4:6,i) = [0;beta_y;beta_z];
-    data_t2(7:9,i) = data1(7:9,i);
 end
 
 draw_cyclops_curved(eaB, taskspace, radius_tool, radius_scaffold);
