@@ -1017,7 +1017,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
                 writeFile << "];" << std::endl << std::endl;
             }
 
-            if (i%2 == 0)
+            if (i%1 == 0)
             {
                 vector<double> temp_position = (pop.getBestPos());
                 writePlot << std::endl << "eaBv(:,end+1) = [";
@@ -1094,7 +1094,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
                 writeFile << "PFO Resampling Step" << std::endl;
             }
 
-            if (i%2 == 0)
+            if (i%1 == 0)
             {
                 vector<double> temp_position = (pfo_pop.getBestPos());
                 writePlot << std::endl << "eaBv(:,end+1) = [";
