@@ -1,8 +1,8 @@
 function [wp_size, feasible, unfeasible, t] = dex_workspace(a, B, W, f_ee, r_ee, phi_min, phi_max, t_min, t_max, length_scaffold)
 
-x_res = 10;
-y_res = 10;
-z_res = 10;
+x_res = 20;
+y_res = 20;
+z_res = 20;
 
 % Determine Search Volume
 x_middle = (min(B(1,:)) + max(B(1,:)))/2;
@@ -66,10 +66,10 @@ for i=1:size(vol_grid,2)
     end
 end
 
-% x_search = x_space_length1 + x_space_length2;
-% yz_search = pi * radius * radius;
-% search_vol = x_search * yz_search;
-% wp_size = size(feasible, 2) / size(vol_grid, 2) * search_vol;
-wp_size = size(feasible, 2)/ (1000);
+x_search = x_space_length1 + x_space_length2;
+yz_search = pi * radius * radius;
+search_vol = x_search * yz_search;
+wp_size = size(feasible, 2) / size(vol_grid, 2) * search_vol;
+%wp_size = size(feasible, 2)/ (1000);
 
 end

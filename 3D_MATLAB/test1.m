@@ -36,7 +36,8 @@ r_ee_dir = r_ee_dir / r_ee_dir_x * curve_length_x;
 curve_length = norm(r_ee_dir);
 
 r_ee = r_ee_dir + r_curve;
-
+data_t1 = [];
+data_t2 = [];
 
 for i=1:size(data1,2)
     alpha_y = data1(5,i);
@@ -66,4 +67,4 @@ draw_cyclops_curved(eaB, taskspace, radius_tool, radius_scaffold);
 %taskspace2 = data_t1;
 %plot3(taskspace2(1,:), taskspace2(2,:), taskspace2(3,:), 'r.');
 taskspace3 = data_t2;
-plot3(taskspace3(1,:), taskspace3(2,:), taskspace3(3,:), 'g.');
+%plot3(taskspace3(1,:), taskspace3(2,:), taskspace3(3,:), 'g.');

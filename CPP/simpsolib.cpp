@@ -271,7 +271,7 @@ double simpsolib::EvalFN::evaluate(vector<double> position, cyclops::fnInputs In
     else if (Input.taskspace[0].rows() == 5)
     {
         // Taskspace Type 2 
-        if (!Input.curve_tool)
+        if (Input.curve_tool == 0)
         {
             // Straight Tool -> eaB size is 15 + 3n
             temp_result = cyclops::objective_function2(eaB, Input.W, Input.f_ee_vec, Input.phi_min,
@@ -279,10 +279,19 @@ double simpsolib::EvalFN::evaluate(vector<double> position, cyclops::fnInputs In
                                   Input.taskspace, Input.radius_tool, Input.radius_scaffold,
                                   Input.length_scaffold);
         }
-        else
+        else if(Input.curve_tool == 1)
         {
             // Curved tool-> eaB size is 18 + 3n
             temp_result = cyclops::objective_function2c(eaB, Input.W, Input.f_ee_vec, Input.phi_min,
+                                  Input.phi_max, Input.t_min, Input.t_max,
+                                  Input.taskspace, Input.radius_tool, Input.radius_scaffold,
+                                  Input.length_scaffold);
+        }
+
+        else if(Input.curve_tool == 2)
+        {
+            // Curved tool-> eaB size is 18 + 3n
+            temp_result = cyclops::objective_function2c2(eaB, Input.W, Input.f_ee_vec, Input.phi_min,
                                   Input.phi_max, Input.t_min, Input.t_max,
                                   Input.taskspace, Input.radius_tool, Input.radius_scaffold,
                                   Input.length_scaffold);
@@ -293,7 +302,7 @@ double simpsolib::EvalFN::evaluate(vector<double> position, cyclops::fnInputs In
     else if (Input.taskspace[0].rows() == 8)
     {
         // Taskspace Type 3 
-        if (!Input.curve_tool)
+        if (Input.curve_tool == 0)
         {
             // Straight Tool -> eaB size is 15 + 3n
             temp_result = cyclops::objective_function2(eaB, Input.W, Input.f_ee_vec, Input.phi_min,
@@ -1157,7 +1166,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
 
         pop.destroy();  // del the population
         pfo_pop.destroy(); // del the pfo population
-        writePlot << std::endl;
+        writePlot << "Run " << nRun << "Over " << std::endl << std::endl;
     }
 
     end=clock();

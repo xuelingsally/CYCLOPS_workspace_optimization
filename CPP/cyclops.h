@@ -55,7 +55,7 @@ struct fnInputs {
     double radius_tool;
     double radius_scaffold;
     double length_scaffold;
-    bool curve_tool;
+    int curve_tool;
 };
 
 // For Dex taskspace - Straight tool
@@ -78,6 +78,15 @@ double objective_function2(Matrix<double,Dynamic,1> eaB, Matrix<double,6,1> W,
 
 // For Taskspace with orientation (wrt tooltip) - curved tool
 double objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double,6,1> W,
+	                      vector<Vector3d> f_ee_vec,
+	                      Vector2d phi_min, Vector2d phi_max,
+	                      VectorXd t_min, VectorXd t_max,
+	                      vector<VectorXd> taskspace,
+	                      double radius_tool, double radius_scaffold,
+	                      double length_scaffold);
+
+// For Taskspace with orientation (wrt tooltip) - curved tool -> double curve
+double objective_function2c2(Matrix<double,Dynamic,1> eaB, Matrix<double,6,1> W,
 	                      vector<Vector3d> f_ee_vec,
 	                      Vector2d phi_min, Vector2d phi_max,
 	                      VectorXd t_min, VectorXd t_max,

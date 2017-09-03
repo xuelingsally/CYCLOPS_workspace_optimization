@@ -69,12 +69,14 @@ int main()
     // Is the tool curved?
     int curve = 0;
     inData >> temp >> curve;
-    if (curve == 0)
-        fnInputs.curve_tool = false;
+    if (curve > 2)
+    {
+        fnInputs.curve_tool = 2;
+        curve = 2;
+    }
     else
     {
-        fnInputs.curve_tool = true;
-        curve = 1;
+        fnInputs.curve_tool = curve;
     }
     
     std::cout << "CYCLOPS PARAMS" << std::endl;
@@ -344,18 +346,20 @@ int main()
     }
     
     // Limits for B
-    /*
+    
     for (int i=12; i<14; i++)
     {
         lower_range[i] = -length_scaffold;
         upper_range[i] = 0.0;
-    }*/
+    }
 
     //Using halfsapce method
+    /*
     lower_range[12] = -length_scaffold;
     upper_range[12] = -length_scaffold/2.0;
     lower_range[13] = -length_scaffold/2.0;
     upper_range[13] = 0.0;
+    */
 
 
     // Limits for tooltip
@@ -369,12 +373,15 @@ int main()
     {
         lower_range[14] = 0.0;
         upper_range[14] = tool_tip_limit;
-        lower_range[15] = -PI/2;
-        upper_range[15] = PI/2;
-        lower_range[16] = -PI/2;
-        upper_range[16] = PI/2;
-        lower_range[17] = 0.0;
-        upper_range[17] = tool_tip_limit;
+        for (int i=0; i<curve;i++)
+        {
+            lower_range[15+i*3] = -PI/2;
+            upper_range[15+i*3] = PI/2;
+            lower_range[16+i*3] = -PI/2;
+            upper_range[16+i*3] = PI/2;
+            lower_range[17+i*3] = 0.0;
+            upper_range[17+i*3] = tool_tip_limit;
+        }
     }
 
     // Limits for additional Tendons
