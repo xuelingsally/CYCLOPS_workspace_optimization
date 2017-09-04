@@ -6,7 +6,9 @@ load('./data/R.mat');
 relative_tp;
 
 radius_tool = 1.75;
-radius_scaffold = 22.7564;
+radius_scaffold = 27.4594;
+%radius_scaffold = 23.2495;
+%radius_scaffold = 22.7564;
 %radius_scaffold = 26.5491;
 %radius_scaffold = 28.64;
 %radius_scaffold = 30.51;

@@ -18,6 +18,15 @@ B(:,5) = [eaB(14), radius_scaffold * cos(ea(5)), radius_scaffold * sin(ea(5))];
 B(:,6) = [eaB(14), radius_scaffold * cos(ea(6)), radius_scaffold * sin(ea(6))];
 
 
+add_cables = (size(eaB,1) - 18) / 3;
+
+for i=1:add_cables
+    ea(end+1) = eaB(19+(i-1)*3);
+    a(:,end+1) = [eaB(20+(i-1)*3), radius_tool * cos(ea(end)), radius_tool * sin(ea(end))];
+    B(:,end+1) = [eaB(21+(i-1)*3), radius_scaffold * cos(ea(end)), radius_scaffold * sin(ea(end))];
+end
+
+
 gamma_y = eaB(16);
 gamma_z = eaB(17);
 
@@ -42,6 +51,8 @@ W = zeros(1,6);
 
 feas = [];
 unfeas = [];
+unfeas2 = [];
+ptloc = [];
 
 for i=1:size(taskspace3,2);
     P = taskspace3(1:6,i);
@@ -59,5 +70,7 @@ for i=1:size(taskspace3,2);
         feas(:,end+1) = P;
     else
         unfeas(:,end+1) = P;
+        unfeas2(:,end+1) = taskspace(:,i);
+        ptloc(end+1) = i;
     end
 end

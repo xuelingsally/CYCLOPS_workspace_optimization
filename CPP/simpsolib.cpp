@@ -1,14 +1,3 @@
-/*
- * FILE: simpsolib.cpp, v.1.7.1, 4/28/2014
- * Author: Tomas V. Arredondo
- *
- * SimPSOLib: A simple yet flexible PSO implementation in C++.
- *
- * DISCLAIMER: No liability is assumed by the author for any use made
- * of this program.
- * DISTRIBUTION: Any use may be made of this program, as long as the
- * clear acknowledgment is made to the author in code and runtime executables
- */
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -27,6 +16,7 @@ using namespace Eigen;
 // create writeFile variable
 ofstream writeFile("out.txt");
 ofstream writePlot("plot.txt");
+ofstream writeResults("results.txt");
 
 int function_cnt = 0;  // function eval counter
 
@@ -908,6 +898,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
                        float phi_p, float phi_g, double omega_initial, double omega_final, bool rand_particle_upd_flag,
                        int pfo_pop_size, int pfo_number_iters, int pfo_resample_factor)
 {
+    
     clock_t start,end,diff=0;
     start=clock();
 
@@ -923,6 +914,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
 
     for (int i=0; i < number_runs ; i++)
         nRunFitness[i]=0;
+
 
     // Set the population parameters: number of dimensions and other parms
     Population pop(eval.num_parms);
@@ -1142,32 +1134,37 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
         nRunFitness[nRun]=pop_info.avg_value;
         nRunsAvgFitness+=pop_info.avg_value;
 
-
         
         std::cout << "Final Max Value: " << pfo_pop.getBestVal() << std::endl;
         writeFile << "Final Max Value: " << pfo_pop.getBestVal() << std::endl;
+        writeResults << "Run " << nRun << endl << "Final Max Value: " << pfo_pop.getBestVal() << std::endl;
 
         vector<double> temp_position = (pfo_pop.getBestPos());
         std::cout << "eaB = [";
         writeFile << "eaB = [";
+        writeResults << "eaB = [";
         for (unsigned int i=0; i < temp_position.size(); i++)
         {
             std::cout << temp_position[i];
             writeFile << temp_position[i];
+            writeResults << temp_position[i];
             if (i < temp_position.size()-1)
             {
                 std::cout << "; ";
                 writeFile << "; ";
+                writeResults << "; ";
             }
         }
 
         std::cout << "];" << std::endl;
         writeFile << "];" << std::endl << std::endl;
+        writeResults << "];" << std::endl << std::endl;
 
         pop.destroy();  // del the population
         pfo_pop.destroy(); // del the pfo population
-        writePlot << "Run " << nRun << "Over " << std::endl << std::endl;
+        writePlot << "Run " << nRun << " Over " << std::endl << std::endl;
     }
+
 
     end=clock();
     diff=end-start;
@@ -1182,7 +1179,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
     nRunsAvgFitnessVariance=nRunsAvgFitnessVariance/number_runs;
     nRunsAvgFitnessSTD=pow(nRunsAvgFitnessVariance, 0.5);
 
-    std::cout << "---------- PSO FINAL RESULTS ----------" << std::endl;
+    std::cout << "---------- FINAL RESULTS ----------" << std::endl;
     std::cout << "Number of Runs: "  << nRun << std::endl;
     std::cout << "Function: "        << eval.szName << std::endl;
     std::cout << "Runs max value: "<< nRunsMaxFitness << std::endl;
@@ -1191,12 +1188,7 @@ int simpsolib::run_pso(EvalFN eval, int number_runs, int pso_pop_size, int pso_n
     std::cout << "Runs std dev value: "<< nRunsAvgFitnessSTD << std::endl;
     std::cout << "Simulation time in clocks: " << diff << std::endl;
     std::cout << "Simulation clocks per sec: " << CLOCKS_PER_SEC << std::endl;
-    std::cout << "----------- PARAMETERS USED: -----------" << std::endl;
-    std::cout << "Pop size:             "   << pop.getSize() << std::endl;
-    std::cout << "Number of Dimensions: "     << pop.getNumDims() << std::endl;
-    std::cout << "Number of Iterations: "     << pop.getNumIters() << std::endl;
-    std::cout << "Number of Function Evals: "     << function_cnt << std::endl;
-    std::cout << "---------- END FINAL RUN RESULTS ------------" << std::endl;
+    std::cout << "---------- END ------------" << std::endl;
 
     return 0;
 }

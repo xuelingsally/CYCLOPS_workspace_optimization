@@ -1,3 +1,7 @@
+/*
+This contains various functions related to the CYCLOPS.
+*/
+
 #ifndef CYCLOPS_H
 #define CYCLOPS_H
 

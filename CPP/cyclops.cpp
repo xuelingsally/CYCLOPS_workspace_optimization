@@ -1,5 +1,5 @@
 /*
-This contains various functions required for calculating the workspace of the CYCLOPS.
+This contains various functions related to the CYCLOPS.
 */
 
 #include "cyclops.h"

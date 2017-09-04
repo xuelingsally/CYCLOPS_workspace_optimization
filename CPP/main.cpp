@@ -1,20 +1,21 @@
 /*
- * FILE: main.cpp, v.1.7.1, 4/28/2014
- * Author: Tomas V. Arredondo
- *
- * Example of a C++ application using SimGALib and SimPSOLib.
- *
- * This is NOT a tutorial on GA as there are many tutorials and books on this
- * subject see http://en.wikipedia.org/wiki/Genetic_algorithm for more information.
- *
- * To change the function and range being optimized go to ga.h and change
- * FUNCTION_LOWER_RANGE, FUNCTION_UPPER_RANGE and FUNCTION definitions.
- *
- * DISCLAIMER: No liability is assumed by the author for any use made
- * of this program.
- * DISTRIBUTION: Any use may be made of this program, as long as the
- * clear acknowledgment is made to the author in code and runtime executables
- */
+Imperial College London Msc Individual Project by Yi Wei Pang
+Main file
+
+Modified and used code from the following sources:
+
+SIMPSOLIB: http://profesores.elo.utfsm.cl/~tarredondo/simgalib.html
+Eigen: http://eigen.tuxfamily.org/index.php?title=Main_Page
+libigl: https://github.com/libigl/libigl
+
+Implemented algorithms based on information from the following:
+
+Optimization of a planar tendon-driven parallel manipulator for a maximal dextrous workspace (Hay and Snyman, 2005)
+Particle Filter with Swarm Move for Optimization (Zhang and Tong et al, 2008)
+A particle swarm pattern search method for bound constrained global optimization (Vaz, A. Ismael F. and Vicente, Luís N., 2007)
+
+
+*/
 #include <iostream>
 #include <ctime>
 #include <cmath>
@@ -33,10 +34,20 @@
 using namespace simpsolib;
 using namespace simtstlib;
 
-int main()
+int main(int argc, char *argv[])
 {
-
     string input_filename = "./input.txt";
+    string tp_filename = "./taskspace.txt";
+
+    if (argc > 2)
+    {
+        std::cout << "Input File: " << argv[1] << std::endl;
+        std::cout << "Taskspace File: " << argv[2] << std::endl << std::endl;
+
+        input_filename = argv[1];
+        tp_filename = argv[2];
+    }
+    
     string temp;
     ifstream inData;
     inData.open(input_filename.c_str());
@@ -191,7 +202,7 @@ int main()
 
 
     // Taskspace Definition
-    string tp_filename = "./taskspace.txt";
+    
     ifstream inTaskspace;
     inTaskspace.open(tp_filename.c_str());
     inTaskspace >> temp; //Take the in the heading word
@@ -277,36 +288,7 @@ int main()
     }
 
     std::cout << "No. of points in taskspace: " << fnInputs.taskspace.size() << std::endl <<std::endl;
-    /*
-    tp_temp(0) = 20; tp_temp(1) = 5, tp_temp(2) = 5;
-    fnInputs.taskspace.push_back(tp_temp/1000.0);
-    tp_temp(0) = 20; tp_temp(1) = -5, tp_temp(2) = 5;
-    fnInputs.taskspace.push_back(tp_temp/1000.0);
-    tp_temp(0) = 20; tp_temp(1) = -5, tp_temp(2) = -5;
-    fnInputs.taskspace.push_back(tp_temp/1000.0);
-    tp_temp(0) = 20; tp_temp(1) = 5, tp_temp(2) = -5;
-    fnInputs.taskspace.push_back(tp_temp/1000.0);
-
-    tp_temp(0) = 25; tp_temp(1) = 5, tp_temp(2) = -6;
-    fnInputs.taskspace.push_back(tp_temp/1000.0);
-    tp_temp(0) = 25; tp_temp(1) = 5, tp_temp(2) = 6;
-    fnInputs.taskspace.push_back(tp_temp/1000.0);
-    tp_temp(0) = 25; tp_temp(1) = -5, tp_temp(2) = -6;
-    fnInputs.taskspace.push_back(tp_temp/1000.0);
-    tp_temp(0) = 25; tp_temp(1) = -5, tp_temp(2) = 6;
-    fnInputs.taskspace.push_back(tp_temp/1000.0);
-
-    tp_temp(0) = 30; tp_temp(1) = 5, tp_temp(2) = -5;
-    fnInputs.taskspace.push_back(tp_temp/1000.0);
-    tp_temp(0) = 30; tp_temp(1) = 5, tp_temp(2) = 5;
-    fnInputs.taskspace.push_back(tp_temp/1000.0);
-    tp_temp(0) = 30; tp_temp(1) = -5, tp_temp(2) = -5;
-    fnInputs.taskspace.push_back(tp_temp/1000.0);
-    tp_temp(0) = 30; tp_temp(1) = -5, tp_temp(2) = 5;
-    fnInputs.taskspace.push_back(tp_temp/1000.0);
-    tp_temp(0) = 35; tp_temp(1) = 5, tp_temp(2) = -10;
-    fnInputs.taskspace.push_back(tp_temp/1000.0);
-    */
+    
 
     // Design Vector and limits
     vector<double> lower_range;

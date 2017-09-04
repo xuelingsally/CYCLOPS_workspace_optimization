@@ -1,14 +1,3 @@
-/*
- * FILE: simpsolib.h, v.1.7.1, 4/28/2014
- * Author: Tomas V. Arredondo
- *
- * SimGALib: A simple yet flexible PSO implementation in C++.
- *
- * DISCLAIMER: No liability is assumed by the author for any use made
- * of this program.
- * DISTRIBUTION: Any use may be made of this program, as long as the
- * clear acknowledgment is made to the author in code and runtime executables
- */
 #ifndef SIMPSOLIB_H
 #define SIMPSOLIB_H
 

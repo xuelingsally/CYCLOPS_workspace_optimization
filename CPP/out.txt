@@ -1,2 +1,1 @@
-Iteration: 1  Leader: 25  ObjVal: -1  meshsize: 0.628319  RanResampleCount: 0  RanFactor: 1.5
-Iteration: 2  Leader: 25  ObjVal: -1  meshsize: 0.314159  RanResampleCount: 588  RanFactor: 1.45
+Iteration: 1  Leader: 42  ObjVal: -1  meshsize: 0.628319  RanResampleCount: 0  RanFactor: 1.5

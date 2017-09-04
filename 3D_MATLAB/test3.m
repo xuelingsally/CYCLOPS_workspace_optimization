@@ -69,6 +69,8 @@ W = zeros(1,6);
 f_ee = [0,0,-0.1];
 feas = [];
 unfeas = [];
+unfeas2 = [];
+ptloc =[];
 
 for i=1:size(taskspace3,2);
     P = taskspace3(:,i);
@@ -84,5 +86,7 @@ for i=1:size(taskspace3,2);
         feas(:,end+1) = P;
     else
         unfeas(:,end+1) = P;
+        unfeas2(:,end+1) = taskspace(:,i);
+        ptloc(end+1) = i;
     end
 end
