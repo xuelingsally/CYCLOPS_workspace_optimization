@@ -2,6 +2,9 @@
 Imperial College London Msc Individual Project by Yi Wei Pang
 Main file
 
+
+Acknowledgements:
+
 Modified and used code from the following sources:
 
 SIMPSOLIB: http://profesores.elo.utfsm.cl/~tarredondo/simgalib.html
@@ -328,33 +331,27 @@ int main(int argc, char *argv[])
     }
     
     // Limits for B
-    
+    /*
     for (int i=12; i<14; i++)
     {
         lower_range[i] = -length_scaffold;
         upper_range[i] = 0.0;
     }
-
+*/
     //Using halfsapce method
-    /*
+    
     lower_range[12] = -length_scaffold;
     upper_range[12] = -length_scaffold/2.0;
     lower_range[13] = -length_scaffold/2.0;
     upper_range[13] = 0.0;
-    */
+    
+    // Limits for tooltip r_ee_x
+    lower_range[14] = 0.0;
+    upper_range[14] = tool_tip_limit;
 
-
-    // Limits for tooltip
-    if (curve == 0)
+   /*
+    if (curve == 1)
     {
-        // No curve we only optimise for r_ee_x
-        lower_range[14] = 0.0;
-        upper_range[14] = tool_tip_limit;
-    }
-    else
-    {
-        lower_range[14] = 0.0;
-        upper_range[14] = tool_tip_limit;
         for (int i=0; i<curve;i++)
         {
             lower_range[15+i*3] = -PI/2;
@@ -365,7 +362,50 @@ int main(int argc, char *argv[])
             upper_range[17+i*3] = tool_tip_limit;
         }
     }
+*/
+    if (curve == 1)
+    {
+        lower_range[15] = -PI/2;
+        upper_range[15] = PI/2;
+        lower_range[16] = -PI/2;
+        upper_range[16] = PI/2;
+        lower_range[17] = 0.0;
+        upper_range[17] = tool_tip_limit;
+    }
+    else if (curve == 2)
+    {
+        lower_range[15] = -PI/2;
+        upper_range[15] = PI/2;
+        lower_range[16] = -PI/2;
+        upper_range[16] = PI/2;
+        lower_range[17] = -PI/2;
+        upper_range[17] = PI/2;
+        lower_range[18] = -PI/2;
+        upper_range[18] = PI/2;
+    }
 
+    int temp_c = 0;
+    if (curve == 0)
+    {
+        temp_c = 0;
+    }
+    else
+    {
+        temp_c = 2;
+    }
+
+    // Limits for additional Tendons
+    for (int i=0; i<num_tendons-6; i++)
+    {
+        lower_range[15+i*3+curve+temp_c] = angle_lower_limit/180.0 * PI;
+        upper_range[15+i*3+curve+temp_c] = angle_upper_limit/180.0 * PI;
+        lower_range[15+i*3+1+curve+temp_c] = -dist_tool_b_cg;
+        upper_range[15+i*3+1+curve+temp_c] = (length_overtube - dist_tool_b_cg);
+        lower_range[15+i*3+2+curve+temp_c] = -length_scaffold;
+        upper_range[15+i*3+2+curve+temp_c] = 0.0;
+    }
+
+/*
     // Limits for additional Tendons
     for (int i=0; i<num_tendons-6; i++)
     {
@@ -376,7 +416,7 @@ int main(int argc, char *argv[])
         lower_range[15+i*3+2+curve*3] = -length_scaffold;
         upper_range[15+i*3+2+curve*3] = 0.0;
     }
-
+*/
 //---------------------------------------------------------------------------------
 // Optimization: PSO + SA + PFO
 //---------------------------------------------------------------------------------
@@ -412,7 +452,7 @@ int main(int argc, char *argv[])
     std::cout << "PFO Resample Factor: " << pfo_resample_factor << std::endl << std::endl;
 
     std::cout << "STARTING OPTIMIZATION" << std::endl;
-    int num_dims = 15 + (num_tendons - 6) * 3 + curve * 3;
+    int num_dims = 15 + (num_tendons - 6) * 3 + curve + temp_c;
     //Create logging file
     //ofstream cout("output.txt")
 
@@ -529,6 +569,23 @@ int main(int argc, char *argv[])
                           fnInputs.radius_scaffold, fnInputs.length_scaffold);
 
     std::cout << "Value of Objective Function is: " << val << std::endl;
+
+
+
+    Eigen::Matrix<double, 21,1> eaB;
+
+    eaB << 1.0472, 3.1416, 5.2360, 1.0472, 3.1416, 5.2360,
+           2.9000, 2.9000, 2.9000, -2.9000, -2.9000, -2.9000,
+           0, -72.2100, 56.7100,
+           0.2820, 0.2018, 7.9000,
+           -0.2820, -0.2018, 50.0000;
+
+    double val = cyclops::objective_function2c2(eaB, fnInputs.W, fnInputs.f_ee_vec, fnInputs.phi_min, fnInputs.phi_max,
+                          fnInputs.t_min, fnInputs.t_max, fnInputs.taskspace, fnInputs.radius_tool, 
+                          fnInputs.radius_scaffold, fnInputs.length_scaffold);
+
+    std::cout << "Value of Objective Function is: " << val << std::endl;
+
 */
     return 0;
 }

@@ -1018,6 +1018,234 @@ double cyclops::objective_function2c(Matrix<double,Dynamic,1> eaB, Matrix<double
 }
 
 
+double cyclops::objective_function2cG(Matrix<double,Dynamic,1> eaB, Matrix<double,6,1> W,
+                          vector<Vector3d> f_ee_vec,
+                          Vector2d phi_min, Vector2d phi_max,
+                          VectorXd t_min, VectorXd t_max,
+                          vector<VectorXd> taskspace,
+                          double radius_tool, double radius_scaffold,
+                          double length_scaffold)
+{
+    //cout << "Func2c" <<endl;
+    double val = 0.0;
+    //cout << eaB << endl;
+    // Finding the attachment and feeding points based on design vector
+    Matrix<double,3,Dynamic> a, B;
+
+    int num_tendons = (eaB.rows() - 19)/3 + 6;
+    a.resize(3,num_tendons);
+    B.resize(3,num_tendons);
+
+
+    // Feeding and attachment points for the 6 main tendons.
+    for(int i=0; i<6; i++)
+    {
+        double cos_mul = cos(eaB(i,0));
+        double sin_mul = sin(eaB(i,0));
+
+        a(0,i) = eaB(i+6,0);
+        a(1,i) = radius_tool * cos_mul; //y-component
+        a(2,i) = radius_tool * sin_mul; //z-component
+
+        if(i<3)
+            B(0,i) = eaB(12,0);
+        else
+            B(0,i) = eaB(13,0);
+
+        B(1,i) = radius_scaffold * cos_mul; //y-component
+        B(2,i) = radius_scaffold * sin_mul; //z-component
+    }
+
+    // Feeding and attachment points for the 'extra' tendons
+    for (int i=0; i<num_tendons - 6; i++)
+    {
+        double cos_mul = cos(eaB(i*3+19, 0));
+        double sin_mul = sin(eaB(i*3+19, 0));
+
+        a(0,i+6) = eaB(i*3+19+1,0);
+        a(1,i+6) = radius_tool * cos_mul; 
+        a(2,i+6) = radius_tool * sin_mul;
+
+        B(0,i+6) = eaB(i*3+19+2,0);
+        B(1,i+6) = radius_scaffold * cos_mul;
+        B(2,i+6) = radius_scaffold * sin_mul;
+    }
+
+/*
+    cout << "a = [";
+    for (int i=0; i<a.rows(); i++){
+        for (int j=0; j<a.cols(); j++) {
+            cout << a(i,j);
+            if (j < a.cols()-1)
+                cout << ",";
+        }
+        cout << ";" << endl;
+    }
+    cout << "];" << endl;
+    
+    cout << "B = [";
+    for (int i=0; i<B.rows(); i++){
+        for (int j=0; j<B.cols(); j++) {
+            cout << B(i,j);
+            if (j < B.cols()-1)
+                cout << ",";
+        }
+        cout << ";" << endl;
+    }
+    cout << "];" << endl;
+
+*/
+
+
+    // Checking for crossing of cables
+    for (int i=0;i<a.cols();i++)
+    {
+        for (int j=0;j<a.cols();j++)
+        {
+            if(a(0,i) < a(0,j) && B(0,i) > B(0,j))
+            {
+                val = -1.5;
+                //cout << "Returned0 " << val << endl;
+                return val;
+            }
+        }
+        // Check that the tooltip is greater than the max value of a_x
+        if (a(0,i) >= eaB(14))
+        {
+            val = -1.5;
+            return val;
+        }
+    }
+
+    // Make sure that we don't get the small B large a config
+    double max_a_x = -1e10;
+    double min_a_x = 1e10;
+
+    for (int i=0; i<6; i++)
+    {
+        if (eaB(i+6,0) > max_a_x)
+            max_a_x = eaB(i+6,0);
+
+        if (eaB(i+6,0) < min_a_x)
+            min_a_x = eaB(i+6,0);
+    }
+
+
+    if (abs(eaB(12) - eaB(13)) < abs(max_a_x - min_a_x))
+    {
+        val = -1.5;
+        return val;
+    }
+
+    //Find r_ee
+    double r_ee_x, gamma_y, gamma_z;
+
+    r_ee_x = eaB(14);
+    gamma_y = eaB(15);
+    gamma_z = eaB(16);
+
+
+    Matrix3d R_y_ee, R_z_ee, T_r_ee;
+    R_y_ee << cos(gamma_y), 0, sin(gamma_y),
+           0, 1, 0,
+           -sin(gamma_y), 0, cos(gamma_y);
+    R_z_ee << cos(gamma_z), -sin(gamma_z), 0,
+           sin(gamma_z), cos(gamma_z), 0,
+           0, 0, 1;
+    T_r_ee = R_z_ee * R_y_ee;
+
+    Vector3d r_ee_dir, r_ee;
+    Vector3d x_unit;
+    x_unit << 1, 0, 0;
+
+    r_ee_dir = T_r_ee * x_unit;
+    double r_ee_dir_x = r_ee_dir(0,0);
+    r_ee = (r_ee_dir / r_ee_dir_x * r_ee_x);
+
+    Vector3d r_ee_length_vec;
+    r_ee_length_vec << r_ee.norm(), 0, 0;
+
+    double beta_y = eaB(17) - gamma_y;
+    double beta_z = eaB(18) - gamma_z;
+
+    // Checking if the points in the taskspace are feasible across the given forces on the end effector
+    vector<VectorXd>::iterator taskspace_iter;
+    vector<Vector3d>::iterator f_ee_iter;
+
+    for (taskspace_iter = taskspace.begin(); taskspace_iter!=taskspace.end(); ++taskspace_iter)
+    {
+
+        // The taskspace orientation
+        double alpha_y = (*taskspace_iter)(3,0);
+        double alpha_z = (*taskspace_iter)(4,0);
+
+        Vector3d taskspace_pt;
+        taskspace_pt << (*taskspace_iter)(0,0), (*taskspace_iter)(1,0), (*taskspace_iter)(2,0);
+
+        //cout << "alpha_y: " << alpha_y << "  alpha_z: " << alpha_z << endl;
+
+        // Find the required position of the curve of the tool
+        // Define rotation Matrix
+        Matrix3d R_y, R_z, T_r;
+        R_y << cos(alpha_y-beta_y), 0, sin(alpha_y-beta_y),
+               0, 1, 0,
+               -sin(alpha_y-beta_y), 0, cos(alpha_y-beta_y);
+        R_z << cos(alpha_z-beta_z), -sin(alpha_z-beta_z), 0,
+               sin(alpha_z-beta_z), cos(alpha_z-beta_z), 0,
+               0, 0, 1;
+        T_r = R_z * R_y;
+
+        Vector3d r_ee_rotated1 = T_r * r_ee_length_vec;
+        //cout << "r_ee_rotated1 is: " << r_ee_rotated1.transpose() << endl;
+
+        Vector3d taskspace_at_tool = taskspace_pt - r_ee_rotated1/1000.0;
+
+        Matrix<double,5,1> taskspace_temp;
+        taskspace_temp << taskspace_at_tool(0,0), taskspace_at_tool(1,0), taskspace_at_tool(2,0), alpha_y - beta_y, alpha_z - beta_z;
+        //cout << "Original taskspace is: " << (*taskspace_iter).transpose() << ";" << endl;
+        //cout << "Moved taskspace is: " << taskspace_temp.transpose() << ";" <<std::endl << endl;
+        //cout << taskspace_temp.transpose() << ";" << endl;
+
+        for (f_ee_iter = f_ee_vec.begin(); f_ee_iter!=f_ee_vec.end(); ++f_ee_iter)
+        {
+
+            bool feasible_temp = false;
+            Matrix<double,5,1> P;
+            P << (taskspace_temp)(0,0), (taskspace_temp)(1,0), (taskspace_temp)(2,0), (taskspace_temp)(3,0), (taskspace_temp)(4,0);
+            feasible_temp = feasible_pose(P, a/1000.0, B/1000.0, W, *f_ee_iter, r_ee/1000.0, t_min, t_max);
+            if (!feasible_temp)
+            {
+                val = val - 1.0;
+            }
+        }
+    }
+
+    if (val < 0.0)
+    {
+        //cout << val << endl;
+        double val2 = double(val)/(double(taskspace.size()) * double(f_ee_vec.size()));
+        //cout << "Returned1 " << val2 << endl;
+        return val2;
+    }
+
+
+    // Calculate and return the zero wrench workspace if the taskspace condition is fulfilled.
+
+    Vector3d zero_f_ee;
+    zero_f_ee << 0,0,0;
+
+    vector<Vector3d> zero_f_ee_vec;
+    zero_f_ee_vec.push_back(zero_f_ee);
+
+    dw_result dex_wp = dex_workspace(a/1000.0, B/1000.0, W, zero_f_ee_vec, r_ee/1000.0, phi_min, phi_max, t_min, t_max, length_scaffold/1000.0);
+
+    val = dex_wp.size;
+    //cout << "Returned2 " << val << endl;
+    return val;
+}
+
+
+
 
 
 double cyclops::objective_function2c2(Matrix<double,Dynamic,1> eaB, Matrix<double,6,1> W,
@@ -1205,10 +1433,10 @@ double cyclops::objective_function2c2(Matrix<double,Dynamic,1> eaB, Matrix<doubl
     double gamma_z2 = eaB(19);
     // Define rotation Matrix for the curve of tool
     Matrix3d R_y_c2, R_z_c2, T_r_c2;
-    R_y_c << cos(gamma_y2), 0, sin(gamma_y2),
+    R_y_c2 << cos(gamma_y2), 0, sin(gamma_y2),
            0, 1, 0,
            -sin(gamma_y2), 0, cos(gamma_y2);
-    R_z_c << cos(gamma_z2), -sin(gamma_z2), 0,
+    R_z_c2 << cos(gamma_z2), -sin(gamma_z2), 0,
            sin(gamma_z2), cos(gamma_z2), 0,
            0, 0, 1;
     T_r_c2 = R_z_c2 * R_y_c2;
@@ -1217,9 +1445,10 @@ double cyclops::objective_function2c2(Matrix<double,Dynamic,1> eaB, Matrix<doubl
 
     // Find r_ee
     Vector3d r_ee_dir2 = T_r_c2 * r_ee_dir;
+    
 
     double r_ee_dir_x2 = r_ee_dir2(0,0);
-    //cout << r_ee_dir_x << endl;
+    //cout << r_ee_dir_x2 << endl;
     r_ee_dir2 = (r_ee_dir2 / r_ee_dir_x2 * curve_length_x2);
 
     double curve_length2 = r_ee_dir2.norm();
@@ -1227,7 +1456,7 @@ double cyclops::objective_function2c2(Matrix<double,Dynamic,1> eaB, Matrix<doubl
     curve2_to_ee << curve_length2, 0.0, 0.0;
 
     r_ee = r_curve + r_ee_dir + r_ee_dir2;
-
+    //cout << r_ee.transpose() << endl;
 
 
     // Checking if the points in the taskspace are feasible across the given forces on the end effector
@@ -1258,10 +1487,10 @@ double cyclops::objective_function2c2(Matrix<double,Dynamic,1> eaB, Matrix<doubl
         T_r = R_z * R_y;
 
         Vector3d r_ee_rotated = T_r * curve2_to_ee;
-        //cout << "r_ee_rotated1 is: " << r_ee_rotated1.transpose() << endl;
+        //cout << "r_ee_rotated is: " << r_ee_rotated.transpose() << endl;
 
         Vector3d taskspace_at_curve2 = taskspace_pt - r_ee_rotated/1000.0;
-
+        //cout << taskspace_at_curve2.transpose() << endl;
 
         // Find the required position of the first curve of the tool
         // Define rotation Matrix
@@ -1279,7 +1508,7 @@ double cyclops::objective_function2c2(Matrix<double,Dynamic,1> eaB, Matrix<doubl
         Vector3d r_ee_rotated1 = T_r_1 * curve_to_curve2;
         Vector3d taskspace_at_curve = taskspace_at_curve2 - r_ee_rotated1/1000.0;
 
-
+        //cout << taskspace_at_curve.transpose() << endl;
         // Find the required position of the tool
         // Define rotation Matrix
         double xi_y = beta_y - gamma_y;
@@ -1295,6 +1524,8 @@ double cyclops::objective_function2c2(Matrix<double,Dynamic,1> eaB, Matrix<doubl
 
         Vector3d r_ee_rotated2 = T_r_2 * r_curve;
         Vector3d taskspace_at_tool = taskspace_at_curve - r_ee_rotated2/1000.0;
+
+        //cout << taskspace_at_tool.transpose() << endl;
 
         Matrix<double,5,1> taskspace_temp;
         taskspace_temp << taskspace_at_tool(0,0), taskspace_at_tool(1,0), taskspace_at_tool(2,0), xi_y, xi_z;

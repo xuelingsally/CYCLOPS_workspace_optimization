@@ -40,75 +40,75 @@ f=[f_ee';cross_pdt_fee]+W';
 % f(4) = [];
 %% Obtaining Tension Solution
 % Using analytical method for L1-norm solution
-% Partition_A = A(:,1:5);
-% Partition_B = A(:,6);
-% 
-% % For unfeasible points the matrix approaches singularity
-% % This line will stop the warning message from MATLAB.
-% %warning('off', 'all');
-% M = -Partition_A\(f);
-% N = -Partition_A\Partition_B;
-% %warning('on', 'all');
-% t_low = zeros(6,1);
-% t_high = zeros(6,1);
-% 
-% for i=1:5
-%     if N(i) > 0
-%         t_low(i) = (t_min(i) - M(i))/N(i);
-%         t_high(i) = (t_max(i) - M(i))/N(i);
-%     else
-%         t_low(i) = (t_max(i) - M(i))/N(i);
-%         t_high(i) = (t_min(i) - M(i))/N(i);
-%     end
-% end
-% 
-% t_low(6) = t_min(6);
-% t_high(6) = t_max(6);
-% 
-% t_B_min = max(t_low);
-% t_B_max = min(t_high);
-% 
-% if (t_B_min <= t_B_max)
-%     feasible = 1;
-%     if t_B_min > t_min(6) && t_B_min < t_max(6)
-%         t_A = M + N * t_B_min;
-%         t = [t_A;t_B_min];
-%     else
-%         t_A = M + N * t_B_max;
-%         t = [t_A;t_B_max];
-%     end
-% else
-%     feasible = 0;
-%     t = zeros(6,1);
-% end
-
-% L1 Norm Solution
-
-A(4:5,:) = A(5:6,:);
-A(6,:) = [];
-f(4:5) = f(5:6);
-f(6) = [];
-
 Partition_A = A(:,1:5);
-Partition_B = A(:,6:end);
+Partition_B = A(:,6);
+
+% For unfeasible points the matrix approaches singularity
+% This line will stop the warning message from MATLAB.
+%warning('off', 'all');
 M = -Partition_A\(f);
 N = -Partition_A\Partition_B;
+%warning('on', 'all');
+t_low = zeros(6,1);
+t_high = zeros(6,1);
 
-a_ = ones(1,5) * -inv(Partition_A);
-linprog_f = a_ * Partition_B + ones(1,size(Partition_B,2));
-
-b_(1:5) = M - t_min(1:5);
-b_(6:10) = t_max(1:5) - M;
-
-A_(1:5,:) = -N;
-A_(6:10,:) = N;
-size(A_);
-size(linprog_f);
-[t, ~, feasible,~] = linprog(linprog_f, A_, b_, [], [], t_min(1:size(Partition_B,2)), t_max(1:size(Partition_B,2)));
-
-if feasible ~=1
-    t = zeros(size(Partition_B,2),1);
+for i=1:5
+    if N(i) > 0
+        t_low(i) = (t_min(i) - M(i))/N(i);
+        t_high(i) = (t_max(i) - M(i))/N(i);
+    else
+        t_low(i) = (t_max(i) - M(i))/N(i);
+        t_high(i) = (t_min(i) - M(i))/N(i);
+    end
 end
+
+t_low(6) = t_min(6);
+t_high(6) = t_max(6);
+
+t_B_min = max(t_low);
+t_B_max = min(t_high);
+
+if (t_B_min <= t_B_max)
+    feasible = 1;
+    if t_B_min > t_min(6) && t_B_min < t_max(6)
+        t_A = M + N * t_B_min;
+        t = [t_A;t_B_min];
+    else
+        t_A = M + N * t_B_max;
+        t = [t_A;t_B_max];
+    end
+else
+    feasible = 0;
+    t = zeros(6,1);
+end
+
+% % L1 Norm Solution
+% 
+% A(4:5,:) = A(5:6,:);
+% A(6,:) = [];
+% f(4:5) = f(5:6);
+% f(6) = [];
+% 
+% Partition_A = A(:,1:5);
+% Partition_B = A(:,6:end);
+% M = -Partition_A\(f);
+% N = -Partition_A\Partition_B;
+% 
+% a_ = ones(1,5) * -inv(Partition_A);
+% linprog_f = a_ * Partition_B + ones(1,size(Partition_B,2));
+% 
+% b_(1:5) = M - t_min(1:5);
+% b_(6:10) = t_max(1:5) - M;
+% 
+% A_(1:5,:) = -N;
+% A_(6:10,:) = N;
+% size(A_);
+% size(linprog_f);
+% [t, ~, feasible,~] = linprog(linprog_f, A_, b_, [], [], t_min(1:size(Partition_B,2)), t_max(1:size(Partition_B,2)));
+% 
+% if feasible ~=1
+%     t = zeros(size(Partition_B,2),1);
+% end
 
 
 % Minimum Norm Solution

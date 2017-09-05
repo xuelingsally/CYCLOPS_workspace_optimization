@@ -6,8 +6,8 @@ load('./data/R.mat');
 relative_tp;
 
 radius_tool = 1.75;
-%radius_scaffold = 26.5491;
-radius_scaffold = 22.7564;
+radius_scaffold = 26.5491;
+%radius_scaffold = 22.7564;
 %radius_scaffold = 28.64;
 %radius_scaffold = 30.51;
 
@@ -99,7 +99,7 @@ for i=1:size(data1,2)
     temp3 = R_3 * r_curve;
     data_t3(1:3,i) = -temp3 + data_t2(1:3,i);
     
-    data_t3(4:6,i) = [0;beta_y;beta_z];
+    data_t3(4:6,i) = [0;xi_y;xi_z];
 end
 
 draw_cyclops_curved2(eaB, taskspace, radius_tool, radius_scaffold);

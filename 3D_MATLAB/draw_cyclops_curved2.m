@@ -145,9 +145,9 @@ for i=1:size(a,2)
 end
 
 % Draw Taskspace
-% if size(taskspace > 0)
-%     plot3(taskspace(1,:), taskspace(2,:), taskspace(3,:), 'b.');
-% end
+if size(taskspace > 0)
+    plot3(taskspace(1,:), taskspace(2,:), taskspace(3,:), 'b.');
+end
 
 max_tp_x = max(taskspace(1,:));
 max_x_axis = max([max_tp_x, r_ee(1)+x_middle]);

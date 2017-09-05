@@ -10,7 +10,7 @@ dataR_r(:,2) = dataR(:,2) + c_x - max(dataR(:,2));
 dataR_r(:,3) = dataR(:,3) + c_x - max(dataR(:,3));
 dataR_r(:,4) = 0;
 dataR_r(:,5) = dataR(:,5);
-dataR_r(:,6) = dataR(:,4);
+dataR_r(:,6) = dataR(:,6);
 
 c_x = ( max(dataL(:,1)) - min(dataL(:,1)) )/2;
 c_y = ( max(dataL(:,2)) - min(dataL(:,2)) )/2;
@@ -21,7 +21,7 @@ dataL_r(:,2) = dataL(:,2) + c_x - max(dataL(:,2));
 dataL_r(:,3) = dataL(:,3) + c_x - max(dataL(:,3));
 dataL_r(:,4) = 0;
 dataL_r(:,5) = dataL(:,5);
-dataL_r(:,6) = dataL(:,4);
+dataL_r(:,6) = dataL(:,6);
 
 dataL_r(:,7:9) = dataL(:,7:9);
 
