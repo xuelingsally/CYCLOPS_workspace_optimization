@@ -1201,7 +1201,7 @@ double cyclops::objective_function2cG(Matrix<double,Dynamic,1> eaB, Matrix<doubl
         Vector3d taskspace_at_tool = taskspace_pt - r_ee_rotated1/1000.0;
 
         Matrix<double,5,1> taskspace_temp;
-        taskspace_temp << taskspace_at_tool(0,0), taskspace_at_tool(1,0), taskspace_at_tool(2,0), alpha_y - beta_y, alpha_z - beta_z;
+        taskspace_temp << taskspace_at_tool(0,0), taskspace_at_tool(1,0), taskspace_at_tool(2,0), alpha_y - eaB(17), alpha_z - eaB(18);
         //cout << "Original taskspace is: " << (*taskspace_iter).transpose() << ";" << endl;
         //cout << "Moved taskspace is: " << taskspace_temp.transpose() << ";" <<std::endl << endl;
         //cout << taskspace_temp.transpose() << ";" << endl;

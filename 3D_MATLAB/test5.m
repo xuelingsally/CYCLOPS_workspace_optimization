@@ -56,7 +56,7 @@ for i=1:size(data1,2)
     
     data_t1(1:3,i) = -temp + data1(1:3,i);
     
-    data_t1(4:6,i) = [0;alpha_y - beta_y; alpha_z - beta_z];
+    data_t1(4:6,i) = [0;alpha_y - eaB(18); alpha_z - eaB(19)];
 
 end
 
