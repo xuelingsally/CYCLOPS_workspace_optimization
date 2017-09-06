@@ -83,7 +83,7 @@ else
 end
 
 % % L1 Norm Solution
-% 
+
 % A(4:5,:) = A(5:6,:);
 % A(6,:) = [];
 % f(4:5) = f(5:6);
@@ -111,7 +111,7 @@ end
 % end
 
 
-% Minimum Norm Solution
+%% Minimum Norm Solution
 % I = eye(size(a,2));
 % k = ones(size(a,2),1)* 5;
 % t_mn = pinv(A) * (-f);

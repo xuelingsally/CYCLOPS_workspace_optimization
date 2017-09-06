@@ -65,7 +65,8 @@ curve_x = eaB(18);
 x_middle = (min(B(1,:)) + max(B(1,:)))/2;
 p = [x_middle; 0; 0];
 
-length_scaffold = abs(eaB(13) - eaB(14));
+%length_scaffold = abs(eaB(13) - eaB(14));
+length_scaffold = max(B(1,:)) - min(B(1,:));
 length_overtube = max(a(1,:)) - min(a(1,:));
 
 dist_tool_b_cg = abs(min(a(1,:)));
@@ -139,10 +140,10 @@ if size(taskspace > 0)
     plot3(taskspace(1,:), taskspace(2,:), taskspace(3,:), 'b.');
 end
 
-max_tp_x = max(taskspace(1,:));
-max_x_axis = max([max_tp_x, r_ee(1)+x_middle]);
+%max_tp_x = max(taskspace(1,:));
+%max_x_axis = max([max_tp_x, r_ee(1)+x_middle]);
 
-axis([min(B(1,:))-5 (max_x_axis+10) -(radius_scaffold+5) radius_scaffold+5 -(radius_scaffold+5) radius_scaffold+5 ]);
-%axis([-85 50 -(radius_scaffold+5) radius_scaffold+5 -(radius_scaffold+5) radius_scaffold+5 ]);
+%axis([min(B(1,:))-5 (max_x_axis+10) -(radius_scaffold+5) radius_scaffold+5 -(radius_scaffold+5) radius_scaffold+5 ]);
+axis([-85 50 -(radius_scaffold+5) radius_scaffold+5 -(radius_scaffold+5) radius_scaffold+5 ]);
 
 end

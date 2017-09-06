@@ -300,10 +300,18 @@ double simpsolib::EvalFN::evaluate(vector<double> position, cyclops::fnInputs In
                                   Input.taskspace, Input.radius_tool, Input.radius_scaffold,
                                   Input.length_scaffold);
         }
-        else
+        else if (Input.curve_tool == 1)
         {
             // Curved tool-> eaB size is 18 + 3n
             temp_result = cyclops::objective_function3c(eaB, Input.W, Input.f_ee_vec, Input.phi_min,
+                                  Input.phi_max, Input.t_min, Input.t_max,
+                                  Input.taskspace, Input.radius_tool, Input.radius_scaffold,
+                                  Input.length_scaffold);
+        }
+        else if (Input.curve_tool == 2)
+        {
+            // Curved tool-> eaB size is 18 + 3n
+            temp_result = cyclops::objective_function3cG(eaB, Input.W, Input.f_ee_vec, Input.phi_min,
                                   Input.phi_max, Input.t_min, Input.t_max,
                                   Input.taskspace, Input.radius_tool, Input.radius_scaffold,
                                   Input.length_scaffold);

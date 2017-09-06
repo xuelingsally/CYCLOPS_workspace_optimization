@@ -60,6 +60,7 @@ for i=1:size(data1,2)
 
 end
 
+
 draw_cyclops_curvedG(eaB, taskspace, radius_tool, radius_scaffold);
 taskspace2 = data_t1;
 plot3(taskspace2(1,:), taskspace2(2,:), taskspace2(3,:), 'g.');

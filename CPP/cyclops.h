@@ -116,6 +116,14 @@ double objective_function3c(Matrix<double,Dynamic,1> eaB, Matrix<double,6,1> W,
 	                      double radius_tool, double radius_scaffold,
 	                      double length_scaffold);
 
+double objective_function3cG(Matrix<double,Dynamic,1> eaB, Matrix<double,6,1> W,
+	                      vector<Vector3d> f_ee_vec,
+	                      Vector2d phi_min, Vector2d phi_max,
+	                      VectorXd t_min, VectorXd t_max,
+	                      vector<VectorXd> taskspace,
+	                      double radius_tool, double radius_scaffold,
+	                      double length_scaffold);
+
 }; //namespace cyclops
 
 #endif // CYCLOPS_H

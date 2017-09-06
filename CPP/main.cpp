@@ -331,20 +331,21 @@ int main(int argc, char *argv[])
     }
     
     // Limits for B
-    /*
+    
     for (int i=12; i<14; i++)
     {
         lower_range[i] = -length_scaffold;
         upper_range[i] = 0.0;
     }
-*/
+/*
     //Using halfsapce method
-    
+   
     lower_range[12] = -length_scaffold;
     upper_range[12] = -length_scaffold/2.0;
     lower_range[13] = -length_scaffold/2.0;
     upper_range[13] = 0.0;
-    
+    */
+
     // Limits for tooltip r_ee_x
     lower_range[14] = 0.0;
     upper_range[14] = tool_tip_limit;
