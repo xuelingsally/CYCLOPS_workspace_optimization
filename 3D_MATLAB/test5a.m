@@ -65,4 +65,4 @@ data_t1(7:9,:) = taskspace(7:9,:);
 
 draw_cyclops_curvedG(eaB, taskspace, radius_tool, radius_scaffold);
 taskspace2 = data_t1;
-plot3(taskspace2(1,:), taskspace2(2,:), taskspace2(3,:), 'g.');
+%plot3(taskspace2(1,:), taskspace2(2,:), taskspace2(3,:), 'g.');

@@ -50,7 +50,7 @@ R_z = [cos(delta_z), -sin(delta_z), 0; sin(delta_z), cos(delta_z), 0; 0, 0, 1];
 R = R_z * R_y;
 
 tip_vec = R * [1;0;0];
-tip_vec = tip_vec/norm(tip_vec) * 5;
+tip_vec = tip_vec/norm(tip_vec) * 10;
 
 tip_start = r_ee - tip_vec;
 
