@@ -375,14 +375,14 @@ int main(int argc, char *argv[])
     }
     else if (curve == 2)
     {
-        lower_range[15] = -PI/2;
-        upper_range[15] = PI/2;
-        lower_range[16] = -PI/2;
-        upper_range[16] = PI/2;
-        lower_range[17] = -PI/2;
-        upper_range[17] = PI/2;
-        lower_range[18] = -PI/2;
-        upper_range[18] = PI/2;
+        lower_range[15] = -PI/4;
+        upper_range[15] = PI/4;
+        lower_range[16] = -PI/4;
+        upper_range[16] = PI/4;
+        lower_range[17] = -PI/4;
+        upper_range[17] = PI/4;
+        lower_range[18] = -PI/4;
+        upper_range[18] = PI/4;
     }
 
     int temp_c = 0;
