@@ -6,8 +6,8 @@ load('./data/R.mat');
 relative_tp;
 
 radius_tool = 1.75;
-%radius_scaffold = 26.5491;
-radius_scaffold = 22.7564;
+radius_scaffold = 26.5491;
+%radius_scaffold = 22.7564;
 %radius_scaffold = 28.64;
 %radius_scaffold = 30.51;
 
@@ -63,4 +63,4 @@ end
 
 draw_cyclops_curvedG(eaB, taskspace, radius_tool, radius_scaffold);
 taskspace2 = data_t1;
-plot3(taskspace2(1,:), taskspace2(2,:), taskspace2(3,:), 'g.');
+%plot3(taskspace2(1,:), taskspace2(2,:), taskspace2(3,:), 'g.');
