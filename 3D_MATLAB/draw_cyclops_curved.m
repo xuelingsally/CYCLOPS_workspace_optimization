@@ -77,27 +77,27 @@ hold;
 % Draw scaffold;
 [y,z,x] = cylinder(radius_scaffold, 20);
 x = x * -length_scaffold + max(B(1,:));
-%y = y(:,:) - radius_scaffold/2;
+y = y(:,:) - radius_scaffold/2;
 surf(x,y,z, 'FaceAlpha', 0.1, 'EdgeColor', 'none', 'FaceColor', '[1,0.5,0.5]');
 
 % Draw Overtube;
 [y,z,x] = cylinder(radius_tool, 20);
 x = x * length_overtube + x_middle + min(a(1,:));
-%y = y(:,:) - radius_scaffold/2;
+y = y(:,:) - radius_scaffold/2;
 s = surf(x,y,z, 'EdgeColor', 'none', 'FaceColor','[0.5,0.5,0.5]');
 
 % Draw tool to curve point
 [y,z,x] = cylinder(radius_tool, 20);
 x = x * (curve_x - max(a(1,:)));
 x = x + max(a(1,:)) + x_middle;
-%y = y(:,:) - radius_scaffold/2;
+y = y(:,:) - radius_scaffold/2;
 s = surf(x,y,z, 'EdgeColor', 'none', 'FaceColor','[0.7,0.7,0.7]');
 
 x = [x_middle,curve_x + x_middle];
 y = [0, 0];
 z = [0,0];
 %y = y(:,:) - radius_scaffold/2;
-plot3(x, y, z, 'k-', 'LineWidth', 1);
+%plot3(x, y, z, 'k-', 'LineWidth', 1);
 
 % Draw tool from curve point to tip
 [y,z,x] = cylinder(radius_tool, 20);
@@ -117,14 +117,14 @@ y(1,:) = circ1(2,:);
 y(2,:) = circ2(2,:);
 z(1,:) = circ1(3,:);
 z(2,:) = circ2(3,:);
-%y = y(:,:) - radius_scaffold/2;
+y = y(:,:) - radius_scaffold/2;
 s = surf(x,y,z, 'EdgeColor', 'none', 'FaceColor','[0.7,0.7,0.7]');
 
 x = [curve_x + x_middle, r_ee(1)+x_middle];
 y = [0, r_ee(2)];
 z = [0, r_ee(3)];
 %y = y(:,:) - radius_scaffold/2;
-plot3(x, y, z, 'k-', 'LineWidth', 1);
+%plot3(x, y, z, 'k-', 'LineWidth', 1);
 
 
 
@@ -137,17 +137,17 @@ for i=1:size(a,2)
     y = [a_b(2), b(2)];
     z = [a_b(3), b(3)];
     
-    %y = y(:,:) - radius_scaffold/2;
+    y = y(:,:) - radius_scaffold/2;
     
     plot3(x, y, z, 'r-');
     plot3(x, y, z, 'rx');
 end
 
-%taskspace(2,:) = taskspace(2,:) -  radius_scaffold/2;
+taskspace(2,:) = taskspace(2,:) - radius_scaffold/2;
 
 % Draw Taskspace
 if size(taskspace > 0)
-    plot3(taskspace(1,:), taskspace(2,:), taskspace(3,:), 'b.');
+    plot3(taskspace(1,:), taskspace(2,:), taskspace(3,:), 'r.');
 end
 
 max_tp_x = max(taskspace(1,:));
